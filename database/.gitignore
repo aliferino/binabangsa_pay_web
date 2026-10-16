@@ -1,1 +1,3 @@
-*.sqlite*
+# Abaikan berkas cadangan database lokal.
+*.sql
+*.sql.gz
