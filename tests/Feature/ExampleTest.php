@@ -2,18 +2,20 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
     /**
-     * A basic test example.
+     * Halaman akar sekarang mengarahkan ke dashboard.
+     *
+     * Tamu yang belum login akan diteruskan lagi ke halaman login oleh
+     * middleware auth. Jadi jawabannya berupa pengalihan, bukan halaman 200.
      */
-    public function test_the_application_returns_a_successful_response(): void
+    public function test_halaman_akar_mengarahkan_ke_dashboard(): void
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(route('dashboard'));
     }
 }
