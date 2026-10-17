@@ -1,58 +1,270 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white" alt="Laravel 13">
+  <img src="https://img.shields.io/badge/PHP-8.4-777BB4?logo=php&logoColor=white" alt="PHP 8.4">
+  <img src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind 4">
+  <img src="https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white" alt="MySQL 8">
+  <img src="https://img.shields.io/badge/status-master%20data-blue" alt="Status">
 </p>
 
-## About Laravel
+# BinaBangsa Pay
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sistem pembayaran SPP untuk **SMK Bina Bangsa**. Aplikasi web untuk mengelola data
+sekolah dan tagihan SPP siswa, dengan empat peran pengguna yang hak aksesnya
+berbeda.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Proyek ini dibuat untuk keperluan LSP. Cakupan yang sudah selesai adalah
+**master data**. Bagian pembayaran belum dibuat.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Status pengerjaan
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Bagian | Status |
+|---|---|
+| Skema database (7 tabel inti) | selesai |
+| Model Eloquent | selesai |
+| Controller (11 buah) | selesai |
+| Route (66 route) | selesai |
+| Tampilan Blade (43 berkas) | selesai |
+| Test (22 test, 80 assertion) | lolos semua |
+| **Pembayaran, virtual account, callback** | **belum dibuat** |
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Bagian pembayaran sengaja ditunda sampai skema pembayarannya disetujui guru
+pembimbing. Tabel `virtual_account`, `transaksi_payment_gateway`, dan
+`pembayaran` belum ada, jadi halaman yang membutuhkannya belum bisa dibuat.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Di dashboard admin ada bagian bertanda **"Belum tersedia"** yang menjelaskan hal
+ini secara terbuka, supaya tidak terlihat seperti bug.
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Empat peran pengguna
+
+| Peran | Bisa apa |
+|---|---|
+| `admin` | semua data master, pengguna, laporan, pencarian |
+| `kepala_sekolah` | melihat data master dan laporan, **tidak bisa mengubah** |
+| `teller` | tagihan, pencarian, laporan |
+| `siswa` | hanya dashboard miliknya sendiri |
+
+Hak akses dijaga oleh middleware `PastikanRole`. Siswa tidak bisa membuka data
+siswa lain lewat URL, dan ini sudah diuji.
+
+---
+
+## Kebutuhan sistem
+
+| Perangkat | Versi |
+|---|---|
+| PHP | 8.4 |
+| Composer | 2.x |
+| Node.js | 20 atau lebih baru |
+| MySQL | 8.x |
+
+Di mesin pengembangan dipakai PHP 8.4.16 dan Node 24 dari Laragon.
+
+---
+
+## Cara memasang
+
+### 1. Pasang dependensi
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+npm install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Siapkan berkas lingkungan
 
-## Contributing
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Sesuaikan bagian database di `.env`:
 
-## Code of Conduct
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=binabangsa_pay
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3. Buat database
 
-## Security Vulnerabilities
+```sql
+CREATE DATABASE binabangsa_pay;
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Jalankan migrasi dan isi data contoh
 
-## License
+```bash
+php artisan migrate --seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. Bangun aset tampilan
+
+```bash
+npm run build
+```
+
+Langkah ini **wajib**. Tanpa `npm run build`, setiap halaman akan gagal dengan
+pesan `Vite manifest not found`, karena layout memakai `@vite`.
+
+### 6. Jalankan
+
+```bash
+php artisan serve
+```
+
+Buka `http://127.0.0.1:8000`.
+
+Kalau sedang mengembangkan tampilan, jalankan `npm run dev` di terminal lain
+supaya perubahan CSS dan JS langsung terlihat tanpa build ulang.
+
+---
+
+## Akun untuk mencoba
+
+Semua akun dibuat oleh seeder dan memakai password yang sama: `password`.
+
+| Username | Peran |
+|---|---|
+| `admin` | administrator |
+| `kepala` | kepala sekolah |
+| `teller` | teller |
+| `siswa` | siswa |
+
+> Ganti semua password ini sebelum aplikasi dipakai sungguhan.
+
+---
+
+## Struktur database
+
+Tujuh tabel inti, sama dengan versi aplikasi desktop:
+
+| Tabel | Isi |
+|---|---|
+| `users` | akun dan peran pengguna |
+| `jurusan` | data jurusan |
+| `tahun_ajaran` | tahun ajaran, hanya satu yang aktif |
+| `kelas` | kelas, terhubung ke jurusan dan tahun ajaran |
+| `siswa` | data siswa, terhubung ke kelas dan akun |
+| `tarif_spp` | nominal SPP per tahun ajaran |
+| `tagihan_spp` | tagihan per siswa per bulan |
+
+Tabel `sessions` dipakai karena `SESSION_DRIVER=database`.
+
+---
+
+## Daftar halaman
+
+### Dashboard
+`/dashboard` mengarahkan otomatis sesuai peran. Ada empat dashboard terpisah
+untuk admin, kepala sekolah, teller, dan siswa.
+
+### Data master
+- `/jurusan` - daftar, tambah, detail, ubah, hapus
+- `/kelas` - daftar, tambah, detail, ubah, hapus
+- `/tahun-ajaran` - daftar, tambah, detail, ubah, hapus
+- `/siswa` - daftar dengan filter, tambah, detail, ubah, hapus
+- `/tarif-spp` - daftar, tambah, detail, ubah, hapus
+- `/tagihan-spp` - daftar dengan filter, tambah, detail, ubah, hapus
+- `/user` - daftar, tambah, detail, ubah, hapus
+
+### Laporan dan pencarian
+- `/laporan/pembayaran` - rekap tagihan dengan filter
+- `/laporan/tunggakan` - daftar tunggakan per siswa
+- `/pencarian` - cari siswa lewat NIS, NISN, atau nama
+
+---
+
+## Aturan bisnis yang sudah berjalan
+
+Ini yang dijaga di kode dan diuji oleh test suite:
+
+- Tahun ajaran hanya boleh **satu** yang berstatus aktif
+- Tagihan ganda pada bulan dan tahun yang sama ditolak, dengan pesan yang ramah
+- Tandai tunggakan hanya menyentuh tagihan yang sudah lewat jatuh tempo
+- Tagihan yang sudah lunas tidak ikut jadi tunggakan
+- Jurusan yang masih dipakai kelas tidak bisa dihapus
+- Admin tidak bisa menghapus akunnya sendiri
+- NIS dan NISN harus unik
+- Jenis kelamin hanya boleh `L` atau `P`
+- Siswa hanya melihat tagihan miliknya sendiri
+
+---
+
+## Menjalankan test
+
+```bash
+php artisan test
+```
+
+Test memakai database terpisah, jadi data pengembangan tidak tersentuh. Siapkan
+dulu database `binabangsa_pay_testing`, karena `phpunit.xml` diarahkan ke situ.
+
+Hasil terakhir: **22 test lolos, 80 assertion**.
+
+---
+
+## Struktur folder penting
+
+```
+app/
+  Http/
+    Controllers/      11 controller
+    Middleware/       PastikanRole.php
+  Models/             7 model
+resources/
+  views/
+    layouts/          layout induk
+    partials/         navigasi, pesan, error, lencana status
+    auth/             halaman login
+    dashboard/        4 dashboard sesuai peran
+    jurusan/ kelas/ tahun-ajaran/ siswa/ tarif-spp/ tagihan-spp/ user/
+    laporan/ pencarian/
+routes/
+  web.php             semua route
+database/
+  migrations/         7 migrasi
+  seeders/            data contoh
+tests/
+  Feature/            test controller dan hak akses
+```
+
+---
+
+## Catatan teknis
+
+**Controller mengembalikan JSON kalau tampilan belum ada.** Ada helper
+`tampilkan()` di `app/Http/Controllers/Controller.php` yang mengecek
+`view()->exists()`. Kalau berkas Blade-nya ada, tampilan dipakai. Kalau belum,
+data dikirim sebagai JSON supaya route tetap bisa dipanggil tanpa error.
+
+**Antrian dan cache tidak memakai database.** `QUEUE_CONNECTION=sync` dan
+`CACHE_STORE=file`, jadi tabel `jobs` dan `cache` tidak diperlukan. Hanya
+`sessions` yang disimpan di database.
+
+**Urutan route penting.** Route dengan segmen tetap seperti `/siswa/create`
+didaftarkan sebelum route berparameter `/siswa/{siswa}`. Kalau terbalik, kata
+"create" akan dibaca sebagai id dan permintaannya berakhir 404.
+
+---
+
+## Yang belum dikerjakan
+
+1. Tabel dan model untuk virtual account, transaksi payment gateway, dan pembayaran
+2. Halaman pembayaran dan integrasi payment gateway
+3. Callback dari payment gateway
+4. Laporan pembayaran yang memakai data transaksi sungguhan
+
+Bagian ini menunggu keputusan guru pembimbing soal skema pembayarannya.
+
+---
+
+## Lisensi
+
+Proyek tugas sekolah. Dibuat untuk SMK Bina Bangsa.
