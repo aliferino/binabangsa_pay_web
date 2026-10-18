@@ -51,6 +51,18 @@ Route::post('/callback/payment', [CallbackController::class, 'handle'])
 
 /*
 |--------------------------------------------------------------------------
+| Callback Xendit
+|--------------------------------------------------------------------------
+| Sama seperti callback di atas: tanpa auth dan tanpa CSRF, karena pemanggilnya
+| server Xendit. Pengaman sebenarnya adalah header x-callback-token yang
+| diperiksa lebih dulu di dalam CallbackController.
+*/
+
+Route::post('/callback/xendit', [CallbackController::class, 'xendit'])
+    ->name('callback.xendit');
+
+/*
+|--------------------------------------------------------------------------
 | Route terproteksi
 |--------------------------------------------------------------------------
 | Semua route di bawah ini wajib login.
@@ -133,6 +145,13 @@ Route::middleware('auth')->group(function () {
             ->name('virtual-account.nonaktifkan');
         Route::post('/virtual-account/{virtualAccount}/aktifkan', [VirtualAccountController::class, 'aktifkan'])
             ->name('virtual-account.aktifkan');
+
+        // Xendit. Segmen terakhirnya kata tetap, jadi tidak tertukar dengan
+        // route berparameter di atas.
+        Route::post('/virtual-account/{siswa}/buat-xendit', [VirtualAccountController::class, 'buatXendit'])
+            ->name('virtual-account.buat-xendit');
+        Route::post('/virtual-account/{virtualAccount}/simulasi', [VirtualAccountController::class, 'simulasi'])
+            ->name('virtual-account.simulasi');
     });
 
     /*

@@ -16,6 +16,7 @@ class TransaksiPaymentGateway extends Model
     protected $fillable = [
         'transaction_id', 'virtual_account_id', 'siswa_id', 'nominal',
         'status_transaksi', 'payment_channel', 'reference_number', 'raw_response',
+        'xendit_payment_id', 'paid_at',
     ];
 
     protected function casts(): array
@@ -23,6 +24,7 @@ class TransaksiPaymentGateway extends Model
         return [
             'raw_response' => 'array',
             'nominal' => 'decimal:2',
+            'paid_at' => 'datetime',
         ];
     }
 

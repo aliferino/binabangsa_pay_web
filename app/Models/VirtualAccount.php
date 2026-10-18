@@ -15,12 +15,14 @@ class VirtualAccount extends Model
 
     protected $fillable = [
         'siswa_id', 'nomor_va', 'prefix', 'status',
+        'xendit_id', 'account_number', 'bank_code', 'external_id', 'expired_at',
     ];
 
     protected function casts(): array
     {
         return [
             'status' => 'string',
+            'expired_at' => 'datetime',
         ];
     }
 

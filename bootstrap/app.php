@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // unik dan pencatatan pembayaran bersifat idempoten.
         $middleware->validateCsrfTokens(except: [
             'callback/payment',
+            'callback/xendit',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
