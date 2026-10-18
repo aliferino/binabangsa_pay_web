@@ -15,6 +15,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\PastikanRole::class,
         ]);
+
+        // Callback payment gateway datang dari server luar, bukan dari browser
+        // pengguna, jadi tidak mungkin membawa token CSRF milik aplikasi ini.
+        // Tanpa pengecualian ini setiap callback akan ditolak 419.
+        //
+        // Pengaman penggantinya ada di CallbackController: transaction_id wajib
+        // unik dan pencatatan pembayaran bersifat idempoten.
+        $middleware->validateCsrfTokens(except: [
+            'callback/payment',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

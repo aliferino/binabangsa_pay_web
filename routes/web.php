@@ -1,16 +1,19 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CallbackController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PencarianController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TagihanSppController;
 use App\Http\Controllers\TahunAjaranController;
 use App\Http\Controllers\TarifSppController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VirtualAccountController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +31,23 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.proses');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Callback payment gateway
+|--------------------------------------------------------------------------
+| Tanpa middleware auth, karena yang memanggil adalah server payment gateway,
+| bukan pengguna yang punya sesi login. Tetap di dalam grup web, jadi
+| perlindungan CSRF tetap berlaku untuk route lain di berkas ini.
+|
+| Route ini dikecualikan dari CSRF di bootstrap/app.php, sebab payment gateway
+| tidak mungkin mengirim token CSRF milik aplikasi ini. Penggantinya adalah
+| pencocokan transaction_id yang wajib unik, ditambah pemeriksaan idempoten di
+| dalam CallbackController.
+*/
+
+Route::post('/callback/payment', [CallbackController::class, 'handle'])
+    ->name('callback.payment');
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +103,54 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin,teller')->group(function () {
         Route::get('/tagihan-spp/lihat', [TagihanSppController::class, 'index'])
             ->name('tagihan-spp.lihat');
+    });
+
+    /*
+    |----------------------------------------------------------------------
+    | Pembayaran dan Virtual Account: route dengan segmen tetap
+    |----------------------------------------------------------------------
+    | Sama seperti bagian 1 di atas, route di sini wajib didaftarkan SEBELUM
+    | route berparameter /pembayaran/{pembayaran} dan
+    | /virtual-account/{virtualAccount}. Kalau terbalik, kata "tunai",
+    | "qris", "generate", atau "nonaktifkan" akan dibaca sebagai id dan
+    | permintaannya berakhir 404.
+    |
+    | Siswa sengaja tidak diberi akses ke seluruh blok ini, karena mencatat
+    | dan mengubah pembayaran bukan haknya.
+    */
+
+    Route::middleware('role:admin,teller')->group(function () {
+        Route::post('/pembayaran/tunai', [PembayaranController::class, 'tunai'])
+            ->name('pembayaran.tunai');
+        Route::post('/pembayaran/qris', [PembayaranController::class, 'qris'])
+            ->name('pembayaran.qris');
+        Route::get('/pembayaran/ringkasan', [PembayaranController::class, 'ringkasan'])
+            ->name('pembayaran.ringkasan');
+
+        Route::post('/virtual-account/generate', [VirtualAccountController::class, 'generate'])
+            ->name('virtual-account.generate');
+        Route::post('/virtual-account/{virtualAccount}/nonaktifkan', [VirtualAccountController::class, 'nonaktifkan'])
+            ->name('virtual-account.nonaktifkan');
+        Route::post('/virtual-account/{virtualAccount}/aktifkan', [VirtualAccountController::class, 'aktifkan'])
+            ->name('virtual-account.aktifkan');
+    });
+
+    /*
+    |----------------------------------------------------------------------
+    | Pembayaran dan Virtual Account: daftar dan detail
+    |----------------------------------------------------------------------
+    | Didaftarkan setelah segmen tetap di atas. Kepala sekolah boleh melihat
+    | sebagai bahan laporan, tetapi tidak boleh mencatat pembayaran.
+    */
+
+    Route::middleware('role:admin,teller,kepala_sekolah')->group(function () {
+        Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
+        Route::get('/pembayaran/{pembayaran}', [PembayaranController::class, 'show'])->name('pembayaran.show');
+    });
+
+    Route::middleware('role:admin,teller')->group(function () {
+        Route::get('/virtual-account', [VirtualAccountController::class, 'index'])->name('virtual-account.index');
+        Route::get('/virtual-account/{virtualAccount}', [VirtualAccountController::class, 'show'])->name('virtual-account.show');
     });
 
     /*

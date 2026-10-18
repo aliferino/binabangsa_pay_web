@@ -46,6 +46,25 @@ class Siswa extends Model
         return $this->hasMany(TagihanSpp::class, 'id_siswa', 'id_siswa');
     }
 
+    /**
+     * Relasi balik ke tabel pembayaran. Ditambahkan saat skema pembayaran
+     * dibuat, tanpa mengubah kolom atau perilaku model ini.
+     */
+    public function virtualAccount()
+    {
+        return $this->hasOne(VirtualAccount::class, 'siswa_id', 'id_siswa');
+    }
+
+    public function transaksiPaymentGateway()
+    {
+        return $this->hasMany(TransaksiPaymentGateway::class, 'siswa_id', 'id_siswa');
+    }
+
+    public function pembayaran()
+    {
+        return $this->hasMany(Pembayaran::class, 'siswa_id', 'id_siswa');
+    }
+
     public function totalTunggakan(): float
     {
         return (float) $this->tagihan()->where('status', 'tunggakan')->sum('nominal');
