@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Jurusan;
-use App\Models\Kelas;
-use App\Models\Siswa;
-use App\Models\TagihanSpp;
-use App\Models\TahunAjaran;
-use App\Models\TarifSpp;
+use App\Models\Major;
+use App\Models\Classroom;
+use App\Models\Student;
+use App\Models\TuitionBill;
+use App\Models\AcademicYear;
+use App\Models\TuitionRate;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -33,30 +33,30 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'), 'role' => 'siswa', 'status' => 'aktif',
         ]);
 
-        $ta = TahunAjaran::create([
+        $ta = AcademicYear::create([
             'tahun_ajaran' => '2026/2027',
             'tanggal_mulai' => '2026-07-01',
             'tanggal_selesai' => '2027-06-30',
             'status' => 'aktif',
         ]);
-        $tarif = TarifSpp::create([
+        $tarif = TuitionRate::create([
             'id_tahun_ajaran' => $ta->id_tahun_ajaran,
             'nominal' => 350000,
             'keterangan' => 'SPP bulanan tahun ajaran 2026/2027',
             'status' => 'aktif',
         ]);
 
-        $rpl = Jurusan::create([
+        $rpl = Major::create([
             'kode_jurusan' => 'RPL',
             'nama_jurusan' => 'Rekayasa Perangkat Lunak',
             'keterangan' => 'Pemrograman dan pengembangan aplikasi',
         ]);
-        $kelas = Kelas::create([
+        $kelas = Classroom::create([
             'nama_kelas' => 'XI RPL 1', 'tingkat' => 'XI',
             'id_jurusan' => $rpl->id_jurusan, 'id_tahun_ajaran' => $ta->id_tahun_ajaran,
         ]);
 
-        $siswa = Siswa::create([
+        $siswa = Student::create([
             'nis' => '12345', 'nisn' => '0071234567', 'nama' => 'Ahmad Fauzan',
             'jenis_kelamin' => 'L', 'tempat_lahir' => 'Sidoarjo',
             'tanggal_lahir' => '2009-05-12', 'alamat' => 'Desa Sumber Makmur',
@@ -66,7 +66,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         foreach ([7, 8, 9, 10] as $bulan) {
-            TagihanSpp::create([
+            TuitionBill::create([
                 'id_siswa' => $siswa->id_siswa,
                 'id_tarif' => $tarif->id_tarif,
                 'id_tahun_ajaran' => $ta->id_tahun_ajaran,

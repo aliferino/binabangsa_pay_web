@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Jurusan extends Model
+class Major extends Model
 {
     use HasFactory;
 
@@ -15,8 +16,13 @@ class Jurusan extends Model
 
     protected $fillable = ['kode_jurusan', 'nama_jurusan', 'keterangan'];
 
-    public function kelas()
+    public function classrooms(): HasMany
     {
-        return $this->hasMany(Kelas::class, 'id_jurusan', 'id_jurusan');
+        return $this->hasMany(Classroom::class, 'id_jurusan', 'id_jurusan');
+    }
+
+    public function kelas(): HasMany
+    {
+        return $this->classrooms();
     }
 }

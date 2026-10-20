@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Teller;
 
+use App\Http\Controllers\Controller;
 use App\Exceptions\XenditException;
-use App\Models\Siswa;
+use App\Models\Student;
 use App\Models\VirtualAccount;
 use App\Services\XenditService;
 use Illuminate\Http\RedirectResponse;
@@ -28,10 +29,10 @@ class VirtualAccountController extends Controller
             $kueri->where('status', $request->input('status'));
         }
 
-        return $this->tampilkan('virtual-account.index', [
-            'daftar_va' => $kueri->orderByDesc('id')->get(),
+        return $this->render('virtual-account.index', [
+            'virtualAccounts' => $kueri->orderByDesc('id')->get(),
             'filter' => $request->only(['siswa_id', 'status']),
-            'daftar_siswa' => Siswa::orderBy('nama')->get(),
+            'students' => Student::orderBy('nama')->get(),
         ]);
     }
 
@@ -40,7 +41,7 @@ class VirtualAccountController extends Controller
      */
     public function show(VirtualAccount $virtualAccount)
     {
-        return $this->tampilkan('virtual-account.show', [
+        return $this->render('virtual-account.show', [
             'va' => $virtualAccount->load('siswa.kelas', 'transaksi'),
         ]);
     }
@@ -62,7 +63,7 @@ class VirtualAccountController extends Controller
             'siswa_id.exists' => 'Siswa yang dipilih tidak ditemukan.',
         ]);
 
-        $siswa = Siswa::findOrFail($data['siswa_id']);
+        $siswa = Student::findOrFail($data['siswa_id']);
 
         $sudahAda = VirtualAccount::where('siswa_id', $siswa->id_siswa)->exists();
 
@@ -102,7 +103,7 @@ class VirtualAccountController extends Controller
      * Barisnya tidak dihapus, hanya statusnya diubah, supaya riwayat
      * transaksi yang menunjuk ke VA ini tetap utuh.
      */
-    public function nonaktifkan(VirtualAccount $virtualAccount): RedirectResponse
+    public function deactivate(VirtualAccount $virtualAccount): RedirectResponse
     {
         if (! $virtualAccount->aktif()) {
             return redirect()->route('virtual-account.index')
@@ -121,7 +122,7 @@ class VirtualAccountController extends Controller
      * Tanpa ini, menonaktifkan VA jadi jalan buntu: nomornya tidak bisa
      * dibuat ulang karena satu siswa hanya boleh punya satu baris VA.
      */
-    public function aktifkan(VirtualAccount $virtualAccount): RedirectResponse
+    public function activate(VirtualAccount $virtualAccount): RedirectResponse
     {
         if ($virtualAccount->aktif()) {
             return redirect()->route('virtual-account.index')
@@ -146,7 +147,7 @@ class VirtualAccountController extends Controller
      * Ditolak kalau siswa ini sudah punya VA yang terhubung ke Xendit, supaya
      * satu siswa tidak punya dua nomor bank berbeda.
      */
-    public function buatXendit(Request $request, Siswa $siswa, XenditService $xendit): RedirectResponse
+    public function createXendit(Request $request, Student $siswa, XenditService $xendit): RedirectResponse
     {
         $data = $request->validate([
             'bank_code' => ['required', 'string', 'max:20'],

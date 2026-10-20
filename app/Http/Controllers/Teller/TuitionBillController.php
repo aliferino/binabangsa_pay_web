@@ -1,24 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Teller;
 
-use App\Models\Siswa;
-use App\Models\TagihanSpp;
-use App\Models\TahunAjaran;
-use App\Models\TarifSpp;
+use App\Http\Controllers\Controller;
+use App\Models\Student;
+use App\Models\TuitionBill;
+use App\Models\AcademicYear;
+use App\Models\TuitionRate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 
-class TagihanSppController extends Controller
+class TuitionBillController extends Controller
 {
     /**
      * Daftar tagihan, bisa difilter per siswa, per bulan, dan per status.
      */
     public function index(Request $request)
     {
-        $kueri = TagihanSpp::with('siswa.kelas', 'tarif', 'tahunAjaran');
+        $kueri = TuitionBill::with('siswa.kelas', 'tarif', 'tahunAjaran');
 
         if ($request->filled('id_siswa')) {
             $kueri->where('id_siswa', $request->input('id_siswa'));
@@ -36,11 +37,11 @@ class TagihanSppController extends Controller
             $kueri->where('status', $request->input('status'));
         }
 
-        return $this->tampilkan('tagihan-spp.index', [
-            'daftar_tagihan' => $kueri->orderByDesc('tahun')->orderByDesc('bulan')->get(),
+        return $this->render('tagihan-spp.index', [
+            'bills' => $kueri->orderByDesc('tahun')->orderByDesc('bulan')->get(),
             'filter' => $request->only(['id_siswa', 'bulan', 'tahun', 'status']),
-            'daftar_siswa' => Siswa::orderBy('nama')->get(),
-            'daftar_tahun' => TagihanSpp::distinct()->orderByDesc('tahun')->pluck('tahun'),
+            'students' => Student::orderBy('nama')->get(),
+            'years' => TuitionBill::distinct()->orderByDesc('tahun')->pluck('tahun'),
         ]);
     }
 
@@ -49,7 +50,7 @@ class TagihanSppController extends Controller
      */
     public function create()
     {
-        return $this->tampilkan('tagihan-spp.create', $this->pilihan());
+        return $this->render('tagihan-spp.create', $this->pilihan());
     }
 
     /**
@@ -63,7 +64,7 @@ class TagihanSppController extends Controller
     {
         $data = $request->validate($this->aturan(), $this->pesan());
 
-        $sudahAda = TagihanSpp::where('id_siswa', $data['id_siswa'])
+        $sudahAda = TuitionBill::where('id_siswa', $data['id_siswa'])
             ->where('bulan', $data['bulan'])
             ->where('tahun', $data['tahun'])
             ->exists();
@@ -74,7 +75,7 @@ class TagihanSppController extends Controller
                 ->withErrors(['bulan' => 'Siswa ini sudah punya tagihan untuk bulan dan tahun tersebut.']);
         }
 
-        TagihanSpp::create($data);
+        TuitionBill::create($data);
 
         return redirect()->route('tagihan-spp.index')->with('sukses', 'Tagihan berhasil ditambahkan.');
     }
@@ -82,9 +83,9 @@ class TagihanSppController extends Controller
     /**
      * Tampilkan detail satu tagihan.
      */
-    public function show(TagihanSpp $tagihanSpp)
+    public function show(TuitionBill $tagihanSpp)
     {
-        return $this->tampilkan('tagihan-spp.show', [
+        return $this->render('tagihan-spp.show', [
             'tagihan' => $tagihanSpp->load('siswa.kelas', 'tarif', 'tahunAjaran'),
         ]);
     }
@@ -92,9 +93,9 @@ class TagihanSppController extends Controller
     /**
      * Tampilkan form ubah tagihan.
      */
-    public function edit(TagihanSpp $tagihanSpp)
+    public function edit(TuitionBill $tagihanSpp)
     {
-        return $this->tampilkan('tagihan-spp.edit', array_merge(
+        return $this->render('tagihan-spp.edit', array_merge(
             ['tagihan' => $tagihanSpp],
             $this->pilihan(),
         ));
@@ -103,11 +104,11 @@ class TagihanSppController extends Controller
     /**
      * Perbarui data tagihan.
      */
-    public function update(Request $request, TagihanSpp $tagihanSpp): RedirectResponse
+    public function update(Request $request, TuitionBill $tagihanSpp): RedirectResponse
     {
         $data = $request->validate($this->aturan(), $this->pesan());
 
-        $bentrok = TagihanSpp::where('id_siswa', $data['id_siswa'])
+        $bentrok = TuitionBill::where('id_siswa', $data['id_siswa'])
             ->where('bulan', $data['bulan'])
             ->where('tahun', $data['tahun'])
             ->where('id_tagihan', '!=', $tagihanSpp->id_tagihan)
@@ -130,7 +131,7 @@ class TagihanSppController extends Controller
      * Tagihan yang sudah lunas tidak boleh dihapus, karena itu bagian dari
      * riwayat pembayaran.
      */
-    public function destroy(TagihanSpp $tagihanSpp): RedirectResponse
+    public function destroy(TuitionBill $tagihanSpp): RedirectResponse
     {
         if ($tagihanSpp->status === 'lunas') {
             return redirect()->route('tagihan-spp.index')
@@ -150,14 +151,14 @@ class TagihanSppController extends Controller
      * belum_bayar otomatis menjadi tunggakan. Tagihan yang sudah lunas
      * tidak pernah disentuh.
      */
-    public function tandaiTunggakan(): RedirectResponse
+    public function markAsArrears(): RedirectResponse
     {
         $hariIni = Carbon::today();
         $jumlah = 0;
 
-        TagihanSpp::where('status', 'belum_bayar')
+        TuitionBill::where('status', 'belum_bayar')
             ->get()
-            ->each(function (TagihanSpp $tagihan) use ($hariIni, &$jumlah) {
+            ->each(function (TuitionBill $tagihan) use ($hariIni, &$jumlah) {
                 $batas = Carbon::create($tagihan->tahun, $tagihan->bulan, 1)->endOfMonth();
 
                 if ($hariIni->greaterThan($batas)) {
@@ -224,9 +225,9 @@ class TagihanSppController extends Controller
     private function pilihan(): array
     {
         return [
-            'daftar_siswa' => Siswa::with('kelas')->orderBy('nama')->get(),
-            'daftar_tarif' => TarifSpp::with('tahunAjaran')->orderByDesc('id_tahun_ajaran')->get(),
-            'daftar_tahun_ajaran' => TahunAjaran::orderByDesc('tahun_ajaran')->get(),
+            'students' => Student::with('kelas')->orderBy('nama')->get(),
+            'tuitionRates' => TuitionRate::with('tahunAjaran')->orderByDesc('id_tahun_ajaran')->get(),
+            'academicYears' => AcademicYear::orderByDesc('tahun_ajaran')->get(),
         ];
     }
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Teller;
 
-use App\Models\Pembayaran;
-use App\Models\Siswa;
-use App\Models\TagihanSpp;
+use App\Http\Controllers\Controller;
+use App\Models\Payment;
+use App\Models\Student;
+use App\Models\TuitionBill;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
-class PembayaranController extends Controller
+class PaymentController extends Controller
 {
     /**
      * Jumlah percobaan ulang kalau nomor transaksi bentrok.
@@ -24,7 +25,7 @@ class PembayaranController extends Controller
      */
     public function index(Request $request)
     {
-        $kueri = Pembayaran::with('siswa.kelas', 'tagihanSpp', 'user', 'transaksi');
+        $kueri = Payment::with('siswa.kelas', 'tagihanSpp', 'user', 'transaksi');
 
         if ($request->filled('dari')) {
             $kueri->whereDate('created_at', '>=', $request->input('dari'));
@@ -46,21 +47,21 @@ class PembayaranController extends Controller
             $kueri->where('status', $request->input('status'));
         }
 
-        return $this->tampilkan('pembayaran.index', [
-            'daftar_pembayaran' => $kueri->orderByDesc('id')->get(),
+        return $this->render('pembayaran.index', [
+            'payments' => $kueri->orderByDesc('id')->get(),
             'filter' => $request->only([
                 'dari', 'sampai', 'metode_pembayaran', 'siswa_id', 'status',
             ]),
-            'daftar_siswa' => Siswa::orderBy('nama')->get(),
+            'students' => Student::orderBy('nama')->get(),
         ]);
     }
 
     /**
      * Detail satu pembayaran.
      */
-    public function show(Pembayaran $pembayaran)
+    public function show(Payment $pembayaran)
     {
-        return $this->tampilkan('pembayaran.show', [
+        return $this->render('pembayaran.show', [
             'pembayaran' => $pembayaran->load('siswa.kelas', 'tagihanSpp', 'user', 'transaksi'),
         ]);
     }
@@ -142,14 +143,14 @@ class PembayaranController extends Controller
     /**
      * Tulis satu baris pembayaran dan ubah status tagihan dalam satu transaksi.
      *
-     * Mengembalikan objek Pembayaran kalau berhasil, atau string 'lunas' kalau
+     * Mengembalikan objek Payment kalau berhasil, atau string 'lunas' kalau
      * tagihannya ternyata sudah lunas.
      */
-    private function simpan(array $data, string $metode, Request $request): Pembayaran|string
+    private function simpan(array $data, string $metode, Request $request): Payment|string
     {
         return DB::transaction(function () use ($data, $metode, $request) {
-            /** @var TagihanSpp $tagihan */
-            $tagihan = TagihanSpp::whereKey($data['tagihan_spp_id'])->lockForUpdate()->firstOrFail();
+            /** @var TuitionBill $tagihan */
+            $tagihan = TuitionBill::whereKey($data['tagihan_spp_id'])->lockForUpdate()->firstOrFail();
 
             if ($tagihan->status === 'lunas') {
                 return 'lunas';
@@ -157,8 +158,8 @@ class PembayaranController extends Controller
 
             $status = $data['status'] ?? 'berhasil';
 
-            $catatan = Pembayaran::create([
-                'nomor_transaksi' => Pembayaran::buatNomorTransaksi(),
+            $catatan = Payment::create([
+                'nomor_transaksi' => Payment::buatNomorTransaksi(),
                 'transaksi_id' => null,
                 'tagihan_spp_id' => $tagihan->id_tagihan,
                 'siswa_id' => $tagihan->id_siswa,
@@ -190,7 +191,7 @@ class PembayaranController extends Controller
             ? Carbon::parse($request->input('tanggal'))->toDateString()
             : Carbon::today()->toDateString();
 
-        $baris = Pembayaran::whereDate('created_at', $tanggal)
+        $baris = Payment::whereDate('created_at', $tanggal)
             ->where('status', 'berhasil')
             ->selectRaw('metode_pembayaran, COUNT(*) as jumlah, SUM(nominal_pembayaran) as total')
             ->groupBy('metode_pembayaran')
@@ -198,7 +199,7 @@ class PembayaranController extends Controller
 
         return response()->json([
             'tanggal' => $tanggal,
-            'rincian' => $baris,
+            'details' => $baris,
             'total' => (float) $baris->sum('total'),
         ]);
     }

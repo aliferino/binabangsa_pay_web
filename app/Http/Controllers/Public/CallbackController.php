@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Public;
 
+use App\Http\Controllers\Controller;
 use App\Exceptions\XenditException;
-use App\Models\Pembayaran;
-use App\Models\TagihanSpp;
-use App\Models\TransaksiPaymentGateway;
+use App\Models\Payment;
+use App\Models\TuitionBill;
+use App\Models\PaymentGatewayTransaction;
 use App\Models\VirtualAccount;
 use App\Services\XenditService;
 use Illuminate\Database\QueryException;
@@ -48,7 +49,7 @@ class CallbackController extends Controller
             'tagihan_spp_id.exists' => 'Tagihan yang ditunjuk tidak ditemukan.',
         ]);
 
-        $transaksi = TransaksiPaymentGateway::where('transaction_id', $data['transaction_id'])->first();
+        $transaksi = PaymentGatewayTransaction::where('transaction_id', $data['transaction_id'])->first();
 
         if ($transaksi === null) {
             return response()->json([
@@ -62,7 +63,7 @@ class CallbackController extends Controller
         // Simpan balasan asli dan status terbaru dari gateway, walaupun
         // statusnya belum berhasil. Ini jejak audit yang berguna saat sengketa.
         $transaksi->update([
-            'status_transaksi' => $this->petakanStatus($statusMasuk),
+            'status_transaksi' => $this->mapStatus($statusMasuk),
             'raw_response' => $request->all(),
         ]);
 
@@ -76,7 +77,7 @@ class CallbackController extends Controller
         }
 
         // Lapis 1: sudah pernah diproses.
-        if (Pembayaran::where('transaksi_id', $transaksi->id)->exists()) {
+        if (Payment::where('transaksi_id', $transaksi->id)->exists()) {
             return response()->json([
                 'sukses' => true,
                 'pesan' => 'Callback ini sudah pernah diproses sebelumnya.',
@@ -87,22 +88,22 @@ class CallbackController extends Controller
 
         try {
             $hasil = DB::transaction(function () use ($transaksi, $data) {
-                /** @var TransaksiPaymentGateway $terkunci */
-                $terkunci = TransaksiPaymentGateway::whereKey($transaksi->id)->lockForUpdate()->firstOrFail();
+                /** @var PaymentGatewayTransaction $terkunci */
+                $terkunci = PaymentGatewayTransaction::whereKey($transaksi->id)->lockForUpdate()->firstOrFail();
 
                 // Periksa sekali lagi setelah baris terkunci, karena callback
                 // kembar bisa saja menunggu di antrean yang sama.
-                if (Pembayaran::where('transaksi_id', $terkunci->id)->exists()) {
+                if (Payment::where('transaksi_id', $terkunci->id)->exists()) {
                     return null;
                 }
 
-                $tagihan = $this->pilihTagihan($terkunci, $data['tagihan_spp_id'] ?? null);
+                $tagihan = $this->selectBill($terkunci, $data['tagihan_spp_id'] ?? null);
 
                 if ($tagihan === null) {
                     return 'tanpa_tagihan';
                 }
 
-                $pembayaran = Pembayaran::create([
+                $pembayaran = Payment::create([
                     'nomor_transaksi' => 'VA-'.$terkunci->transaction_id,
                     'transaksi_id' => $terkunci->id,
                     'tagihan_spp_id' => $tagihan->id_tagihan,
@@ -201,7 +202,7 @@ class CallbackController extends Controller
             ], 422);
         }
 
-        $va = $this->cariVirtualAccount($externalId, $accountNumber);
+        $va = $this->findVirtualAccount($externalId, $accountNumber);
 
         if ($va === null) {
             return response()->json([
@@ -215,7 +216,7 @@ class CallbackController extends Controller
         $status = strtoupper(trim((string) $request->input('status', '')));
 
         if ($status !== 'COMPLETED') {
-            $this->catatTanpaPelunasan($request, $va, $status);
+            $this->recordWithoutSettlement($request, $va, $status);
 
             return response()->json([
                 'sukses' => true,
@@ -256,7 +257,7 @@ class CallbackController extends Controller
                     return null;
                 }
 
-                $tagihan = TagihanSpp::where('id_siswa', $vaTerkunci->siswa_id)
+                $tagihan = TuitionBill::where('id_siswa', $vaTerkunci->siswa_id)
                     ->whereIn('status', ['belum_bayar', 'tunggakan'])
                     ->orderBy('tahun')
                     ->orderBy('bulan')
@@ -269,7 +270,7 @@ class CallbackController extends Controller
 
                 $nominal = (float) $request->input('amount', $tagihan->nominal);
 
-                $transaksi = $this->simpanTransaksi(
+                $transaksi = $this->storeTransaction(
                     $vaTerkunci,
                     $transactionId,
                     $paymentId,
@@ -278,7 +279,7 @@ class CallbackController extends Controller
                     $request->all()
                 );
 
-                $pembayaran = Pembayaran::create([
+                $pembayaran = Payment::create([
                     'nomor_transaksi' => 'XD-'.($transactionId ?: $paymentId ?: $vaTerkunci->external_id),
                     'transaksi_id' => $transaksi->id,
                     'tagihan_spp_id' => $tagihan->id_tagihan,
@@ -355,7 +356,7 @@ class CallbackController extends Controller
      */
     private function sudahDiproses(string $paymentId): bool
     {
-        return TransaksiPaymentGateway::where('xendit_payment_id', $paymentId)
+        return PaymentGatewayTransaction::where('xendit_payment_id', $paymentId)
             ->where('status_transaksi', 'berhasil')
             ->exists();
     }
@@ -366,7 +367,7 @@ class CallbackController extends Controller
      * external_id diutamakan karena itu yang kita tentukan sendiri, sedangkan
      * account_number berasal dari Xendit dan bisa berubah kalau VA dibuat ulang.
      */
-    private function cariVirtualAccount(?string $externalId, ?string $accountNumber): ?VirtualAccount
+    private function findVirtualAccount(?string $externalId, ?string $accountNumber): ?VirtualAccount
     {
         if (! empty($externalId)) {
             $va = VirtualAccount::where('external_id', $externalId)->first();
@@ -389,17 +390,17 @@ class CallbackController extends Controller
      * Dipakai updateOrCreate supaya alur PENDING lalu COMPLETED untuk
      * pembayaran yang sama tidak menabrak kunci unik transaction_id.
      */
-    private function simpanTransaksi(
+    private function storeTransaction(
         VirtualAccount $va,
         ?string $transactionId,
         ?string $paymentId,
         float $nominal,
         ?Carbon $paidAt,
         array $mentah
-    ): TransaksiPaymentGateway {
+    ): PaymentGatewayTransaction {
         $kunci = $transactionId ?: ('VA-'.$va->external_id);
 
-        return TransaksiPaymentGateway::updateOrCreate(
+        return PaymentGatewayTransaction::updateOrCreate(
             ['transaction_id' => $kunci],
             [
                 'virtual_account_id' => $va->id,
@@ -422,7 +423,7 @@ class CallbackController extends Controller
      * dibuat baris baru berstatus pending atau kedaluwarsa, supaya jejaknya
      * tetap ada saat diperiksa nanti.
      */
-    private function catatTanpaPelunasan(Request $request, VirtualAccount $va, string $status): void
+    private function recordWithoutSettlement(Request $request, VirtualAccount $va, string $status): void
     {
         $transactionId = $request->input('transaction_id');
         $paymentId = $request->input('payment_id');
@@ -437,7 +438,7 @@ class CallbackController extends Controller
         $nominal = (float) $request->input('amount', $request->input('expected_amount', 0));
 
         try {
-            TransaksiPaymentGateway::updateOrCreate(
+            PaymentGatewayTransaction::updateOrCreate(
                 ['transaction_id' => $transactionId ?: ('VA-'.$va->external_id.'-'.$status)],
                 [
                     'virtual_account_id' => $va->id,
@@ -491,16 +492,16 @@ class CallbackController extends Controller
      * Virtual Account untuk tagihan yang sama datang. Tanpa penjagaan ini,
      * satu tagihan akan tercatat lunas dua kali dengan dua metode berbeda.
      */
-    private function pilihTagihan(TransaksiPaymentGateway $transaksi, ?int $tagihanId): ?TagihanSpp
+    private function selectBill(PaymentGatewayTransaction $transaksi, ?int $tagihanId): ?TuitionBill
     {
         if ($tagihanId !== null) {
-            return TagihanSpp::whereKey($tagihanId)
+            return TuitionBill::whereKey($tagihanId)
                 ->where('id_siswa', $transaksi->siswa_id)
                 ->where('status', '!=', 'lunas')
                 ->first();
         }
 
-        return TagihanSpp::where('id_siswa', $transaksi->siswa_id)
+        return TuitionBill::where('id_siswa', $transaksi->siswa_id)
             ->whereIn('status', ['belum_bayar', 'tunggakan'])
             ->orderBy('tahun')
             ->orderBy('bulan')
@@ -510,7 +511,7 @@ class CallbackController extends Controller
     /**
      * Petakan status dari gateway ke status yang dipakai tabel.
      */
-    private function petakanStatus(string $status): string
+    private function mapStatus(string $status): string
     {
         return match ($status) {
             'berhasil', 'success', 'paid', 'settlement', 'capture' => 'berhasil',

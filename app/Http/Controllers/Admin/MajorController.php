@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Jurusan;
+use App\Http\Controllers\Controller;
+use App\Models\Major;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class JurusanController extends Controller
+class MajorController extends Controller
 {
     /**
      * Daftar jurusan.
      */
     public function index()
     {
-        return $this->tampilkan('jurusan.index', [
-            'daftar_jurusan' => Jurusan::withCount('kelas')->orderBy('nama_jurusan')->get(),
+        return $this->render('jurusan.index', [
+            'majors' => Major::withCount('kelas')->orderBy('nama_jurusan')->get(),
         ]);
     }
 
@@ -24,7 +25,7 @@ class JurusanController extends Controller
      */
     public function create()
     {
-        return $this->tampilkan('jurusan.create');
+        return $this->render('jurusan.create');
     }
 
     /**
@@ -42,7 +43,7 @@ class JurusanController extends Controller
             'nama_jurusan.required' => 'Nama jurusan wajib diisi.',
         ]);
 
-        Jurusan::create($data);
+        Major::create($data);
 
         return redirect()->route('jurusan.index')->with('sukses', 'Jurusan berhasil ditambahkan.');
     }
@@ -50,9 +51,9 @@ class JurusanController extends Controller
     /**
      * Tampilkan detail satu jurusan.
      */
-    public function show(Jurusan $jurusan)
+    public function show(Major $jurusan)
     {
-        return $this->tampilkan('jurusan.show', [
+        return $this->render('jurusan.show', [
             'jurusan' => $jurusan->load('kelas'),
         ]);
     }
@@ -60,15 +61,15 @@ class JurusanController extends Controller
     /**
      * Tampilkan form ubah jurusan.
      */
-    public function edit(Jurusan $jurusan)
+    public function edit(Major $jurusan)
     {
-        return $this->tampilkan('jurusan.edit', ['jurusan' => $jurusan]);
+        return $this->render('jurusan.edit', ['jurusan' => $jurusan]);
     }
 
     /**
      * Perbarui data jurusan.
      */
-    public function update(Request $request, Jurusan $jurusan): RedirectResponse
+    public function update(Request $request, Major $jurusan): RedirectResponse
     {
         $data = $request->validate([
             'kode_jurusan' => ['required', 'string', 'max:255',
@@ -92,7 +93,7 @@ class JurusanController extends Controller
      * Jurusan yang masih dipakai kelas tidak boleh dihapus, supaya data
      * kelas tidak ikut terhapus lewat cascade.
      */
-    public function destroy(Jurusan $jurusan): RedirectResponse
+    public function destroy(Major $jurusan): RedirectResponse
     {
         if ($jurusan->kelas()->exists()) {
             return redirect()->route('jurusan.index')

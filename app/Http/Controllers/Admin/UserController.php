@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,8 +15,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return $this->tampilkan('user.index', [
-            'daftar_user' => User::orderBy('nama')->get(),
+        return $this->render('user.index', [
+            'users' => User::orderBy('nama')->get(),
         ]);
     }
 
@@ -24,7 +25,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return $this->tampilkan('user.create');
+        return $this->render('user.create');
     }
 
     /**
@@ -61,7 +62,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $this->tampilkan('user.show', [
+        return $this->render('user.show', [
             'user' => $user->load('siswa'),
         ]);
     }
@@ -71,7 +72,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return $this->tampilkan('user.edit', ['user' => $user]);
+        return $this->render('user.edit', ['user' => $user]);
     }
 
     /**

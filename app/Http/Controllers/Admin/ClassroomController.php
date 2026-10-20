@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Jurusan;
-use App\Models\Kelas;
-use App\Models\TahunAjaran;
+use App\Http\Controllers\Controller;
+use App\Models\Major;
+use App\Models\Classroom;
+use App\Models\AcademicYear;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class KelasController extends Controller
+class ClassroomController extends Controller
 {
     /**
      * Daftar kelas.
      */
     public function index()
     {
-        return $this->tampilkan('kelas.index', [
-            'daftar_kelas' => Kelas::with('jurusan', 'tahunAjaran')
+        return $this->render('kelas.index', [
+            'classrooms' => Classroom::with('jurusan', 'tahunAjaran')
                 ->withCount('siswa')
                 ->orderBy('nama_kelas')
                 ->get(),
@@ -28,7 +29,7 @@ class KelasController extends Controller
      */
     public function create()
     {
-        return $this->tampilkan('kelas.create', $this->pilihan());
+        return $this->render('kelas.create', $this->pilihan());
     }
 
     /**
@@ -50,7 +51,7 @@ class KelasController extends Controller
             'id_tahun_ajaran.exists' => 'Tahun ajaran yang dipilih tidak ditemukan.',
         ]);
 
-        Kelas::create($data);
+        Classroom::create($data);
 
         return redirect()->route('kelas.index')->with('sukses', 'Kelas berhasil ditambahkan.');
     }
@@ -58,9 +59,9 @@ class KelasController extends Controller
     /**
      * Tampilkan detail satu kelas.
      */
-    public function show(Kelas $kelas)
+    public function show(Classroom $kelas)
     {
-        return $this->tampilkan('kelas.show', [
+        return $this->render('kelas.show', [
             'kelas' => $kelas->load('jurusan', 'tahunAjaran', 'siswa'),
         ]);
     }
@@ -68,9 +69,9 @@ class KelasController extends Controller
     /**
      * Tampilkan form ubah kelas.
      */
-    public function edit(Kelas $kelas)
+    public function edit(Classroom $kelas)
     {
-        return $this->tampilkan('kelas.edit', array_merge(
+        return $this->render('kelas.edit', array_merge(
             ['kelas' => $kelas],
             $this->pilihan(),
         ));
@@ -79,7 +80,7 @@ class KelasController extends Controller
     /**
      * Perbarui data kelas.
      */
-    public function update(Request $request, Kelas $kelas): RedirectResponse
+    public function update(Request $request, Classroom $kelas): RedirectResponse
     {
         $data = $request->validate([
             'nama_kelas' => ['required', 'string', 'max:255'],
@@ -101,7 +102,7 @@ class KelasController extends Controller
     /**
      * Hapus kelas.
      */
-    public function destroy(Kelas $kelas): RedirectResponse
+    public function destroy(Classroom $kelas): RedirectResponse
     {
         // Kelas yang masih berisi siswa tidak boleh dihapus.
         if ($kelas->siswa()->exists()) {
@@ -120,8 +121,8 @@ class KelasController extends Controller
     private function pilihan(): array
     {
         return [
-            'daftar_jurusan' => Jurusan::orderBy('nama_jurusan')->get(),
-            'daftar_tahun_ajaran' => TahunAjaran::orderByDesc('tahun_ajaran')->get(),
+            'majors' => Major::orderBy('nama_jurusan')->get(),
+            'academicYears' => AcademicYear::orderByDesc('tahun_ajaran')->get(),
         ];
     }
 }

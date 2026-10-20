@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class TransaksiPaymentGateway extends Model
+class PaymentGatewayTransaction extends Model
 {
     use HasFactory;
 
@@ -28,9 +28,9 @@ class TransaksiPaymentGateway extends Model
         ];
     }
 
-    public function siswa(): BelongsTo
+    public function student(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class, 'siswa_id', 'id_siswa');
+        return $this->belongsTo(Student::class, 'siswa_id', 'id_siswa');
     }
 
     public function virtualAccount(): BelongsTo
@@ -38,13 +38,28 @@ class TransaksiPaymentGateway extends Model
         return $this->belongsTo(VirtualAccount::class, 'virtual_account_id', 'id');
     }
 
+    public function payment(): HasOne
+    {
+        return $this->hasOne(Payment::class, 'transaksi_id', 'id');
+    }
+
+    public function succeeded(): bool
+    {
+        return $this->status_transaksi === 'berhasil';
+    }
+
+    public function siswa(): BelongsTo
+    {
+        return $this->student();
+    }
+
     public function pembayaran(): HasOne
     {
-        return $this->hasOne(Pembayaran::class, 'transaksi_id', 'id');
+        return $this->payment();
     }
 
     public function berhasil(): bool
     {
-        return $this->status_transaksi === 'berhasil';
+        return $this->succeeded();
     }
 }

@@ -26,35 +26,48 @@ class VirtualAccount extends Model
         ];
     }
 
-    /**
-     * Susun nomor Virtual Account dari NIS.
-     *
-     * Aturannya: prefix 880, lalu 00, lalu 5 digit terakhir NIS. Total 10
-     * digit. Kalau NIS kurang dari 5 digit, bagian depannya diisi nol supaya
-     * panjangnya tetap 10 digit.
-     */
-    public static function generateNomorVa(string $nis): string
+    public static function generateNumber(string $nis): string
     {
-        $bersih = preg_replace('/[^0-9]/', '', $nis);
+        $digits = preg_replace('/[^0-9]/', '', $nis);
 
-        $ekor = substr($bersih, -5);
-        $ekor = str_pad($ekor, 5, '0', STR_PAD_LEFT);
+        $tail = substr($digits, -5);
+        $tail = str_pad($tail, 5, '0', STR_PAD_LEFT);
 
-        return '880'.'00'.$ekor;
+        return '880'.'00'.$tail;
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'siswa_id', 'id_siswa');
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(PaymentGatewayTransaction::class, 'virtual_account_id', 'id');
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'aktif';
     }
 
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class, 'siswa_id', 'id_siswa');
+        return $this->student();
     }
 
     public function transaksi(): HasMany
     {
-        return $this->hasMany(TransaksiPaymentGateway::class, 'virtual_account_id', 'id');
+        return $this->transactions();
     }
 
     public function aktif(): bool
     {
-        return $this->status === 'aktif';
+        return $this->isActive();
+    }
+
+    public static function generateNomorVa(string $nis): string
+    {
+        return static::generateNumber($nis);
     }
 }

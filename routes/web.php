@@ -1,19 +1,22 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CallbackController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\JurusanController;
-use App\Http\Controllers\KelasController;
-use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\PembayaranController;
-use App\Http\Controllers\PencarianController;
-use App\Http\Controllers\SiswaController;
-use App\Http\Controllers\TagihanSppController;
-use App\Http\Controllers\TahunAjaranController;
-use App\Http\Controllers\TarifSppController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\VirtualAccountController;
+use App\Http\Controllers\Admin\AcademicYearController;
+use App\Http\Controllers\Admin\ClassroomController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MajorController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SearchController;
+use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\TuitionRateController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Kepsek\DashboardController as KepsekDashboardController;
+use App\Http\Controllers\Public\CallbackController;
+use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
+use App\Http\Controllers\Teller\DashboardController as TellerDashboardController;
+use App\Http\Controllers\Teller\PaymentController;
+use App\Http\Controllers\Teller\TuitionBillController;
+use App\Http\Controllers\Teller\VirtualAccountController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -81,11 +84,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/admin', [DashboardController::class, 'admin'])
         ->middleware('role:admin')->name('dashboard.admin');
-    Route::get('/dashboard/kepala-sekolah', [DashboardController::class, 'kepalaSekolah'])
+    Route::get('/dashboard/kepala-sekolah', [KepsekDashboardController::class, 'principal'])
         ->middleware('role:kepala_sekolah')->name('dashboard.kepala-sekolah');
-    Route::get('/dashboard/teller', [DashboardController::class, 'teller'])
+    Route::get('/dashboard/teller', [TellerDashboardController::class, 'teller'])
         ->middleware('role:teller')->name('dashboard.teller');
-    Route::get('/dashboard/siswa', [DashboardController::class, 'siswa'])
+    Route::get('/dashboard/siswa', [SiswaDashboardController::class, 'student'])
         ->middleware('role:siswa')->name('dashboard.siswa');
 
     /*
@@ -99,21 +102,21 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->group(function () {
         // Form tambah. Wajib di atas route {param}.
         Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
-        Route::get('/jurusan/create', [JurusanController::class, 'create'])->name('jurusan.create');
-        Route::get('/tahun-ajaran/create', [TahunAjaranController::class, 'create'])->name('tahun-ajaran.create');
-        Route::get('/kelas/create', [KelasController::class, 'create'])->name('kelas.create');
-        Route::get('/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
-        Route::get('/tarif-spp/create', [TarifSppController::class, 'create'])->name('tarif-spp.create');
-        Route::get('/tagihan-spp/create', [TagihanSppController::class, 'create'])->name('tagihan-spp.create');
+        Route::get('/jurusan/create', [MajorController::class, 'create'])->name('jurusan.create');
+        Route::get('/tahun-ajaran/create', [AcademicYearController::class, 'create'])->name('tahun-ajaran.create');
+        Route::get('/kelas/create', [ClassroomController::class, 'create'])->name('kelas.create');
+        Route::get('/siswa/create', [StudentController::class, 'create'])->name('siswa.create');
+        Route::get('/tarif-spp/create', [TuitionRateController::class, 'create'])->name('tarif-spp.create');
+        Route::get('/tagihan-spp/create', [TuitionBillController::class, 'create'])->name('tagihan-spp.create');
 
         // Aksi khusus. Juga wajib di atas route {param}.
-        Route::post('/tagihan-spp/tandai-tunggakan', [TagihanSppController::class, 'tandaiTunggakan'])
+        Route::post('/tagihan-spp/tandai-tunggakan', [TuitionBillController::class, 'markAsArrears'])
             ->name('tagihan-spp.tandai-tunggakan');
     });
 
     // Tagihan untuk teller. Teller boleh melihat, tidak boleh mengubah.
     Route::middleware('role:admin,teller')->group(function () {
-        Route::get('/tagihan-spp/lihat', [TagihanSppController::class, 'index'])
+        Route::get('/tagihan-spp/lihat', [TuitionBillController::class, 'index'])
             ->name('tagihan-spp.lihat');
     });
 
@@ -132,23 +135,23 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::middleware('role:admin,teller')->group(function () {
-        Route::post('/pembayaran/tunai', [PembayaranController::class, 'tunai'])
+        Route::post('/pembayaran/tunai', [PaymentController::class, 'tunai'])
             ->name('pembayaran.tunai');
-        Route::post('/pembayaran/qris', [PembayaranController::class, 'qris'])
+        Route::post('/pembayaran/qris', [PaymentController::class, 'qris'])
             ->name('pembayaran.qris');
-        Route::get('/pembayaran/ringkasan', [PembayaranController::class, 'ringkasan'])
+        Route::get('/pembayaran/ringkasan', [PaymentController::class, 'ringkasan'])
             ->name('pembayaran.ringkasan');
 
         Route::post('/virtual-account/generate', [VirtualAccountController::class, 'generate'])
             ->name('virtual-account.generate');
-        Route::post('/virtual-account/{virtualAccount}/nonaktifkan', [VirtualAccountController::class, 'nonaktifkan'])
+        Route::post('/virtual-account/{virtualAccount}/nonaktifkan', [VirtualAccountController::class, 'deactivate'])
             ->name('virtual-account.nonaktifkan');
-        Route::post('/virtual-account/{virtualAccount}/aktifkan', [VirtualAccountController::class, 'aktifkan'])
+        Route::post('/virtual-account/{virtualAccount}/aktifkan', [VirtualAccountController::class, 'activate'])
             ->name('virtual-account.aktifkan');
 
         // Xendit. Segmen terakhirnya kata tetap, jadi tidak tertukar dengan
         // route berparameter di atas.
-        Route::post('/virtual-account/{siswa}/buat-xendit', [VirtualAccountController::class, 'buatXendit'])
+        Route::post('/virtual-account/{siswa}/buat-xendit', [VirtualAccountController::class, 'createXendit'])
             ->name('virtual-account.buat-xendit');
         Route::post('/virtual-account/{virtualAccount}/simulasi', [VirtualAccountController::class, 'simulasi'])
             ->name('virtual-account.simulasi');
@@ -163,8 +166,8 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::middleware('role:admin,teller,kepala_sekolah')->group(function () {
-        Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
-        Route::get('/pembayaran/{pembayaran}', [PembayaranController::class, 'show'])->name('pembayaran.show');
+        Route::get('/pembayaran', [PaymentController::class, 'index'])->name('pembayaran.index');
+        Route::get('/pembayaran/{pembayaran}', [PaymentController::class, 'show'])->name('pembayaran.show');
     });
 
     Route::middleware('role:admin,teller')->group(function () {
@@ -182,11 +185,11 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::middleware('role:admin,kepala_sekolah')->group(function () {
-        Route::get('/jurusan', [JurusanController::class, 'index'])->name('jurusan.index');
-        Route::get('/tahun-ajaran', [TahunAjaranController::class, 'index'])->name('tahun-ajaran.index');
-        Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
-        Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
-        Route::get('/tarif-spp', [TarifSppController::class, 'index'])->name('tarif-spp.index');
+        Route::get('/jurusan', [MajorController::class, 'index'])->name('jurusan.index');
+        Route::get('/tahun-ajaran', [AcademicYearController::class, 'index'])->name('tahun-ajaran.index');
+        Route::get('/kelas', [ClassroomController::class, 'index'])->name('kelas.index');
+        Route::get('/siswa', [StudentController::class, 'index'])->name('siswa.index');
+        Route::get('/tarif-spp', [TuitionRateController::class, 'index'])->name('tarif-spp.index');
     });
 
     /*
@@ -206,42 +209,42 @@ Route::middleware('auth')->group(function () {
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy');
 
         // Jurusan.
-        Route::post('/jurusan', [JurusanController::class, 'store'])->name('jurusan.store');
-        Route::get('/jurusan/{jurusan}/edit', [JurusanController::class, 'edit'])->name('jurusan.edit');
-        Route::put('/jurusan/{jurusan}', [JurusanController::class, 'update'])->name('jurusan.update');
-        Route::delete('/jurusan/{jurusan}', [JurusanController::class, 'destroy'])->name('jurusan.destroy');
+        Route::post('/jurusan', [MajorController::class, 'store'])->name('jurusan.store');
+        Route::get('/jurusan/{jurusan}/edit', [MajorController::class, 'edit'])->name('jurusan.edit');
+        Route::put('/jurusan/{jurusan}', [MajorController::class, 'update'])->name('jurusan.update');
+        Route::delete('/jurusan/{jurusan}', [MajorController::class, 'destroy'])->name('jurusan.destroy');
 
         // Tahun ajaran.
-        Route::post('/tahun-ajaran', [TahunAjaranController::class, 'store'])->name('tahun-ajaran.store');
-        Route::get('/tahun-ajaran/{tahunAjaran}/edit', [TahunAjaranController::class, 'edit'])->name('tahun-ajaran.edit');
-        Route::put('/tahun-ajaran/{tahunAjaran}', [TahunAjaranController::class, 'update'])->name('tahun-ajaran.update');
-        Route::delete('/tahun-ajaran/{tahunAjaran}', [TahunAjaranController::class, 'destroy'])->name('tahun-ajaran.destroy');
+        Route::post('/tahun-ajaran', [AcademicYearController::class, 'store'])->name('tahun-ajaran.store');
+        Route::get('/tahun-ajaran/{tahunAjaran}/edit', [AcademicYearController::class, 'edit'])->name('tahun-ajaran.edit');
+        Route::put('/tahun-ajaran/{tahunAjaran}', [AcademicYearController::class, 'update'])->name('tahun-ajaran.update');
+        Route::delete('/tahun-ajaran/{tahunAjaran}', [AcademicYearController::class, 'destroy'])->name('tahun-ajaran.destroy');
 
         // Kelas.
-        Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
-        Route::get('/kelas/{kelas}/edit', [KelasController::class, 'edit'])->name('kelas.edit');
-        Route::put('/kelas/{kelas}', [KelasController::class, 'update'])->name('kelas.update');
-        Route::delete('/kelas/{kelas}', [KelasController::class, 'destroy'])->name('kelas.destroy');
+        Route::post('/kelas', [ClassroomController::class, 'store'])->name('kelas.store');
+        Route::get('/kelas/{kelas}/edit', [ClassroomController::class, 'edit'])->name('kelas.edit');
+        Route::put('/kelas/{kelas}', [ClassroomController::class, 'update'])->name('kelas.update');
+        Route::delete('/kelas/{kelas}', [ClassroomController::class, 'destroy'])->name('kelas.destroy');
 
         // Siswa.
-        Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
-        Route::get('/siswa/{siswa}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
-        Route::put('/siswa/{siswa}', [SiswaController::class, 'update'])->name('siswa.update');
-        Route::delete('/siswa/{siswa}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+        Route::post('/siswa', [StudentController::class, 'store'])->name('siswa.store');
+        Route::get('/siswa/{siswa}/edit', [StudentController::class, 'edit'])->name('siswa.edit');
+        Route::put('/siswa/{siswa}', [StudentController::class, 'update'])->name('siswa.update');
+        Route::delete('/siswa/{siswa}', [StudentController::class, 'destroy'])->name('siswa.destroy');
 
         // Tarif SPP.
-        Route::post('/tarif-spp', [TarifSppController::class, 'store'])->name('tarif-spp.store');
-        Route::get('/tarif-spp/{tarifSpp}/edit', [TarifSppController::class, 'edit'])->name('tarif-spp.edit');
-        Route::put('/tarif-spp/{tarifSpp}', [TarifSppController::class, 'update'])->name('tarif-spp.update');
-        Route::delete('/tarif-spp/{tarifSpp}', [TarifSppController::class, 'destroy'])->name('tarif-spp.destroy');
+        Route::post('/tarif-spp', [TuitionRateController::class, 'store'])->name('tarif-spp.store');
+        Route::get('/tarif-spp/{tarifSpp}/edit', [TuitionRateController::class, 'edit'])->name('tarif-spp.edit');
+        Route::put('/tarif-spp/{tarifSpp}', [TuitionRateController::class, 'update'])->name('tarif-spp.update');
+        Route::delete('/tarif-spp/{tarifSpp}', [TuitionRateController::class, 'destroy'])->name('tarif-spp.destroy');
 
         // Tagihan SPP.
-        Route::get('/tagihan-spp', [TagihanSppController::class, 'index'])->name('tagihan-spp.index');
-        Route::post('/tagihan-spp', [TagihanSppController::class, 'store'])->name('tagihan-spp.store');
-        Route::get('/tagihan-spp/{tagihanSpp}', [TagihanSppController::class, 'show'])->name('tagihan-spp.show');
-        Route::get('/tagihan-spp/{tagihanSpp}/edit', [TagihanSppController::class, 'edit'])->name('tagihan-spp.edit');
-        Route::put('/tagihan-spp/{tagihanSpp}', [TagihanSppController::class, 'update'])->name('tagihan-spp.update');
-        Route::delete('/tagihan-spp/{tagihanSpp}', [TagihanSppController::class, 'destroy'])->name('tagihan-spp.destroy');
+        Route::get('/tagihan-spp', [TuitionBillController::class, 'index'])->name('tagihan-spp.index');
+        Route::post('/tagihan-spp', [TuitionBillController::class, 'store'])->name('tagihan-spp.store');
+        Route::get('/tagihan-spp/{tagihanSpp}', [TuitionBillController::class, 'show'])->name('tagihan-spp.show');
+        Route::get('/tagihan-spp/{tagihanSpp}/edit', [TuitionBillController::class, 'edit'])->name('tagihan-spp.edit');
+        Route::put('/tagihan-spp/{tagihanSpp}', [TuitionBillController::class, 'update'])->name('tagihan-spp.update');
+        Route::delete('/tagihan-spp/{tagihanSpp}', [TuitionBillController::class, 'destroy'])->name('tagihan-spp.destroy');
     });
 
     /*
@@ -253,11 +256,11 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::middleware('role:admin,kepala_sekolah')->group(function () {
-        Route::get('/jurusan/{jurusan}', [JurusanController::class, 'show'])->name('jurusan.show');
-        Route::get('/tahun-ajaran/{tahunAjaran}', [TahunAjaranController::class, 'show'])->name('tahun-ajaran.show');
-        Route::get('/kelas/{kelas}', [KelasController::class, 'show'])->name('kelas.show');
-        Route::get('/siswa/{siswa}', [SiswaController::class, 'show'])->name('siswa.show');
-        Route::get('/tarif-spp/{tarifSpp}', [TarifSppController::class, 'show'])->name('tarif-spp.show');
+        Route::get('/jurusan/{jurusan}', [MajorController::class, 'show'])->name('jurusan.show');
+        Route::get('/tahun-ajaran/{tahunAjaran}', [AcademicYearController::class, 'show'])->name('tahun-ajaran.show');
+        Route::get('/kelas/{kelas}', [ClassroomController::class, 'show'])->name('kelas.show');
+        Route::get('/siswa/{siswa}', [StudentController::class, 'show'])->name('siswa.show');
+        Route::get('/tarif-spp/{tarifSpp}', [TuitionRateController::class, 'show'])->name('tarif-spp.show');
     });
 
     /*
@@ -268,9 +271,9 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::middleware('role:admin,kepala_sekolah,teller')->group(function () {
-        Route::get('/laporan/pembayaran', [LaporanController::class, 'pembayaran'])
+        Route::get('/laporan/pembayaran', [ReportController::class, 'payments'])
             ->name('laporan.pembayaran');
-        Route::get('/laporan/tunggakan', [LaporanController::class, 'tunggakan'])
+        Route::get('/laporan/tunggakan', [ReportController::class, 'arrears'])
             ->name('laporan.tunggakan');
     });
 
@@ -283,6 +286,6 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::middleware('role:admin,teller')->group(function () {
-        Route::get('/pencarian', [PencarianController::class, 'index'])->name('pencarian.index');
+        Route::get('/pencarian', [SearchController::class, 'index'])->name('pencarian.index');
     });
 });

@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\TahunAjaran;
+use App\Http\Controllers\Controller;
+use App\Models\AcademicYear;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
-class TahunAjaranController extends Controller
+class AcademicYearController extends Controller
 {
     /**
      * Daftar tahun ajaran.
      */
     public function index()
     {
-        return $this->tampilkan('tahun-ajaran.index', [
-            'daftar_tahun_ajaran' => TahunAjaran::withCount(['kelas', 'tarifSpp'])
+        return $this->render('tahun-ajaran.index', [
+            'academicYears' => AcademicYear::withCount(['kelas', 'tarifSpp'])
                 ->orderByDesc('tahun_ajaran')
                 ->get(),
         ]);
@@ -27,7 +28,7 @@ class TahunAjaranController extends Controller
      */
     public function create()
     {
-        return $this->tampilkan('tahun-ajaran.create');
+        return $this->render('tahun-ajaran.create');
     }
 
     /**
@@ -42,10 +43,10 @@ class TahunAjaranController extends Controller
 
         DB::transaction(function () use ($data) {
             if ($data['status'] === 'aktif') {
-                TahunAjaran::where('status', 'aktif')->update(['status' => 'nonaktif']);
+                AcademicYear::where('status', 'aktif')->update(['status' => 'nonaktif']);
             }
 
-            TahunAjaran::create($data);
+            AcademicYear::create($data);
         });
 
         return redirect()->route('tahun-ajaran.index')
@@ -55,9 +56,9 @@ class TahunAjaranController extends Controller
     /**
      * Tampilkan detail satu tahun ajaran.
      */
-    public function show(TahunAjaran $tahunAjaran)
+    public function show(AcademicYear $tahunAjaran)
     {
-        return $this->tampilkan('tahun-ajaran.show', [
+        return $this->render('tahun-ajaran.show', [
             'tahun_ajaran' => $tahunAjaran->load('kelas', 'tarifSpp'),
         ]);
     }
@@ -65,21 +66,21 @@ class TahunAjaranController extends Controller
     /**
      * Tampilkan form ubah tahun ajaran.
      */
-    public function edit(TahunAjaran $tahunAjaran)
+    public function edit(AcademicYear $tahunAjaran)
     {
-        return $this->tampilkan('tahun-ajaran.edit', ['tahun_ajaran' => $tahunAjaran]);
+        return $this->render('tahun-ajaran.edit', ['tahun_ajaran' => $tahunAjaran]);
     }
 
     /**
      * Perbarui data tahun ajaran.
      */
-    public function update(Request $request, TahunAjaran $tahunAjaran): RedirectResponse
+    public function update(Request $request, AcademicYear $tahunAjaran): RedirectResponse
     {
         $data = $this->validasi($request, $tahunAjaran);
 
         DB::transaction(function () use ($data, $tahunAjaran) {
             if ($data['status'] === 'aktif') {
-                TahunAjaran::where('id_tahun_ajaran', '!=', $tahunAjaran->id_tahun_ajaran)
+                AcademicYear::where('id_tahun_ajaran', '!=', $tahunAjaran->id_tahun_ajaran)
                     ->where('status', 'aktif')
                     ->update(['status' => 'nonaktif']);
             }
@@ -94,7 +95,7 @@ class TahunAjaranController extends Controller
     /**
      * Hapus tahun ajaran.
      */
-    public function destroy(TahunAjaran $tahunAjaran): RedirectResponse
+    public function destroy(AcademicYear $tahunAjaran): RedirectResponse
     {
         // Tahun ajaran yang masih dipakai kelas atau tarif tidak boleh dihapus.
         if ($tahunAjaran->kelas()->exists() || $tahunAjaran->tarifSpp()->exists()) {
@@ -114,7 +115,7 @@ class TahunAjaranController extends Controller
      * Nama tahun ajaran wajib unik. Saat update, baris yang sedang diubah
      * dikecualikan supaya tidak dianggap bentrok dengan dirinya sendiri.
      */
-    private function validasi(Request $request, ?TahunAjaran $tahunAjaran = null): array
+    private function validasi(Request $request, ?AcademicYear $tahunAjaran = null): array
     {
         $aturanUnik = Rule::unique('tahun_ajaran', 'tahun_ajaran');
 

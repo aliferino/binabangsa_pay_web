@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TarifSpp extends Model
+class TuitionRate extends Model
 {
     use HasFactory;
 
@@ -22,8 +23,13 @@ class TarifSpp extends Model
         ];
     }
 
-    public function tahunAjaran()
+    public function academicYear(): BelongsTo
     {
-        return $this->belongsTo(TahunAjaran::class, 'id_tahun_ajaran', 'id_tahun_ajaran');
+        return $this->belongsTo(AcademicYear::class, 'id_tahun_ajaran', 'id_tahun_ajaran');
+    }
+
+    public function tahunAjaran(): BelongsTo
+    {
+        return $this->academicYear();
     }
 }

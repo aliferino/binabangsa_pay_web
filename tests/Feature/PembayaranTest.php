@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\Jurusan;
-use App\Models\Kelas;
-use App\Models\Pembayaran;
-use App\Models\Siswa;
-use App\Models\TagihanSpp;
-use App\Models\TahunAjaran;
-use App\Models\TarifSpp;
-use App\Models\TransaksiPaymentGateway;
+use App\Models\Major;
+use App\Models\Classroom;
+use App\Models\Payment;
+use App\Models\Student;
+use App\Models\TuitionBill;
+use App\Models\AcademicYear;
+use App\Models\TuitionRate;
+use App\Models\PaymentGatewayTransaction;
 use App\Models\User;
 use App\Models\VirtualAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,15 +19,15 @@ class PembayaranTest extends TestCase
 {
     use RefreshDatabase;
 
-    private TahunAjaran $tahunAjaran;
+    private AcademicYear $tahunAjaran;
 
-    private Kelas $kelas;
+    private Classroom $kelas;
 
-    private TarifSpp $tarif;
+    private TuitionRate $tarif;
 
-    private Siswa $siswa;
+    private Student $siswa;
 
-    private TagihanSpp $tagihan;
+    private TuitionBill $tagihan;
 
     private User $admin;
 
@@ -37,26 +37,26 @@ class PembayaranTest extends TestCase
     {
         parent::setUp();
 
-        $jurusan = Jurusan::create([
+        $jurusan = Major::create([
             'kode_jurusan' => 'RPL',
             'nama_jurusan' => 'Rekayasa Perangkat Lunak',
         ]);
 
-        $this->tahunAjaran = TahunAjaran::create([
+        $this->tahunAjaran = AcademicYear::create([
             'tahun_ajaran' => '2026/2027',
             'tanggal_mulai' => '2026-07-01',
             'tanggal_selesai' => '2027-06-30',
             'status' => 'aktif',
         ]);
 
-        $this->kelas = Kelas::create([
+        $this->kelas = Classroom::create([
             'nama_kelas' => 'XI RPL 1',
             'tingkat' => 'XI',
             'id_jurusan' => $jurusan->id_jurusan,
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
         ]);
 
-        $this->tarif = TarifSpp::create([
+        $this->tarif = TuitionRate::create([
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
             'nominal' => 350000,
             'status' => 'aktif',
@@ -64,7 +64,7 @@ class PembayaranTest extends TestCase
 
         $this->siswa = $this->buatSiswa('2612345', 'Budi Santoso');
 
-        $this->tagihan = TagihanSpp::create([
+        $this->tagihan = TuitionBill::create([
             'id_siswa' => $this->siswa->id_siswa,
             'id_tarif' => $this->tarif->id_tarif,
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
@@ -88,9 +88,9 @@ class PembayaranTest extends TestCase
         ]);
     }
 
-    private function buatSiswa(string $nis, string $nama): Siswa
+    private function buatSiswa(string $nis, string $nama): Student
     {
-        return Siswa::create([
+        return Student::create([
             'nis' => $nis,
             'nisn' => '00'.$nis,
             'nama' => $nama,
@@ -190,7 +190,7 @@ class PembayaranTest extends TestCase
             'nominal_pembayaran' => 350000,
         ]);
 
-        $pembayaran = Pembayaran::first();
+        $pembayaran = Payment::first();
 
         $this->assertNotNull($pembayaran);
         $response->assertRedirect(route('pembayaran.show', $pembayaran->id));
@@ -210,7 +210,7 @@ class PembayaranTest extends TestCase
             'nomor_referensi' => 'QR-778899',
         ]);
 
-        $pembayaran = Pembayaran::first();
+        $pembayaran = Payment::first();
 
         $this->assertSame('lunas', $this->tagihan->fresh()->status);
         $this->assertSame('qris', $pembayaran->metode_pembayaran);
@@ -233,7 +233,7 @@ class PembayaranTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors('tagihan_spp_id');
-        $this->assertSame(1, Pembayaran::count());
+        $this->assertSame(1, Payment::count());
         $this->assertSame('lunas', $this->tagihan->fresh()->status);
     }
 
@@ -248,7 +248,7 @@ class PembayaranTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors('nominal_pembayaran');
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
         $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
     }
 
@@ -260,7 +260,7 @@ class PembayaranTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors('nominal_pembayaran');
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
     }
 
     /**
@@ -301,8 +301,8 @@ class PembayaranTest extends TestCase
         $kedua->assertStatus(200);
         $kedua->assertJsonPath('dibuat', false);
 
-        $this->assertSame(1, Pembayaran::count());
-        $this->assertSame(1, Pembayaran::where('transaksi_id', $transaksi->id)->count());
+        $this->assertSame(1, Payment::count());
+        $this->assertSame(1, Payment::where('transaksi_id', $transaksi->id)->count());
         $this->assertSame('lunas', $this->tagihan->fresh()->status);
     }
 
@@ -317,13 +317,13 @@ class PembayaranTest extends TestCase
 
         $response->assertStatus(201);
 
-        $pembayaran = Pembayaran::first();
+        $pembayaran = Payment::first();
 
         $this->assertSame('va', $pembayaran->metode_pembayaran);
         $this->assertSame('berhasil', $pembayaran->status);
         $this->assertNull($pembayaran->user_id);
         $this->assertSame('lunas', $this->tagihan->fresh()->status);
-        $this->assertSame('berhasil', TransaksiPaymentGateway::first()->status_transaksi);
+        $this->assertSame('berhasil', PaymentGatewayTransaction::first()->status_transaksi);
     }
 
     public function test_callback_status_gagal_tidak_melunasi_tagihan(): void
@@ -338,9 +338,9 @@ class PembayaranTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonPath('dibuat', false);
 
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
         $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
-        $this->assertSame('gagal', TransaksiPaymentGateway::first()->status_transaksi);
+        $this->assertSame('gagal', PaymentGatewayTransaction::first()->status_transaksi);
     }
 
     public function test_transaction_id_wajib_unik(): void
@@ -376,8 +376,8 @@ class PembayaranTest extends TestCase
         $response->assertJsonPath('dibuat', false);
 
         // Hanya satu pembayaran, yaitu yang tunai.
-        $this->assertSame(1, Pembayaran::count());
-        $this->assertSame('tunai', Pembayaran::first()->metode_pembayaran);
+        $this->assertSame(1, Payment::count());
+        $this->assertSame('tunai', Payment::first()->metode_pembayaran);
         $this->assertSame('lunas', $this->tagihan->fresh()->status);
     }
 
@@ -404,7 +404,7 @@ class PembayaranTest extends TestCase
             'siswa_id' => $this->siswa->id_siswa,
         ])->assertStatus(403);
 
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
         $this->assertSame(0, VirtualAccount::count());
     }
 
@@ -440,9 +440,9 @@ class PembayaranTest extends TestCase
     /**
      * Buat satu transaksi gateway untuk keperluan test callback.
      */
-    private function buatTransaksi(string $transactionId): TransaksiPaymentGateway
+    private function buatTransaksi(string $transactionId): PaymentGatewayTransaction
     {
-        return TransaksiPaymentGateway::create([
+        return PaymentGatewayTransaction::create([
             'transaction_id' => $transactionId,
             'siswa_id' => $this->siswa->id_siswa,
             'nominal' => 350000,

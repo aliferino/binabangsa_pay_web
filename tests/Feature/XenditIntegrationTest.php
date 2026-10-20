@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\Jurusan;
-use App\Models\Kelas;
-use App\Models\Pembayaran;
-use App\Models\Siswa;
-use App\Models\TagihanSpp;
-use App\Models\TahunAjaran;
-use App\Models\TarifSpp;
-use App\Models\TransaksiPaymentGateway;
+use App\Models\Major;
+use App\Models\Classroom;
+use App\Models\Payment;
+use App\Models\Student;
+use App\Models\TuitionBill;
+use App\Models\AcademicYear;
+use App\Models\TuitionRate;
+use App\Models\PaymentGatewayTransaction;
 use App\Models\User;
 use App\Models\VirtualAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,15 +27,15 @@ class XenditIntegrationTest extends TestCase
     // Xendit yang asli, supaya tidak ada yang salah kira ini kunci sungguhan.
     private const KUNCI = 'kunci-palsu-untuk-test';
 
-    private TahunAjaran $tahunAjaran;
+    private AcademicYear $tahunAjaran;
 
-    private Kelas $kelas;
+    private Classroom $kelas;
 
-    private TarifSpp $tarif;
+    private TuitionRate $tarif;
 
-    private Siswa $siswa;
+    private Student $siswa;
 
-    private TagihanSpp $tagihan;
+    private TuitionBill $tagihan;
 
     private User $admin;
 
@@ -51,32 +51,32 @@ class XenditIntegrationTest extends TestCase
             'services.xendit.base_url' => 'https://api.xendit.co',
         ]);
 
-        $jurusan = Jurusan::create([
+        $jurusan = Major::create([
             'kode_jurusan' => 'RPL',
             'nama_jurusan' => 'Rekayasa Perangkat Lunak',
         ]);
 
-        $this->tahunAjaran = TahunAjaran::create([
+        $this->tahunAjaran = AcademicYear::create([
             'tahun_ajaran' => '2026/2027',
             'tanggal_mulai' => '2026-07-01',
             'tanggal_selesai' => '2027-06-30',
             'status' => 'aktif',
         ]);
 
-        $this->kelas = Kelas::create([
+        $this->kelas = Classroom::create([
             'nama_kelas' => 'XI RPL 1',
             'tingkat' => 'XI',
             'id_jurusan' => $jurusan->id_jurusan,
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
         ]);
 
-        $this->tarif = TarifSpp::create([
+        $this->tarif = TuitionRate::create([
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
             'nominal' => 350000,
             'status' => 'aktif',
         ]);
 
-        $this->siswa = Siswa::create([
+        $this->siswa = Student::create([
             'nis' => '2612345',
             'nisn' => '002612345',
             'nama' => 'Budi Santoso',
@@ -89,7 +89,7 @@ class XenditIntegrationTest extends TestCase
             'status' => 'aktif',
         ]);
 
-        $this->tagihan = TagihanSpp::create([
+        $this->tagihan = TuitionBill::create([
             'id_siswa' => $this->siswa->id_siswa,
             'id_tarif' => $this->tarif->id_tarif,
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
@@ -265,7 +265,7 @@ class XenditIntegrationTest extends TestCase
 
         $response->assertStatus(401);
         $response->assertJsonPath('sukses', false);
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
         $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
     }
 
@@ -285,7 +285,7 @@ class XenditIntegrationTest extends TestCase
 
         $response->assertStatus(404);
         $response->assertJsonPath('sukses', false);
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
     }
 
     /**
@@ -311,7 +311,7 @@ class XenditIntegrationTest extends TestCase
         $response->assertStatus(201);
         $response->assertJsonPath('dibuat', true);
 
-        $pembayaran = Pembayaran::first();
+        $pembayaran = Payment::first();
 
         $this->assertNotNull($pembayaran);
         $this->assertSame('va', $pembayaran->metode_pembayaran);
@@ -320,7 +320,7 @@ class XenditIntegrationTest extends TestCase
         $this->assertSame($this->tagihan->id_tagihan, $pembayaran->tagihan_spp_id);
         $this->assertNull($pembayaran->user_id);
 
-        $transaksi = TransaksiPaymentGateway::first();
+        $transaksi = PaymentGatewayTransaction::first();
 
         $this->assertNotNull($transaksi);
         $this->assertSame('pay-xendit-001', $transaksi->xendit_payment_id);
@@ -356,8 +356,8 @@ class XenditIntegrationTest extends TestCase
         $kedua->assertStatus(200);
         $kedua->assertJsonPath('dibuat', false);
 
-        $this->assertSame(1, Pembayaran::count());
-        $this->assertSame(1, TransaksiPaymentGateway::count());
+        $this->assertSame(1, Payment::count());
+        $this->assertSame(1, PaymentGatewayTransaction::count());
         $this->assertSame('lunas', $this->tagihan->fresh()->status);
     }
 
@@ -380,12 +380,12 @@ class XenditIntegrationTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonPath('dibuat', false);
 
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
         $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
 
         // Jejaknya tetap dicatat sebagai pending.
-        $this->assertSame(1, TransaksiPaymentGateway::count());
-        $this->assertSame('pending', TransaksiPaymentGateway::first()->status_transaksi);
+        $this->assertSame(1, PaymentGatewayTransaction::count());
+        $this->assertSame('pending', PaymentGatewayTransaction::first()->status_transaksi);
     }
 
     /**
@@ -403,7 +403,7 @@ class XenditIntegrationTest extends TestCase
 
         $response->assertStatus(401);
         $response->assertJsonPath('sukses', false);
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
         $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
     }
 
@@ -429,7 +429,7 @@ class XenditIntegrationTest extends TestCase
         $response->assertRedirect(route('virtual-account.show', $va->id));
         $response->assertSessionHas('gagal');
 
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
         $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
     }
 
@@ -456,7 +456,7 @@ class XenditIntegrationTest extends TestCase
         });
 
         // Simulasi tidak boleh langsung melunasi. Yang melunasi tetap callback.
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
         $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
     }
 
@@ -477,7 +477,7 @@ class XenditIntegrationTest extends TestCase
         ], '');
 
         $response->assertStatus(401);
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
     }
 
     /**
@@ -502,7 +502,7 @@ class XenditIntegrationTest extends TestCase
         ]);
 
         $pending->assertStatus(200);
-        $this->assertSame(0, Pembayaran::count());
+        $this->assertSame(0, Payment::count());
 
         $completed = $this->kirimCallback([
             'external_id' => '8800012345',
@@ -517,10 +517,10 @@ class XenditIntegrationTest extends TestCase
         $completed->assertStatus(201);
         $completed->assertJsonPath('dibuat', true);
 
-        $this->assertSame(1, Pembayaran::count());
+        $this->assertSame(1, Payment::count());
         $this->assertSame('lunas', $this->tagihan->fresh()->status);
-        $this->assertSame(1, TransaksiPaymentGateway::count());
-        $this->assertSame('berhasil', TransaksiPaymentGateway::first()->status_transaksi);
+        $this->assertSame(1, PaymentGatewayTransaction::count());
+        $this->assertSame('berhasil', PaymentGatewayTransaction::first()->status_transaksi);
     }
 
     public function test_siswa_tidak_bisa_membuat_va_xendit(): void

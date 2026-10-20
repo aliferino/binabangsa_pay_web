@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Siswa;
+use App\Http\Controllers\Controller;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
-class PencarianController extends Controller
+class SearchController extends Controller
 {
     /**
      * Pencarian siswa untuk admin dan teller.
@@ -19,7 +20,7 @@ class PencarianController extends Controller
         $hasil = collect();
 
         if ($kata !== '') {
-            $hasil = Siswa::with('kelas.jurusan', 'tagihan')
+            $hasil = Student::with('kelas.jurusan', 'tagihan')
                 ->where(function ($q) use ($kata) {
                     $q->where('nis', 'like', '%'.$kata.'%')
                         ->orWhere('nisn', 'like', '%'.$kata.'%')
@@ -30,18 +31,18 @@ class PencarianController extends Controller
                 })
                 ->orderBy('nama')
                 ->get()
-                ->map(fn (Siswa $siswa) => [
+                ->map(fn (Student $siswa) => [
                     'nis' => $siswa->nis,
                     'nisn' => $siswa->nisn,
                     'nama' => $siswa->nama,
                     'kelas' => $siswa->kelas?->nama_kelas,
                     'jurusan' => $siswa->kelas?->jurusan?->nama_jurusan,
-                    'status_tagihan' => $this->ringkasStatusTagihan($siswa),
+                    'status_tagihan' => $this->summarizeBillStatus($siswa),
                 ]);
         }
 
-        return $this->tampilkan('pencarian.index', [
-            'kata_kunci' => $kata,
+        return $this->render('pencarian.index', [
+            'keyword' => $kata,
             'hasil' => $hasil,
         ]);
     }
@@ -52,7 +53,7 @@ class PencarianController extends Controller
      * Dipakai di hasil pencarian supaya admin dan teller langsung tahu
      * posisi siswa tanpa membuka satu per satu.
      */
-    private function ringkasStatusTagihan(Siswa $siswa): string
+    private function summarizeBillStatus(Student $siswa): string
     {
         $tagihan = $siswa->tagihan;
 
@@ -79,11 +80,11 @@ class PencarianController extends Controller
      * tinggal dihubungkan setelah tabelnya ada. Jangan dipanggil dari route
      * sebelum tabel virtual_account tersedia.
      */
-    private function cariLewatVirtualAccount(string $nomorVa)
+    private function searchByVirtualAccount(string $nomorVa)
     {
         // Contoh pemakaian setelah tabel virtual_account ada:
         //
-        // return Siswa::whereHas('virtualAccount', function ($q) use ($nomorVa) {
+        // return Student::whereHas('virtualAccount', function ($q) use ($nomorVa) {
         //     $q->where('nomor_va', $nomorVa);
         // })->get();
         //

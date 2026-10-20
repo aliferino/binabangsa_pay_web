@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\Jurusan;
-use App\Models\Kelas;
-use App\Models\Siswa;
-use App\Models\TagihanSpp;
-use App\Models\TahunAjaran;
-use App\Models\TarifSpp;
+use App\Models\Major;
+use App\Models\Classroom;
+use App\Models\Student;
+use App\Models\TuitionBill;
+use App\Models\AcademicYear;
+use App\Models\TuitionRate;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,45 +16,45 @@ class ControllerMasterDataTest extends TestCase
 {
     use RefreshDatabase;
 
-    private TahunAjaran $tahunAjaran;
+    private AcademicYear $tahunAjaran;
 
-    private Kelas $kelas;
+    private Classroom $kelas;
 
-    private TarifSpp $tarif;
+    private TuitionRate $tarif;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $jurusan = Jurusan::create([
+        $jurusan = Major::create([
             'kode_jurusan' => 'RPL',
             'nama_jurusan' => 'Rekayasa Perangkat Lunak',
         ]);
 
-        $this->tahunAjaran = TahunAjaran::create([
+        $this->tahunAjaran = AcademicYear::create([
             'tahun_ajaran' => '2026/2027',
             'tanggal_mulai' => '2026-07-01',
             'tanggal_selesai' => '2027-06-30',
             'status' => 'aktif',
         ]);
 
-        $this->kelas = Kelas::create([
+        $this->kelas = Classroom::create([
             'nama_kelas' => 'XI RPL 1',
             'tingkat' => 'XI',
             'id_jurusan' => $jurusan->id_jurusan,
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
         ]);
 
-        $this->tarif = TarifSpp::create([
+        $this->tarif = TuitionRate::create([
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
             'nominal' => 350000,
             'status' => 'aktif',
         ]);
     }
 
-    private function buatSiswa(string $nis, string $nama, ?User $akun = null): Siswa
+    private function buatSiswa(string $nis, string $nama, ?User $akun = null): Student
     {
-        return Siswa::create([
+        return Student::create([
             'nis' => $nis,
             'nisn' => '00'.$nis,
             'nama' => $nama,
@@ -241,10 +241,10 @@ class ControllerMasterDataTest extends TestCase
             'status' => 'aktif',
         ])->assertRedirect(route('tahun-ajaran.index'));
 
-        $this->assertSame(1, TahunAjaran::where('status', 'aktif')->count());
+        $this->assertSame(1, AcademicYear::where('status', 'aktif')->count());
         $this->assertSame(
             '2027/2028',
-            TahunAjaran::where('status', 'aktif')->value('tahun_ajaran'),
+            AcademicYear::where('status', 'aktif')->value('tahun_ajaran'),
         );
     }
 
@@ -270,7 +270,7 @@ class ControllerMasterDataTest extends TestCase
         $this->actingAs($admin)->post(route('tagihan-spp.store'), $isi)
             ->assertSessionHasErrors('bulan');
 
-        $this->assertSame(1, TagihanSpp::count());
+        $this->assertSame(1, TuitionBill::count());
     }
 
     public function test_tandai_tunggakan_hanya_menyentuh_yang_lewat_jatuh_tempo(): void
@@ -279,7 +279,7 @@ class ControllerMasterDataTest extends TestCase
         $siswa = $this->buatSiswa('12345', 'Ahmad Fauzan');
 
         // Bulan Januari 2026 sudah lewat jauh, harus jadi tunggakan.
-        $lama = TagihanSpp::create([
+        $lama = TuitionBill::create([
             'id_siswa' => $siswa->id_siswa,
             'id_tarif' => $this->tarif->id_tarif,
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
@@ -291,7 +291,7 @@ class ControllerMasterDataTest extends TestCase
         ]);
 
         // Bulan Desember 2026 belum lewat, harus tetap belum_bayar.
-        $baru = TagihanSpp::create([
+        $baru = TuitionBill::create([
             'id_siswa' => $siswa->id_siswa,
             'id_tarif' => $this->tarif->id_tarif,
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
@@ -315,7 +315,7 @@ class ControllerMasterDataTest extends TestCase
         $admin = User::factory()->role('admin')->create();
         $siswa = $this->buatSiswa('12345', 'Ahmad Fauzan');
 
-        $lunas = TagihanSpp::create([
+        $lunas = TuitionBill::create([
             'id_siswa' => $siswa->id_siswa,
             'id_tarif' => $this->tarif->id_tarif,
             'id_tahun_ajaran' => $this->tahunAjaran->id_tahun_ajaran,
@@ -349,7 +349,7 @@ class ControllerMasterDataTest extends TestCase
             'status' => 'aktif',
         ])->assertSessionHasErrors('nis');
 
-        $this->assertSame(1, Siswa::count());
+        $this->assertSame(1, Student::count());
     }
 
     public function test_validasi_siswa_menolak_jenis_kelamin_di_luar_l_dan_p(): void

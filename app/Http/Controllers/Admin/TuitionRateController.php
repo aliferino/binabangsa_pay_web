@@ -1,23 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\TagihanSpp;
-use App\Models\TahunAjaran;
-use App\Models\TarifSpp;
+use App\Http\Controllers\Controller;
+use App\Models\TuitionBill;
+use App\Models\AcademicYear;
+use App\Models\TuitionRate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class TarifSppController extends Controller
+class TuitionRateController extends Controller
 {
     /**
      * Daftar tarif SPP.
      */
     public function index()
     {
-        return $this->tampilkan('tarif-spp.index', [
-            'daftar_tarif' => TarifSpp::with('tahunAjaran')
+        return $this->render('tarif-spp.index', [
+            'tuitionRates' => TuitionRate::with('tahunAjaran')
                 ->orderByDesc('id_tahun_ajaran')
                 ->get(),
         ]);
@@ -28,7 +29,7 @@ class TarifSppController extends Controller
      */
     public function create()
     {
-        return $this->tampilkan('tarif-spp.create', $this->pilihan());
+        return $this->render('tarif-spp.create', $this->pilihan());
     }
 
     /**
@@ -38,7 +39,7 @@ class TarifSppController extends Controller
     {
         $data = $request->validate($this->aturan(), $this->pesan());
 
-        TarifSpp::create($data);
+        TuitionRate::create($data);
 
         return redirect()->route('tarif-spp.index')->with('sukses', 'Tarif SPP berhasil ditambahkan.');
     }
@@ -46,9 +47,9 @@ class TarifSppController extends Controller
     /**
      * Tampilkan detail satu tarif.
      */
-    public function show(TarifSpp $tarifSpp)
+    public function show(TuitionRate $tarifSpp)
     {
-        return $this->tampilkan('tarif-spp.show', [
+        return $this->render('tarif-spp.show', [
             'tarif' => $tarifSpp->load('tahunAjaran'),
         ]);
     }
@@ -56,9 +57,9 @@ class TarifSppController extends Controller
     /**
      * Tampilkan form ubah tarif.
      */
-    public function edit(TarifSpp $tarifSpp)
+    public function edit(TuitionRate $tarifSpp)
     {
-        return $this->tampilkan('tarif-spp.edit', array_merge(
+        return $this->render('tarif-spp.edit', array_merge(
             ['tarif' => $tarifSpp],
             $this->pilihan(),
         ));
@@ -67,7 +68,7 @@ class TarifSppController extends Controller
     /**
      * Perbarui data tarif.
      */
-    public function update(Request $request, TarifSpp $tarifSpp): RedirectResponse
+    public function update(Request $request, TuitionRate $tarifSpp): RedirectResponse
     {
         $data = $request->validate($this->aturan(), $this->pesan());
 
@@ -82,9 +83,9 @@ class TarifSppController extends Controller
      * Tarif yang sudah dipakai tagihan tidak dihapus, supaya tagihan lama
      * tetap punya acuan nominalnya.
      */
-    public function destroy(TarifSpp $tarifSpp): RedirectResponse
+    public function destroy(TuitionRate $tarifSpp): RedirectResponse
     {
-        $dipakai = TagihanSpp::where('id_tarif', $tarifSpp->id_tarif)->exists();
+        $dipakai = TuitionBill::where('id_tarif', $tarifSpp->id_tarif)->exists();
 
         if ($dipakai) {
             return redirect()->route('tarif-spp.index')
@@ -130,7 +131,7 @@ class TarifSppController extends Controller
     private function pilihan(): array
     {
         return [
-            'daftar_tahun_ajaran' => TahunAjaran::orderByDesc('tahun_ajaran')->get(),
+            'academicYears' => AcademicYear::orderByDesc('tahun_ajaran')->get(),
         ];
     }
 }

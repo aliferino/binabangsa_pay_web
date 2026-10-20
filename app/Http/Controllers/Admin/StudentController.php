@@ -1,23 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\Kelas;
-use App\Models\Siswa;
-use App\Models\TahunAjaran;
+use App\Http\Controllers\Controller;
+use App\Models\Classroom;
+use App\Models\Student;
+use App\Models\AcademicYear;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class SiswaController extends Controller
+class StudentController extends Controller
 {
     /**
      * Daftar siswa.
      */
     public function index(Request $request)
     {
-        $kueri = Siswa::with('kelas.jurusan', 'tahunAjaran', 'user');
+        $kueri = Student::with('kelas.jurusan', 'tahunAjaran', 'user');
 
         // Filter opsional supaya daftar panjang tetap enak dibaca.
         if ($request->filled('id_kelas')) {
@@ -41,8 +42,8 @@ class SiswaController extends Controller
             });
         }
 
-        return $this->tampilkan('siswa.index', [
-            'daftar_siswa' => $kueri->orderBy('nama')->get(),
+        return $this->render('siswa.index', [
+            'students' => $kueri->orderBy('nama')->get(),
             'filter' => $request->only(['id_kelas', 'id_tahun_ajaran', 'status', 'cari']),
         ] + $this->pilihan());
     }
@@ -52,7 +53,7 @@ class SiswaController extends Controller
      */
     public function create()
     {
-        return $this->tampilkan('siswa.create', $this->pilihan());
+        return $this->render('siswa.create', $this->pilihan());
     }
 
     /**
@@ -62,7 +63,7 @@ class SiswaController extends Controller
     {
         $data = $request->validate($this->aturan(), $this->pesan());
 
-        Siswa::create($data);
+        Student::create($data);
 
         return redirect()->route('siswa.index')->with('sukses', 'Siswa berhasil ditambahkan.');
     }
@@ -70,9 +71,9 @@ class SiswaController extends Controller
     /**
      * Tampilkan detail satu siswa.
      */
-    public function show(Siswa $siswa)
+    public function show(Student $siswa)
     {
-        return $this->tampilkan('siswa.show', [
+        return $this->render('siswa.show', [
             'siswa' => $siswa->load('kelas.jurusan', 'tahunAjaran', 'user', 'tagihan'),
         ]);
     }
@@ -80,9 +81,9 @@ class SiswaController extends Controller
     /**
      * Tampilkan form ubah siswa.
      */
-    public function edit(Siswa $siswa)
+    public function edit(Student $siswa)
     {
-        return $this->tampilkan('siswa.edit', array_merge(
+        return $this->render('siswa.edit', array_merge(
             ['siswa' => $siswa],
             $this->pilihan(),
         ));
@@ -91,7 +92,7 @@ class SiswaController extends Controller
     /**
      * Perbarui data siswa.
      */
-    public function update(Request $request, Siswa $siswa): RedirectResponse
+    public function update(Request $request, Student $siswa): RedirectResponse
     {
         $data = $request->validate(
             $this->aturan($siswa),
@@ -109,7 +110,7 @@ class SiswaController extends Controller
      * Siswa yang sudah punya tagihan tidak dihapus, supaya riwayat tagihan
      * tidak ikut terhapus lewat cascade.
      */
-    public function destroy(Siswa $siswa): RedirectResponse
+    public function destroy(Student $siswa): RedirectResponse
     {
         if ($siswa->tagihan()->exists()) {
             return redirect()->route('siswa.index')
@@ -127,7 +128,7 @@ class SiswaController extends Controller
      * NIS dan NISN wajib unik. Saat update, baris yang sedang diubah
      * dikecualikan supaya tidak dianggap bentrok dengan dirinya sendiri.
      */
-    private function aturan(?Siswa $siswa = null): array
+    private function aturan(?Student $siswa = null): array
     {
         $nis = Rule::unique('siswa', 'nis');
         $nisn = Rule::unique('siswa', 'nisn');
@@ -188,12 +189,12 @@ class SiswaController extends Controller
      */
     private function pilihan(): array
     {
-        $akunTerpakai = Siswa::whereNotNull('id_user')->pluck('id_user');
+        $akunTerpakai = Student::whereNotNull('id_user')->pluck('id_user');
 
         return [
-            'daftar_kelas' => Kelas::with('jurusan')->orderBy('nama_kelas')->get(),
-            'daftar_tahun_ajaran' => TahunAjaran::orderByDesc('tahun_ajaran')->get(),
-            'daftar_akun' => User::where('role', 'siswa')
+            'classrooms' => Classroom::with('jurusan')->orderBy('nama_kelas')->get(),
+            'academicYears' => AcademicYear::orderByDesc('tahun_ajaran')->get(),
+            'accounts' => User::where('role', 'siswa')
                 ->whereNotIn('id_user', $akunTerpakai)
                 ->orderBy('nama')
                 ->get(),

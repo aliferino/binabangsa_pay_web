@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class PastikanRole
+class CheckRole
 {
     /**
      * Batasi akses route hanya untuk role tertentu.
@@ -23,7 +23,7 @@ class PastikanRole
             return redirect()->route('login');
         }
 
-        if (! $user->punyaRole(...$role)) {
+        if (! $user->hasRole(...$role)) {
             abort(403, 'Anda tidak punya akses ke halaman ini.');
         }
 

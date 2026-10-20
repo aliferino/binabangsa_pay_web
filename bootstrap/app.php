@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role' => \App\Http\Middleware\PastikanRole::class,
+            'role' => \App\Http\Middleware\CheckRole::class,
         ]);
 
         // Callback payment gateway datang dari server luar, bukan dari browser

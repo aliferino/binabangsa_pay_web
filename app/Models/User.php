@@ -25,13 +25,23 @@ class User extends Authenticatable
         ];
     }
 
-    public function punyaRole(string ...$role): bool
+    public function hasRole(string ...$role): bool
     {
         return in_array($this->role, $role, true);
     }
 
+    public function student()
+    {
+        return $this->hasOne(Student::class, 'id_user', 'id_user');
+    }
+
+    public function punyaRole(string ...$role): bool
+    {
+        return $this->hasRole(...$role);
+    }
+
     public function siswa()
     {
-        return $this->hasOne(Siswa::class, 'id_user', 'id_user');
+        return $this->student();
     }
 }
