@@ -42,19 +42,12 @@ class StudentController extends Controller
             });
         }
 
-        return $this->render('siswa.index', [
+        return $this->render('admin.students.index', [
             'students' => $kueri->orderBy('nama')->get(),
             'filter' => $request->only(['id_kelas', 'id_tahun_ajaran', 'status', 'cari']),
         ] + $this->pilihan());
     }
 
-    /**
-     * Tampilkan form tambah siswa.
-     */
-    public function create()
-    {
-        return $this->render('siswa.create', $this->pilihan());
-    }
 
     /**
      * Simpan siswa baru.
@@ -73,20 +66,21 @@ class StudentController extends Controller
      */
     public function show(Student $siswa)
     {
-        return $this->render('siswa.show', [
+        return $this->render('admin.students.show', [
             'siswa' => $siswa->load('kelas.jurusan', 'tahunAjaran', 'user', 'tagihan'),
         ]);
     }
 
     /**
-     * Tampilkan form ubah siswa.
+     * Form ubah sekarang berupa modal di halaman daftar. Route lama
+     * tetap ada supaya tautan Ubah di halaman detail tidak rusak, tetapi
+     * sekarang hanya mengalihkan ke daftar dengan penanda modal terbuka.
      */
-    public function edit(Student $siswa)
+    public function edit(Student $siswa): RedirectResponse
     {
-        return $this->render('siswa.edit', array_merge(
-            ['siswa' => $siswa],
-            $this->pilihan(),
-        ));
+        return redirect()
+            ->route('siswa.index', ['ubah' => $siswa->id_siswa])
+            ->with('buka_modal', 'ubah');
     }
 
     /**

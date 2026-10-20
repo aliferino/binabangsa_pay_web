@@ -15,18 +15,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        return $this->render('user.index', [
+        return $this->render('admin.users.index', [
             'users' => User::orderBy('nama')->get(),
         ]);
     }
 
-    /**
-     * Tampilkan form tambah pengguna.
-     */
-    public function create()
-    {
-        return $this->render('user.create');
-    }
 
     /**
      * Simpan pengguna baru.
@@ -62,17 +55,21 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $this->render('user.show', [
+        return $this->render('admin.users.show', [
             'user' => $user->load('siswa'),
         ]);
     }
 
     /**
-     * Tampilkan form ubah pengguna.
+     * Form ubah sekarang berupa modal di halaman daftar. Route lama
+     * tetap ada supaya tautan Ubah di halaman detail tidak rusak, tetapi
+     * sekarang hanya mengalihkan ke daftar dengan penanda modal terbuka.
      */
-    public function edit(User $user)
+    public function edit(User $user): RedirectResponse
     {
-        return $this->render('user.edit', ['user' => $user]);
+        return redirect()
+            ->route('user.index', ['ubah' => $user->id_user])
+            ->with('buka_modal', 'ubah');
     }
 
     /**

@@ -100,15 +100,6 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::middleware('role:admin')->group(function () {
-        // Form tambah. Wajib di atas route {param}.
-        Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
-        Route::get('/jurusan/create', [MajorController::class, 'create'])->name('jurusan.create');
-        Route::get('/tahun-ajaran/create', [AcademicYearController::class, 'create'])->name('tahun-ajaran.create');
-        Route::get('/kelas/create', [ClassroomController::class, 'create'])->name('kelas.create');
-        Route::get('/siswa/create', [StudentController::class, 'create'])->name('siswa.create');
-        Route::get('/tarif-spp/create', [TuitionRateController::class, 'create'])->name('tarif-spp.create');
-        Route::get('/tagihan-spp/create', [TuitionBillController::class, 'create'])->name('tagihan-spp.create');
-
         // Aksi khusus. Juga wajib di atas route {param}.
         Route::post('/tagihan-spp/tandai-tunggakan', [TuitionBillController::class, 'markAsArrears'])
             ->name('tagihan-spp.tandai-tunggakan');

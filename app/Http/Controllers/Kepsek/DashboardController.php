@@ -27,6 +27,6 @@ class DashboardController extends Controller
             'totalArrears' => (float) TuitionBill::where('status', 'tunggakan')->sum('nominal'),
         ];
 
-        return $this->render('dashboard.kepala-sekolah', $data);
+        return $this->render('kepsek.dashboard.index', $data);
     }
 }

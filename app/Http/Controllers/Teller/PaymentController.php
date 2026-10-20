@@ -47,7 +47,7 @@ class PaymentController extends Controller
             $kueri->where('status', $request->input('status'));
         }
 
-        return $this->render('pembayaran.index', [
+        return $this->render('teller.payments.index', [
             'payments' => $kueri->orderByDesc('id')->get(),
             'filter' => $request->only([
                 'dari', 'sampai', 'metode_pembayaran', 'siswa_id', 'status',
@@ -61,7 +61,7 @@ class PaymentController extends Controller
      */
     public function show(Payment $pembayaran)
     {
-        return $this->render('pembayaran.show', [
+        return $this->render('teller.payments.show', [
             'pembayaran' => $pembayaran->load('siswa.kelas', 'tagihanSpp', 'user', 'transaksi'),
         ]);
     }

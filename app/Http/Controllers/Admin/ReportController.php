@@ -58,7 +58,7 @@ class ReportController extends Controller
 
         $rows = $query->orderByDesc('tahun')->orderByDesc('bulan')->get();
 
-        return $this->render('laporan.pembayaran', [
+        return $this->render('admin.reports.payments', [
             'bills' => $rows,
             'totalNominal' => (float) $rows->sum('nominal'),
             'totalPaid' => (float) $rows->where('status', 'lunas')->sum('nominal'),
@@ -109,7 +109,7 @@ class ReportController extends Controller
             ];
         });
 
-        return $this->render('laporan.tunggakan', [
+        return $this->render('admin.reports.arrears', [
             'arrears' => $rows,
             'totalAll' => (float) $rows->sum('total_nominal'),
             'filter' => $request->only(['id_kelas', 'id_jurusan']),

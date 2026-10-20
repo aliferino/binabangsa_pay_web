@@ -29,7 +29,7 @@ class VirtualAccountController extends Controller
             $kueri->where('status', $request->input('status'));
         }
 
-        return $this->render('virtual-account.index', [
+        return $this->render('teller.virtual-accounts.index', [
             'virtualAccounts' => $kueri->orderByDesc('id')->get(),
             'filter' => $request->only(['siswa_id', 'status']),
             'students' => Student::orderBy('nama')->get(),
@@ -41,7 +41,7 @@ class VirtualAccountController extends Controller
      */
     public function show(VirtualAccount $virtualAccount)
     {
-        return $this->render('virtual-account.show', [
+        return $this->render('teller.virtual-accounts.show', [
             'va' => $virtualAccount->load('siswa.kelas', 'transaksi'),
         ]);
     }

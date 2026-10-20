@@ -35,7 +35,7 @@
                 </label>
                 <input type="text" name="nis" id="nis" value="{{ $nilai('nis') }}" required
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'nis'])
+                @include('partials._error', ['nama' => 'nis'])
             </div>
 
             <div>
@@ -44,7 +44,7 @@
                 </label>
                 <input type="text" name="nisn" id="nisn" value="{{ $nilai('nisn') }}" required
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'nisn'])
+                @include('partials._error', ['nama' => 'nisn'])
             </div>
 
             <div class="sm:col-span-2">
@@ -53,7 +53,7 @@
                 </label>
                 <input type="text" name="nama" id="nama" value="{{ $nilai('nama') }}" required
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'nama'])
+                @include('partials._error', ['nama' => 'nama'])
             </div>
 
             <div>
@@ -66,7 +66,7 @@
                     <option value="L" @selected($nilai('jenis_kelamin') === 'L')>Laki-laki</option>
                     <option value="P" @selected($nilai('jenis_kelamin') === 'P')>Perempuan</option>
                 </select>
-                @include('partials.error', ['nama' => 'jenis_kelamin'])
+                @include('partials._error', ['nama' => 'jenis_kelamin'])
             </div>
 
             <div>
@@ -79,7 +79,7 @@
                     <option value="lulus" @selected($nilai('status') === 'lulus')>Lulus</option>
                     <option value="keluar" @selected($nilai('status') === 'keluar')>Keluar</option>
                 </select>
-                @include('partials.error', ['nama' => 'status'])
+                @include('partials._error', ['nama' => 'status'])
             </div>
 
             <div>
@@ -89,7 +89,7 @@
                 <input type="text" name="tempat_lahir" id="tempat_lahir"
                        value="{{ $nilai('tempat_lahir') }}" required
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'tempat_lahir'])
+                @include('partials._error', ['nama' => 'tempat_lahir'])
             </div>
 
             <div>
@@ -99,7 +99,7 @@
                 <input type="date" name="tanggal_lahir" id="tanggal_lahir" required
                        value="{{ old('tanggal_lahir', $ubah ? $siswa->tanggal_lahir?->format('Y-m-d') : '') }}"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'tanggal_lahir'])
+                @include('partials._error', ['nama' => 'tanggal_lahir'])
             </div>
 
             <div class="sm:col-span-2">
@@ -108,14 +108,14 @@
                 </label>
                 <textarea name="alamat" id="alamat" rows="3" required
                           class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">{{ $nilai('alamat') }}</textarea>
-                @include('partials.error', ['nama' => 'alamat'])
+                @include('partials._error', ['nama' => 'alamat'])
             </div>
 
             <div>
                 <label for="no_hp" class="mb-1 block text-sm font-medium text-slate-700">Nomor HP</label>
                 <input type="text" name="no_hp" id="no_hp" value="{{ $nilai('no_hp') }}"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'no_hp'])
+                @include('partials._error', ['nama' => 'no_hp'])
             </div>
 
             <div>
@@ -123,7 +123,7 @@
                 <input type="text" name="nama_orang_tua" id="nama_orang_tua"
                        value="{{ $nilai('nama_orang_tua') }}"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'nama_orang_tua'])
+                @include('partials._error', ['nama' => 'nama_orang_tua'])
             </div>
         </div>
     </div>
@@ -147,7 +147,7 @@
                         </option>
                     @endforeach
                 </select>
-                @include('partials.error', ['nama' => 'id_kelas'])
+                @include('partials._error', ['nama' => 'id_kelas'])
             </div>
 
             <div>
@@ -163,7 +163,7 @@
                         </option>
                     @endforeach
                 </select>
-                @include('partials.error', ['nama' => 'id_tahun_ajaran'])
+                @include('partials._error', ['nama' => 'id_tahun_ajaran'])
             </div>
 
             <div class="sm:col-span-2">
@@ -185,7 +185,7 @@
                         </option>
                     @endforeach
                 </select>
-                @include('partials.error', ['nama' => 'id_user'])
+                @include('partials._error', ['nama' => 'id_user'])
                 <p class="mt-1 text-xs text-slate-500">
                     Hanya akun berrole siswa yang belum dipakai siswa lain. Boleh dikosongkan.
                 </p>

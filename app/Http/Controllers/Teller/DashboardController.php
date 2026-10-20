@@ -21,6 +21,6 @@ class DashboardController extends Controller
                 ->count('id_siswa'),
         ];
 
-        return $this->render('dashboard.teller', $data);
+        return $this->render('teller.dashboard.index', $data);
     }
 }

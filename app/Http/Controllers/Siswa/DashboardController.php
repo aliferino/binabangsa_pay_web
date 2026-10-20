@@ -15,7 +15,7 @@ class DashboardController extends Controller
 
         // Kalau akun siswa belum ditautkan ke data siswa, jangan tampilkan apa pun.
         if ($student === null) {
-            return $this->render('dashboard.siswa', [
+            return $this->render('siswa.dashboard.index', [
                 'siswa' => null,
                 'pesan' => 'Akun ini belum ditautkan ke data siswa. Hubungi administrator.',
             ]);
@@ -27,6 +27,6 @@ class DashboardController extends Controller
             'totalArrears' => $student->totalTunggakan(),
         ];
 
-        return $this->render('dashboard.siswa', $data);
+        return $this->render('siswa.dashboard.index', $data);
     }
 }

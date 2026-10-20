@@ -37,21 +37,13 @@ class TuitionBillController extends Controller
             $kueri->where('status', $request->input('status'));
         }
 
-        return $this->render('tagihan-spp.index', [
+        return $this->render('teller.bills.index', [
             'bills' => $kueri->orderByDesc('tahun')->orderByDesc('bulan')->get(),
             'filter' => $request->only(['id_siswa', 'bulan', 'tahun', 'status']),
-            'students' => Student::orderBy('nama')->get(),
             'years' => TuitionBill::distinct()->orderByDesc('tahun')->pluck('tahun'),
-        ]);
+        ] + $this->pilihan());
     }
 
-    /**
-     * Tampilkan form tambah tagihan.
-     */
-    public function create()
-    {
-        return $this->render('tagihan-spp.create', $this->pilihan());
-    }
 
     /**
      * Simpan tagihan baru.
@@ -85,20 +77,21 @@ class TuitionBillController extends Controller
      */
     public function show(TuitionBill $tagihanSpp)
     {
-        return $this->render('tagihan-spp.show', [
+        return $this->render('teller.bills.show', [
             'tagihan' => $tagihanSpp->load('siswa.kelas', 'tarif', 'tahunAjaran'),
         ]);
     }
 
     /**
-     * Tampilkan form ubah tagihan.
+     * Form ubah sekarang berupa modal di halaman daftar. Route lama
+     * tetap ada supaya tautan Ubah di halaman detail tidak rusak, tetapi
+     * sekarang hanya mengalihkan ke daftar dengan penanda modal terbuka.
      */
-    public function edit(TuitionBill $tagihanSpp)
+    public function edit(TuitionBill $tagihanSpp): RedirectResponse
     {
-        return $this->render('tagihan-spp.edit', array_merge(
-            ['tagihan' => $tagihanSpp],
-            $this->pilihan(),
-        ));
+        return redirect()
+            ->route('tagihan-spp.index', ['ubah' => $tagihanSpp->id_tagihan])
+            ->with('buka_modal', 'ubah');
     }
 
     /**

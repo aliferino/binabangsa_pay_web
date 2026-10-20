@@ -38,7 +38,7 @@
                         </option>
                     @endforeach
                 </select>
-                @include('partials.error', ['nama' => 'id_siswa'])
+                @include('partials._error', ['nama' => 'id_siswa'])
             </div>
 
             <div>
@@ -52,7 +52,7 @@
                         <option value="{{ $angka }}" @selected($nilai('bulan') == $angka)>{{ $nama }}</option>
                     @endforeach
                 </select>
-                @include('partials.error', ['nama' => 'bulan'])
+                @include('partials._error', ['nama' => 'bulan'])
             </div>
 
             <div>
@@ -62,7 +62,7 @@
                 <input type="number" name="tahun" id="tahun" min="2000" max="2100"
                        value="{{ $nilai('tahun', date('Y')) }}" required
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'tahun'])
+                @include('partials._error', ['nama' => 'tahun'])
             </div>
 
             <div>
@@ -78,7 +78,7 @@
                         </option>
                     @endforeach
                 </select>
-                @include('partials.error', ['nama' => 'id_tahun_ajaran'])
+                @include('partials._error', ['nama' => 'id_tahun_ajaran'])
             </div>
 
             <div>
@@ -95,7 +95,7 @@
                         </option>
                     @endforeach
                 </select>
-                @include('partials.error', ['nama' => 'id_tarif'])
+                @include('partials._error', ['nama' => 'id_tarif'])
             </div>
         </div>
     </div>
@@ -113,7 +113,7 @@
                 <input type="number" name="nominal" id="nominal" min="1" step="1000"
                        value="{{ $nilai('nominal') }}" required placeholder="Contoh: 350000"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'nominal'])
+                @include('partials._error', ['nama' => 'nominal'])
                 <p class="mt-1 text-xs text-slate-500">Isi angka saja, tanpa titik atau tanda rupiah.</p>
             </div>
 
@@ -124,7 +124,7 @@
                 <input type="date" name="tanggal_jatuh_tempo" id="tanggal_jatuh_tempo" required
                        value="{{ old('tanggal_jatuh_tempo', $ubah ? $tagihan->tanggal_jatuh_tempo?->format('Y-m-d') : '') }}"
                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                @include('partials.error', ['nama' => 'tanggal_jatuh_tempo'])
+                @include('partials._error', ['nama' => 'tanggal_jatuh_tempo'])
             </div>
 
             <div>
@@ -137,7 +137,7 @@
                     <option value="lunas" @selected($nilai('status') === 'lunas')>Lunas</option>
                     <option value="tunggakan" @selected($nilai('status') === 'tunggakan')>Tunggakan</option>
                 </select>
-                @include('partials.error', ['nama' => 'status'])
+                @include('partials._error', ['nama' => 'status'])
                 <p class="mt-1 text-xs text-slate-500">
                     Satu siswa hanya boleh punya satu tagihan per bulan per tahun.
                 </p>

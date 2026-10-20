@@ -41,7 +41,7 @@ class SearchController extends Controller
                 ]);
         }
 
-        return $this->render('pencarian.index', [
+        return $this->render('admin.search.index', [
             'keyword' => $kata,
             'hasil' => $hasil,
         ]);

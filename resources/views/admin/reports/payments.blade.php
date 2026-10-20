@@ -189,7 +189,7 @@
                                     Rp{{ number_format((float) $tagihan->nominal, 0, ',', '.') }}
                                 </td>
                                 <td class="px-5 py-3">
-                                    @include('partials.lencana-status', ['status' => $tagihan->status])
+                                    @include('partials._status-badge', ['status' => $tagihan->status])
                                 </td>
                             </tr>
                         @endforeach

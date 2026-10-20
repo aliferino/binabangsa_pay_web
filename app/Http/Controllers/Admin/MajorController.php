@@ -15,17 +15,9 @@ class MajorController extends Controller
      */
     public function index()
     {
-        return $this->render('jurusan.index', [
+        return $this->render('admin.majors.index', [
             'majors' => Major::withCount('kelas')->orderBy('nama_jurusan')->get(),
         ]);
-    }
-
-    /**
-     * Tampilkan form tambah jurusan.
-     */
-    public function create()
-    {
-        return $this->render('jurusan.create');
     }
 
     /**
@@ -53,17 +45,21 @@ class MajorController extends Controller
      */
     public function show(Major $jurusan)
     {
-        return $this->render('jurusan.show', [
+        return $this->render('admin.majors.show', [
             'jurusan' => $jurusan->load('kelas'),
         ]);
     }
 
     /**
-     * Tampilkan form ubah jurusan.
+     * Form ubah jurusan sekarang berupa modal di halaman daftar. Route lama
+     * tetap ada supaya tautan Ubah di halaman detail tidak rusak, tetapi
+     * sekarang hanya mengalihkan ke daftar dengan penanda modal terbuka.
      */
-    public function edit(Major $jurusan)
+    public function edit(Major $jurusan): RedirectResponse
     {
-        return $this->render('jurusan.edit', ['jurusan' => $jurusan]);
+        return redirect()
+            ->route('jurusan.index', ['ubah' => $jurusan->id_jurusan])
+            ->with('buka_modal', 'ubah');
     }
 
     /**

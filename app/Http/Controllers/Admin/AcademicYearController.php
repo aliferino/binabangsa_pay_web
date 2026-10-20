@@ -16,20 +16,13 @@ class AcademicYearController extends Controller
      */
     public function index()
     {
-        return $this->render('tahun-ajaran.index', [
+        return $this->render('admin.academic-years.index', [
             'academicYears' => AcademicYear::withCount(['kelas', 'tarifSpp'])
                 ->orderByDesc('tahun_ajaran')
                 ->get(),
         ]);
     }
 
-    /**
-     * Tampilkan form tambah tahun ajaran.
-     */
-    public function create()
-    {
-        return $this->render('tahun-ajaran.create');
-    }
 
     /**
      * Simpan tahun ajaran baru.
@@ -58,17 +51,21 @@ class AcademicYearController extends Controller
      */
     public function show(AcademicYear $tahunAjaran)
     {
-        return $this->render('tahun-ajaran.show', [
+        return $this->render('admin.academic-years.show', [
             'tahun_ajaran' => $tahunAjaran->load('kelas', 'tarifSpp'),
         ]);
     }
 
     /**
-     * Tampilkan form ubah tahun ajaran.
+     * Form ubah sekarang berupa modal di halaman daftar. Route lama
+     * tetap ada supaya tautan Ubah di halaman detail tidak rusak, tetapi
+     * sekarang hanya mengalihkan ke daftar dengan penanda modal terbuka.
      */
-    public function edit(AcademicYear $tahunAjaran)
+    public function edit(AcademicYear $tahunAjaran): RedirectResponse
     {
-        return $this->render('tahun-ajaran.edit', ['tahun_ajaran' => $tahunAjaran]);
+        return redirect()
+            ->route('tahun-ajaran.index', ['ubah' => $tahunAjaran->id_tahun_ajaran])
+            ->with('buka_modal', 'ubah');
     }
 
     /**

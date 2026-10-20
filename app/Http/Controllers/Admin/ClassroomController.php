@@ -16,21 +16,14 @@ class ClassroomController extends Controller
      */
     public function index()
     {
-        return $this->render('kelas.index', [
+        return $this->render('admin.classrooms.index', [
             'classrooms' => Classroom::with('jurusan', 'tahunAjaran')
                 ->withCount('siswa')
                 ->orderBy('nama_kelas')
                 ->get(),
-        ]);
+        ] + $this->pilihan());
     }
 
-    /**
-     * Tampilkan form tambah kelas.
-     */
-    public function create()
-    {
-        return $this->render('kelas.create', $this->pilihan());
-    }
 
     /**
      * Simpan kelas baru.
@@ -61,20 +54,21 @@ class ClassroomController extends Controller
      */
     public function show(Classroom $kelas)
     {
-        return $this->render('kelas.show', [
+        return $this->render('admin.classrooms.show', [
             'kelas' => $kelas->load('jurusan', 'tahunAjaran', 'siswa'),
         ]);
     }
 
     /**
-     * Tampilkan form ubah kelas.
+     * Form ubah sekarang berupa modal di halaman daftar. Route lama
+     * tetap ada supaya tautan Ubah di halaman detail tidak rusak, tetapi
+     * sekarang hanya mengalihkan ke daftar dengan penanda modal terbuka.
      */
-    public function edit(Classroom $kelas)
+    public function edit(Classroom $kelas): RedirectResponse
     {
-        return $this->render('kelas.edit', array_merge(
-            ['kelas' => $kelas],
-            $this->pilihan(),
-        ));
+        return redirect()
+            ->route('kelas.index', ['ubah' => $kelas->id_kelas])
+            ->with('buka_modal', 'ubah');
     }
 
     /**

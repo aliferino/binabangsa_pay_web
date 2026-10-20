@@ -17,20 +17,13 @@ class TuitionRateController extends Controller
      */
     public function index()
     {
-        return $this->render('tarif-spp.index', [
+        return $this->render('admin.tuition-rates.index', [
             'tuitionRates' => TuitionRate::with('tahunAjaran')
                 ->orderByDesc('id_tahun_ajaran')
                 ->get(),
-        ]);
+        ] + $this->pilihan());
     }
 
-    /**
-     * Tampilkan form tambah tarif.
-     */
-    public function create()
-    {
-        return $this->render('tarif-spp.create', $this->pilihan());
-    }
 
     /**
      * Simpan tarif baru.
@@ -49,20 +42,21 @@ class TuitionRateController extends Controller
      */
     public function show(TuitionRate $tarifSpp)
     {
-        return $this->render('tarif-spp.show', [
+        return $this->render('admin.tuition-rates.show', [
             'tarif' => $tarifSpp->load('tahunAjaran'),
         ]);
     }
 
     /**
-     * Tampilkan form ubah tarif.
+     * Form ubah sekarang berupa modal di halaman daftar. Route lama
+     * tetap ada supaya tautan Ubah di halaman detail tidak rusak, tetapi
+     * sekarang hanya mengalihkan ke daftar dengan penanda modal terbuka.
      */
-    public function edit(TuitionRate $tarifSpp)
+    public function edit(TuitionRate $tarifSpp): RedirectResponse
     {
-        return $this->render('tarif-spp.edit', array_merge(
-            ['tarif' => $tarifSpp],
-            $this->pilihan(),
-        ));
+        return redirect()
+            ->route('tarif-spp.index', ['ubah' => $tarifSpp->id_tarif])
+            ->with('buka_modal', 'ubah');
     }
 
     /**

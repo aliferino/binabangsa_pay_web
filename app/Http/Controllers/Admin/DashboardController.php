@@ -38,6 +38,6 @@ class DashboardController extends Controller
             'arrearsAmount' => (float) TuitionBill::where('status', 'tunggakan')->sum('nominal'),
         ];
 
-        return $this->render('dashboard.admin', $data);
+        return $this->render('admin.dashboard.index', $data);
     }
 }

@@ -183,8 +183,9 @@ class ControllerMasterDataTest extends TestCase
         $this->actingAs($kepala)->get(route('tarif-spp.index'))->assertStatus(200);
         $this->actingAs($kepala)->get(route('laporan.tunggakan'))->assertStatus(200);
 
-        // Tidak boleh mengubah atau menghapus.
-        $this->actingAs($kepala)->get(route('siswa.create'))->assertStatus(403);
+        // Tidak boleh mengubah atau menghapus. Halaman tambah dan ubah sekarang
+        // berupa modal di halaman daftar, jadi yang diuji route simpannya.
+        $this->actingAs($kepala)->post(route('siswa.store'), [])->assertStatus(403);
         $this->actingAs($kepala)->post(route('jurusan.store'), [])->assertStatus(403);
         $this->actingAs($kepala)->delete(route('kelas.destroy', $this->kelas))->assertStatus(403);
         $this->actingAs($kepala)->get(route('user.index'))->assertStatus(403);
@@ -198,7 +199,8 @@ class ControllerMasterDataTest extends TestCase
         $this->actingAs($teller)->get(route('laporan.pembayaran'))->assertStatus(200);
         $this->actingAs($teller)->get(route('pencarian.index'))->assertStatus(200);
 
-        $this->actingAs($teller)->get(route('tagihan-spp.create'))->assertStatus(403);
+        // Halaman tambah sudah jadi modal, jadi yang diuji route simpannya.
+        $this->actingAs($teller)->post(route('tagihan-spp.store'), [])->assertStatus(403);
         $this->actingAs($teller)->post(route('siswa.store'), [])->assertStatus(403);
         $this->actingAs($teller)->get(route('user.index'))->assertStatus(403);
     }

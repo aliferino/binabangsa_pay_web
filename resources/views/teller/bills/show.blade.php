@@ -59,7 +59,7 @@
                 </div>
                 <div>
                     <dt class="text-slate-500">Status</dt>
-                    <dd>@include('partials.lencana-status', ['status' => $tagihan->status])</dd>
+                    <dd>@include('partials._status-badge', ['status' => $tagihan->status])</dd>
                 </div>
                 <div>
                     <dt class="text-slate-500">Tahun ajaran</dt>

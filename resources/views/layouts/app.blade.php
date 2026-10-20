@@ -28,7 +28,7 @@
         {{-- Menu samping. Di layar kecil disembunyikan dulu, dibuka lewat tombol Menu. --}}
         <aside id="menu-samping"
                class="hidden w-full shrink-0 border-b border-slate-200 bg-white lg:block lg:min-h-screen lg:w-64 lg:border-b-0 lg:border-r">
-            @include('partials.navigasi')
+            @include('partials._navigation')
         </aside>
 
         {{-- Isi halaman. --}}
@@ -49,7 +49,7 @@
                 </div>
 
                 {{-- Pesan sukses atau gagal dari controller. --}}
-                @include('partials.pesan')
+                @include('partials._flash')
 
                 @yield('isi')
             </div>
