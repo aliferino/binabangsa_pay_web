@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/kepsek.php'));
             Route::middleware('web')
                 ->group(base_path('routes/teller.php'));
+            Route::middleware('web')
+                ->group(base_path('routes/siswa.php'));
         },
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
