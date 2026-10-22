@@ -24,32 +24,12 @@
 
     <div class="grain" aria-hidden="true"></div>
 
-    {{-- Bilah atas tipis: kembali ke beranda di kiri, toggle tema di kanan. --}}
-    <header class="border-b border-[#e2e8dd] dark:border-[#2a3038]">
-        <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-            <a href="{{ route('beranda') }}" class="flex items-center gap-2.5">
-                <img src="{{ asset('images/logo-smk-bina-bangsa-180.webp') }}"
-                     alt="Logo SMK Bina Bangsa" width="28" height="28"
-                     class="h-7 w-7 rounded-full ring-1 ring-[#e2e8dd] dark:ring-[#2a3038]">
-                <span class="text-sm font-semibold tracking-tight">BinaBangsa Pay</span>
-            </a>
-            <button type="button" id="tombol-tema" aria-pressed="false" aria-label="Ganti tema terang atau gelap"
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#e2e8dd] text-[#5b6659] transition hover:bg-[#f6f8f4] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a7a0a] dark:border-[#2a3038] dark:text-[#8b95a1] dark:hover:bg-[#1b2026]">
-                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="hidden h-5 w-5 dark:block">
-                    <circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="h-5 w-5 dark:hidden">
-                    <path d="M16 11.5A6.5 6.5 0 0 1 8.5 4a6.5 6.5 0 1 0 7.5 7.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                </svg>
-            </button>
-        </div>
-    </header>
+    @include('partials._navigation-web')
 
     {{-- Dua kolom di layar lebar: keterangan di kiri, form di kanan.
          Di ponsel dan tablet hanya form yang tampil, keterangannya disembunyikan
          supaya pengguna langsung sampai ke kolom isian. --}}
-    <main class="mx-auto grid w-full max-w-6xl flex-1 content-center gap-12 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1fr_0.85fr] lg:content-center lg:items-start lg:gap-16 lg:py-20">
+    <main class="mx-auto grid w-full max-w-6xl flex-1 content-center gap-12 px-4 py-10 sm:px-6 sm:py-14 lg:content-center lg:grid-cols-[1fr_0.85fr] lg:items-start lg:gap-16 lg:py-20">
 
         <div class="hidden lg:block">
             <span class="inline-flex items-center gap-2 rounded-full border border-[#e2e8dd] bg-[#f6f8f4] px-3 py-1 text-xs font-medium text-[#5b6659] dark:border-[#2a3038] dark:bg-[#171c21] dark:text-[#8b95a1]">
@@ -140,7 +120,7 @@
                                    value="{{ old('username') }}"
                                    required autofocus autocomplete="username"
                                    placeholder="NIS atau username"
-                                   class="h-11 w-full rounded-lg border border-[#d5ddc9] bg-white px-3 font-mono text-sm transition placeholder:font-sans placeholder:text-[#8b95a1] focus:border-[#4a7a0a] focus:outline-none focus:ring-1 focus:ring-inset focus:ring-[#4a7a0a] dark:border-[#6b7784] dark:bg-[#111111] dark:focus:border-[#b8f048] dark:focus:ring-[#b8f048]">
+                                   class="h-11 w-full rounded-lg border bg-white px-3 font-mono text-sm transition-colors duration-150 placeholder:font-sans placeholder:text-[#8b95a1] border-[#d5ddc9] dark:border-[#6b7784] dark:bg-[#111111] hover:border-[#b9c4ae] dark:hover:border-[#8b95a1] focus:border-[#4a7a0a] focus:shadow-[0_0_0_3px_rgba(74,122,10,0.12)] focus:outline-none dark:focus:border-[#b8f048] dark:focus:shadow-[0_0_0_3px_rgba(184,240,72,0.16)]">
                             @error('username')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -151,7 +131,7 @@
                             <div class="relative">
                                 <input type="password" name="password" id="password"
                                 required autocomplete="current-password"
-                                class="h-11 w-full rounded-lg border border-[#d5ddc9] bg-white pl-3 pr-11 font-mono text-sm transition focus:border-[#4a7a0a] focus:outline-none focus:ring-1 focus:ring-inset focus:ring-[#4a7a0a] dark:border-[#6b7784] dark:bg-[#111111] dark:focus:border-[#b8f048] dark:focus:ring-[#b8f048]">
+                                class="h-11 w-full rounded-lg border bg-white pl-3 pr-11 font-mono text-sm transition-colors duration-150 placeholder:font-sans placeholder:text-[#8b95a1] border-[#d5ddc9] dark:border-[#6b7784] dark:bg-[#111111] hover:border-[#b9c4ae] dark:hover:border-[#8b95a1] focus:border-[#4a7a0a] focus:shadow-[0_0_0_3px_rgba(74,122,10,0.12)] focus:outline-none dark:focus:border-[#b8f048] dark:focus:shadow-[0_0_0_3px_rgba(184,240,72,0.16)]">
                                 <button type="button" id="tombol-lihat"
                                 aria-pressed="false" aria-controls="password" aria-label="Tampilkan password"
                                 class="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-[#5b6659] transition hover:text-[#4a7a0a] focus:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[#4a7a0a] dark:text-[#8b95a1] dark:hover:text-[#b8f048] dark:focus-visible:ring-[#b8f048]">
@@ -174,24 +154,21 @@
                         </div>
 
                         <button type="submit"
-                                class="flex w-full items-center justify-between rounded-lg bg-[#b8f048] px-4 py-2.5 text-sm font-semibold text-[#111111] transition hover:bg-[#a0d040] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a7a0a] dark:focus-visible:outline-[#b8f048]">
+                                class="tombol-tekan flex w-full items-center justify-center rounded-lg bg-[#b8f048] px-4 py-2.5 text-sm font-semibold text-[#111111] hover:bg-[#a0d040] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a7a0a] dark:focus-visible:outline-[#b8f048]">
                             Masuk
-                            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" class="h-4 w-4">
-                                <path d="M3 8h9.5M9 4.5 12.5 8 9 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
                         </button>
                     </form>
                 </div>
             </div>
 
-            <p class="mt-5 text-center text-xs leading-relaxed text-[#5b6659] lg:text-left dark:text-[#8b95a1]">
+            <p class="mt-5 text-center text-xs leading-relaxed text-[#5b6659] dark:text-[#8b95a1]">
                 Akun dibuatkan oleh sekolah.
                 <a href="{{ route('beranda') }}" class="font-medium underline decoration-[#e2e8dd] underline-offset-4 transition hover:text-[#4a7a0a] hover:decoration-[#4a7a0a] dark:decoration-[#2a3038] dark:hover:text-[#b8f048] dark:hover:decoration-[#b8f048]">Kembali ke beranda</a>
             </p>
         </div>
     </main>
 
-    <footer class="border-t border-[#e2e8dd] px-4 py-6 text-center text-xs text-[#5b6659] sm:px-6 dark:border-[#2a3038] dark:text-[#8b95a1]">
+    <footer class="border-t border-[#e2e8dd] bg-white px-4 py-6 text-center text-xs text-[#5b6659] sm:px-6 dark:border-[#2a3038] dark:bg-[#111111] dark:text-[#8b95a1]">
         SMK Bina Bangsa, Kabupaten Sidoarjo. Pembayaran SPP lewat virtual account.
     </footer>
 

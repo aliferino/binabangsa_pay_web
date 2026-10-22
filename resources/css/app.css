@@ -64,6 +64,17 @@ html.dark { color-scheme: dark; }
 }
 
 /*
+    Kolom isian sudah punya penanda fokus sendiri (tepi menguat + bayangan
+    3px). Outline global di atas akan menggandakannya jadi cincin ganda,
+    jadi khusus kolom isian outline-nya dimatikan.
+*/
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: none;
+}
+
+/*
     Animasi kecil di halaman login: koin berjalan dari kartu virtual account
     menuju stempel LUNAS. Murni CSS, tanpa pustaka animasi.
 */
@@ -116,4 +127,33 @@ html.dark { color-scheme: dark; }
     }
     .anim-koin { opacity: 0; }
     .anim-centang { stroke-dashoffset: 0; }
+}
+
+/*
+    Tombol neon yang terasa ditekan. Bayangan bawah meniru tombol fisik,
+    saat ditekan tombol turun 1px dan bayangannya hilang.
+*/
+.tombol-tekan {
+    box-shadow: 0 2px 0 0 rgba(17, 17, 17, 0.18);
+    transition: transform 120ms ease, box-shadow 120ms ease, background-color 150ms ease;
+}
+
+.tombol-tekan:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 0 0 rgba(17, 17, 17, 0.18);
+}
+
+.tombol-tekan:active {
+    transform: translateY(1px) scale(0.99);
+    box-shadow: 0 0 0 0 rgba(17, 17, 17, 0.18);
+    transition-duration: 60ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tombol-tekan,
+    .tombol-tekan:hover,
+    .tombol-tekan:active {
+        transform: none;
+        transition: background-color 150ms ease;
+    }
 }
