@@ -7,41 +7,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Masuk | BinaBangsa Pay</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- Pasang tema tersimpan SEBELUM body dilukis supaya tidak ada flash. --}}
     <script>
         (function () {
-            var html = document.documentElement;
-            var tombol = document.getElementById('tombol-tema');
-
-            function terapkan(gelap) {
-                html.classList.toggle('dark', gelap);
-                if (tombol) tombol.setAttribute('aria-pressed', gelap ? 'true' : 'false');
-            }
-
-            terapkan(html.classList.contains('dark'));
-
-            if (tombol) {
-                tombol.addEventListener('click', function () {
-                    var gelap = !html.classList.contains('dark');
-                    terapkan(gelap);
-                    try { localStorage.setItem('tema', gelap ? 'dark' : 'light'); } catch (e) { }
-                });
-            }
-
-            // Tampilkan atau sembunyikan isi password.
-            var lihat = document.getElementById('tombol-lihat');
-            var sandi = document.getElementById('password');
-
-            if (lihat && sandi) {
-                lihat.addEventListener('click', function () {
-                    var terbuka = sandi.type === 'text';
-                    sandi.type = terbuka ? 'password' : 'text';
-                    lihat.textContent = terbuka ? 'Lihat' : 'Tutup';
-                    lihat.setAttribute('aria-pressed', terbuka ? 'false' : 'true');
-                    lihat.setAttribute('aria-label', terbuka ? 'Tampilkan password' : 'Sembunyikan password');
-                });
-            }
+            try {
+                if (localStorage.getItem('tema') === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) { /* localStorage bisa terblokir; tetap light. */ }
         })();
     </script>
 </head>
@@ -74,7 +49,7 @@
     {{-- Dua kolom di layar lebar: keterangan di kiri, form di kanan.
          Di ponsel dan tablet hanya form yang tampil, keterangannya disembunyikan
          supaya pengguna langsung sampai ke kolom isian. --}}
-    <main class="mx-auto grid w-full max-w-6xl flex-1 gap-12 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1fr_0.85fr] lg:content-center lg:items-start lg:gap-16 lg:py-20">
+    <main class="mx-auto grid w-full max-w-6xl flex-1 content-center gap-12 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1fr_0.85fr] lg:content-center lg:items-start lg:gap-16 lg:py-20">
 
         <div class="hidden lg:block">
             <span class="inline-flex items-center gap-2 rounded-full border border-[#e2e8dd] bg-[#f6f8f4] px-3 py-1 text-xs font-medium text-[#5b6659] dark:border-[#2a3038] dark:bg-[#171c21] dark:text-[#8b95a1]">
@@ -126,29 +101,6 @@
                 </svg>
             </div>
 
-            <dl class="mt-8 max-w-md space-y-4 border-t border-[#e2e8dd] pt-6 dark:border-[#2a3038]">
-                <div class="flex gap-3">
-                    <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#b8f048]"></span>
-                    <div>
-                        <dt class="text-sm font-semibold">Virtual account pribadi</dt>
-                        <dd class="mt-0.5 text-sm leading-relaxed text-[#5b6659] dark:text-[#8b95a1]">Nomornya hanya untuk satu siswa, tidak bisa tertukar.</dd>
-                    </div>
-                </div>
-                <div class="flex gap-3">
-                    <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#b8f048]"></span>
-                    <div>
-                        <dt class="text-sm font-semibold">Status tagihan jelas</dt>
-                        <dd class="mt-0.5 text-sm leading-relaxed text-[#5b6659] dark:text-[#8b95a1]">Belum bayar, lunas, atau tunggakan, per bulan.</dd>
-                    </div>
-                </div>
-                <div class="flex gap-3">
-                    <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#b8f048]"></span>
-                    <div>
-                        <dt class="text-sm font-semibold">Tanpa kirim bukti transfer</dt>
-                        <dd class="mt-0.5 text-sm leading-relaxed text-[#5b6659] dark:text-[#8b95a1]">Sistem mencocokkan transaksi sendiri.</dd>
-                    </div>
-                </div>
-            </dl>
         </div>
 
         <div class="w-full max-w-sm justify-self-center lg:justify-self-end">
@@ -188,24 +140,34 @@
                                    value="{{ old('username') }}"
                                    required autofocus autocomplete="username"
                                    placeholder="NIS atau username"
-                                   class="w-full rounded-lg border border-[#d5ddc9] bg-white px-3 py-2.5 font-mono text-sm transition placeholder:font-sans placeholder:text-[#8b95a1] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#4a7a0a] dark:border-[#6b7784] dark:bg-[#111111] dark:focus:ring-[#b8f048]">
+                                   class="h-11 w-full rounded-lg border border-[#d5ddc9] bg-white px-3 font-mono text-sm transition placeholder:font-sans placeholder:text-[#8b95a1] focus:border-[#4a7a0a] focus:outline-none focus:ring-1 focus:ring-inset focus:ring-[#4a7a0a] dark:border-[#6b7784] dark:bg-[#111111] dark:focus:border-[#b8f048] dark:focus:ring-[#b8f048]">
                             @error('username')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <div class="mb-1.5 flex items-baseline justify-between">
-                                <label for="password" class="block font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5b6659] dark:text-[#8b95a1]">Password</label>
+                            <label for="password" class="mb-1.5 block font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5b6659] dark:text-[#8b95a1]">Password</label>
+                            <div class="relative">
+                                <input type="password" name="password" id="password"
+                                required autocomplete="current-password"
+                                class="h-11 w-full rounded-lg border border-[#d5ddc9] bg-white pl-3 pr-11 font-mono text-sm transition focus:border-[#4a7a0a] focus:outline-none focus:ring-1 focus:ring-inset focus:ring-[#4a7a0a] dark:border-[#6b7784] dark:bg-[#111111] dark:focus:border-[#b8f048] dark:focus:ring-[#b8f048]">
                                 <button type="button" id="tombol-lihat"
-                                        aria-pressed="false" aria-controls="password" aria-label="Tampilkan password"
-                                        class="text-[11px] font-medium text-[#5b6659] underline decoration-[#d5ddc9] underline-offset-2 transition hover:text-[#4a7a0a] hover:decoration-[#4a7a0a] dark:text-[#8b95a1] dark:decoration-[#3a424e] dark:hover:text-[#b8f048] dark:hover:decoration-[#b8f048]">
-                                    Lihat
+                                aria-pressed="false" aria-controls="password" aria-label="Tampilkan password"
+                                class="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-[#5b6659] transition hover:text-[#4a7a0a] focus:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[#4a7a0a] dark:text-[#8b95a1] dark:hover:text-[#b8f048] dark:focus-visible:ring-[#b8f048]">
+                                {{-- Mata terbuka: tampil selama password tersembunyi. --}}
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="mata-terbuka h-[18px] w-[18px]">
+                                <path d="M2.6 12S6 5.6 12 5.6 21.4 12 21.4 12 18 18.4 12 18.4 2.6 12 2.6 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="12" r="2.9" stroke="currentColor" stroke-width="1.6"/>
+                                </svg>
+                                {{-- Mata dicoret: tampil selama password terlihat. --}}
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="mata-tertutup hidden h-[18px] w-[18px]">
+                                <path d="M2.6 12S6 5.6 12 5.6 21.4 12 21.4 12 18 18.4 12 18.4 2.6 12 2.6 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="12" r="2.9" stroke="currentColor" stroke-width="1.6"/>
+                                <path d="M3.6 3.6l16.8 16.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                </svg>
                                 </button>
                             </div>
-                            <input type="password" name="password" id="password"
-                                   required autocomplete="current-password"
-                                   class="w-full rounded-lg border border-[#d5ddc9] bg-white px-3 py-2.5 font-mono text-sm transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#4a7a0a] dark:border-[#6b7784] dark:bg-[#111111] dark:focus:ring-[#b8f048]">
                             @error('password')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -246,26 +208,30 @@
             terapkan(html.classList.contains('dark'));
 
             if (tombol) {
-                            tombol.addEventListener('click', function () {
-                                var gelap = !html.classList.contains('dark');
-                                terapkan(gelap);
-                                try { localStorage.setItem('tema', gelap ? 'dark' : 'light'); } catch (e) { }
-                            });
-                        }
+                tombol.addEventListener('click', function () {
+                    var gelap = !html.classList.contains('dark');
+                    terapkan(gelap);
+                    try { localStorage.setItem('tema', gelap ? 'dark' : 'light'); } catch (e) { }
+                });
+            }
 
-                        // Tampilkan atau sembunyikan isi password.
-                        var lihat = document.getElementById('tombol-lihat');
-                        var sandi = document.getElementById('password');
+            // Tombol mata: ganti ikon dan jenis input, tanpa menulis teks.
+            var lihat = document.getElementById('tombol-lihat');
+            var sandi = document.getElementById('password');
 
-                        if (lihat && sandi) {
-                            lihat.addEventListener('click', function () {
-                                var terbuka = sandi.type === 'text';
-                                sandi.type = terbuka ? 'password' : 'text';
-                                lihat.textContent = terbuka ? 'Lihat' : 'Tutup';
-                                lihat.setAttribute('aria-pressed', terbuka ? 'false' : 'true');
-                                lihat.setAttribute('aria-label', terbuka ? 'Tampilkan password' : 'Sembunyikan password');
-                            });
-                        }
+            if (lihat && sandi) {
+                var mataBuka = lihat.querySelector('.mata-terbuka');
+                var mataTutup = lihat.querySelector('.mata-tertutup');
+
+                lihat.addEventListener('click', function () {
+                    var sedangTerlihat = sandi.type === 'text';
+                    sandi.type = sedangTerlihat ? 'password' : 'text';
+                    mataBuka.classList.toggle('hidden', sedangTerlihat === false);
+                    mataTutup.classList.toggle('hidden', sedangTerlihat === true);
+                    lihat.setAttribute('aria-pressed', sedangTerlihat ? 'false' : 'true');
+                    lihat.setAttribute('aria-label', sedangTerlihat ? 'Tampilkan password' : 'Sembunyikan password');
+                });
+            }
         })();
     </script>
 </body>

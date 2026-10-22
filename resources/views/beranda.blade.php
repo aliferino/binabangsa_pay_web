@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BinaBangsa Pay | Pembayaran SPP SMK Bina Bangsa</title>
     <meta name="description" content="BinaBangsa Pay menerbitkan virtual account per siswa untuk pembayaran SPP SMK Bina Bangsa, mencocokkan transaksi secara otomatis, dan menyusun laporan tunggakan.">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- Pasang tema tersimpan SEBELUM body dilukis supaya tidak ada flash. --}}
     <script>
