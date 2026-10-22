@@ -23,12 +23,15 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Route tamu
 |--------------------------------------------------------------------------
-| Hanya halaman login yang boleh dibuka tanpa masuk dulu.
+| Halaman depan boleh dibuka tanpa masuk. Yang sudah punya sesi langsung
+| dilempar ke dashboard supaya tidak mengetik ulang alamat.
 */
 
 Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : view('beranda');
+})->name('beranda');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
