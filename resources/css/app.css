@@ -62,3 +62,58 @@ html.dark { color-scheme: dark; }
 .dark :focus-visible {
     outline-color: var(--color-neon);
 }
+
+/*
+    Animasi kecil di halaman login: koin berjalan dari kartu virtual account
+    menuju stempel LUNAS. Murni CSS, tanpa pustaka animasi.
+*/
+.anim-alir {
+    animation: alir 1.2s linear infinite;
+}
+
+@keyframes alir {
+    to { stroke-dashoffset: -16; }
+}
+
+.anim-koin {
+    cx: 132px;
+    animation: jalan 2.6s ease-in-out infinite;
+}
+
+@keyframes jalan {
+    0%   { cx: 132px; opacity: 0; }
+    12%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { cx: 206px; opacity: 0; }
+}
+
+.anim-stempel {
+    transform-origin: 268px 60px;
+    animation: stempel 2.6s ease-out infinite;
+}
+
+@keyframes stempel {
+    0%, 62%   { transform: scale(0.9); opacity: 0.35; }
+    74%       { transform: scale(1.06); opacity: 1; }
+    82%, 100% { transform: scale(1); opacity: 1; }
+}
+
+.anim-centang {
+    stroke-dasharray: 26;
+    stroke-dashoffset: 26;
+    animation: centang 2.6s ease-out infinite;
+}
+
+@keyframes centang {
+    0%, 66%   { stroke-dashoffset: 26; }
+    80%, 100% { stroke-dashoffset: 0; }
+}
+
+/* Hormati pilihan pengguna yang tidak mau gerakan. */
+@media (prefers-reduced-motion: reduce) {
+    .anim-alir, .anim-koin, .anim-stempel, .anim-centang {
+        animation: none;
+    }
+    .anim-koin { opacity: 0; }
+    .anim-centang { stroke-dashoffset: 0; }
+}

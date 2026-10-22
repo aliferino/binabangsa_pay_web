@@ -11,11 +11,37 @@
     {{-- Pasang tema tersimpan SEBELUM body dilukis supaya tidak ada flash. --}}
     <script>
         (function () {
-            try {
-                if (localStorage.getItem('tema') === 'dark') {
-                    document.documentElement.classList.add('dark');
-                }
-            } catch (e) { /* localStorage bisa terblokir; tetap light. */ }
+            var html = document.documentElement;
+            var tombol = document.getElementById('tombol-tema');
+
+            function terapkan(gelap) {
+                html.classList.toggle('dark', gelap);
+                if (tombol) tombol.setAttribute('aria-pressed', gelap ? 'true' : 'false');
+            }
+
+            terapkan(html.classList.contains('dark'));
+
+            if (tombol) {
+                tombol.addEventListener('click', function () {
+                    var gelap = !html.classList.contains('dark');
+                    terapkan(gelap);
+                    try { localStorage.setItem('tema', gelap ? 'dark' : 'light'); } catch (e) { }
+                });
+            }
+
+            // Tampilkan atau sembunyikan isi password.
+            var lihat = document.getElementById('tombol-lihat');
+            var sandi = document.getElementById('password');
+
+            if (lihat && sandi) {
+                lihat.addEventListener('click', function () {
+                    var terbuka = sandi.type === 'text';
+                    sandi.type = terbuka ? 'password' : 'text';
+                    lihat.textContent = terbuka ? 'Lihat' : 'Tutup';
+                    lihat.setAttribute('aria-pressed', terbuka ? 'false' : 'true');
+                    lihat.setAttribute('aria-label', terbuka ? 'Tampilkan password' : 'Sembunyikan password');
+                });
+            }
         })();
     </script>
 </head>
@@ -66,7 +92,41 @@
                 dan riwayat pembayaran SPP.
             </p>
 
-            <dl class="mt-10 max-w-md space-y-4 border-t border-[#e2e8dd] pt-6 dark:border-[#2a3038]">
+            {{-- Animasi kecil: uang berjalan dari kartu VA ke status lunas.
+                 CSS keyframes saja, tanpa pustaka. Berhenti sendiri kalau
+                 pengguna memilih kurangi gerak lewat prefers-reduced-motion. --}}
+            <div class="mt-10 max-w-md overflow-hidden rounded-xl border border-[#e2e8dd] bg-[#f6f8f4] dark:border-[#2a3038] dark:bg-[#171c21]">
+                <svg viewBox="0 18 340 76" class="h-auto w-full" role="img" aria-labelledby="judul-animasi">
+                    <title id="judul-animasi">Transfer masuk ke virtual account lalu status tagihan berubah lunas</title>
+
+                    {{-- Kartu VA sumber. --}}
+                    <g class="fill-white stroke-[#d5ddc9] dark:fill-[#1b2026] dark:stroke-[#3a424e]">
+                        <rect x="16" y="34" width="112" height="52" rx="8" fill="inherit" stroke-width="1.2"/>
+                    </g>
+                    <text x="28" y="55" font-family="'Instrument Sans', sans-serif" font-size="7.5" letter-spacing="0.9"
+                          class="fill-[#5b6659] dark:fill-[#8b95a1]">VIRTUAL ACCOUNT</text>
+                    <text x="28" y="72" font-family="ui-monospace, monospace" font-size="10" font-weight="700"
+                          class="fill-[#111111] dark:fill-[#e8ecf1]">8800012345</text>
+
+                    {{-- Jalur transfer: garis putus-putus yang mengalir. --}}
+                    <line x1="132" y1="60" x2="208" y2="60" stroke-width="1.4" stroke-dasharray="4 4"
+                          class="anim-alir stroke-[#b8f048]"/>
+
+                    {{-- Koin yang berjalan di sepanjang jalur. --}}
+                    <circle r="4" cy="60" class="anim-koin fill-[#b8f048]"/>
+
+                    {{-- Status tujuan: berdenyut lalu menetap. --}}
+                    <g class="anim-stempel">
+                        <rect x="212" y="42" width="112" height="36" rx="18" class="fill-[#b8f048]"/>
+                        <path d="M228 60.5l5 5 11-11" fill="none" stroke="#111111" stroke-width="2.4"
+                              stroke-linecap="round" stroke-linejoin="round" class="anim-centang"/>
+                        <text x="252" y="64" font-family="'Instrument Sans', sans-serif" font-size="10" font-weight="700"
+                              letter-spacing="1.2" class="fill-[#111111]">LUNAS</text>
+                    </g>
+                </svg>
+            </div>
+
+            <dl class="mt-8 max-w-md space-y-4 border-t border-[#e2e8dd] pt-6 dark:border-[#2a3038]">
                 <div class="flex gap-3">
                     <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#b8f048]"></span>
                     <div>
@@ -98,46 +158,68 @@
                 <p class="mt-1.5 text-sm text-[#5b6659] dark:text-[#8b95a1]">Sistem Pembayaran SPP SMK Bina Bangsa</p>
             </div>
 
-            <div class="rounded-xl border border-[#d5ddc9] bg-white p-6 shadow-sm dark:border-[#3a424e] dark:bg-[#1b2026] dark:shadow-none">
+            {{-- Kartu form mengikuti motif kartu tagihan di halaman depan: kepala
+                 bergaris putus-putus, label monospace huruf besar, dan satu titik
+                 neon. Bukan kartu putih polos dengan dua kotak isian. --}}
+            <div class="overflow-hidden rounded-xl border border-[#d5ddc9] bg-white dark:border-[#3a424e] dark:bg-[#1b2026]">
 
-                <h2 class="hidden text-lg font-bold tracking-tight lg:block">Masuk ke akun</h2>
+                <div class="flex items-center justify-between border-b border-dashed border-[#d5ddc9] px-6 py-3 dark:border-[#3a424e]">
+                    <span class="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5b6659] dark:text-[#8b95a1]">Akses akun</span>
+                    <span class="h-1.5 w-1.5 rounded-full bg-[#b8f048]"></span>
+                </div>
 
-                {{-- Pesan gagal dari validasi login. --}}
-                @if ($errors->any())
-                    <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200" role="alert">
-                        {{ $errors->first() }}
-                    </div>
-                @endif
+                <div class="p-6">
 
-                <form method="POST" action="{{ route('login.proses') }}" class="mt-5 space-y-4">
-                    @csrf
+                    <h2 class="hidden text-lg font-bold tracking-tight lg:block">Masuk ke akun</h2>
 
-                    <div>
-                        <label for="username" class="mb-1.5 block text-sm font-medium">Username</label>
-                        <input type="text" name="username" id="username"
-                               value="{{ old('username') }}"
-                               required autofocus autocomplete="username"
-                               class="w-full rounded-lg border border-[#d5ddc9] bg-white px-3 py-2.5 text-sm transition placeholder:text-[#8b95a1] focus:border-[#4a7a0a] focus:outline-none focus:ring-2 focus:ring-[#b8f048]/40 dark:border-[#6b7784] dark:bg-[#111111] dark:focus:border-[#b8f048]">
-                        @error('username')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    {{-- Pesan gagal dari validasi login. --}}
+                    @if ($errors->any())
+                        <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200" role="alert">
+                            {{ $errors->first() }}
+                        </div>
+                    @endif
 
-                    <div>
-                        <label for="password" class="mb-1.5 block text-sm font-medium">Password</label>
-                        <input type="password" name="password" id="password"
-                               required autocomplete="current-password"
-                               class="w-full rounded-lg border border-[#d5ddc9] bg-white px-3 py-2.5 text-sm transition placeholder:text-[#8b95a1] focus:border-[#4a7a0a] focus:outline-none focus:ring-2 focus:ring-[#b8f048]/40 dark:border-[#6b7784] dark:bg-[#111111] dark:focus:border-[#b8f048]">
-                        @error('password')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <form method="POST" action="{{ route('login.proses') }}" class="mt-5 space-y-4">
+                        @csrf
 
-                    <button type="submit"
-                            class="w-full rounded-lg bg-[#b8f048] px-4 py-2.5 text-sm font-semibold text-[#111111] transition hover:bg-[#a0d040] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a7a0a] dark:focus-visible:outline-[#b8f048]">
-                        Masuk
-                    </button>
-                </form>
+                        <div>
+                            <label for="username" class="mb-1.5 block font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5b6659] dark:text-[#8b95a1]">Username</label>
+                            <input type="text" name="username" id="username"
+                                   value="{{ old('username') }}"
+                                   required autofocus autocomplete="username"
+                                   placeholder="NIS atau username"
+                                   class="w-full rounded-lg border border-[#d5ddc9] bg-white px-3 py-2.5 font-mono text-sm transition placeholder:font-sans placeholder:text-[#8b95a1] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#4a7a0a] dark:border-[#6b7784] dark:bg-[#111111] dark:focus:ring-[#b8f048]">
+                            @error('username')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <div class="mb-1.5 flex items-baseline justify-between">
+                                <label for="password" class="block font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5b6659] dark:text-[#8b95a1]">Password</label>
+                                <button type="button" id="tombol-lihat"
+                                        aria-pressed="false" aria-controls="password" aria-label="Tampilkan password"
+                                        class="text-[11px] font-medium text-[#5b6659] underline decoration-[#d5ddc9] underline-offset-2 transition hover:text-[#4a7a0a] hover:decoration-[#4a7a0a] dark:text-[#8b95a1] dark:decoration-[#3a424e] dark:hover:text-[#b8f048] dark:hover:decoration-[#b8f048]">
+                                    Lihat
+                                </button>
+                            </div>
+                            <input type="password" name="password" id="password"
+                                   required autocomplete="current-password"
+                                   class="w-full rounded-lg border border-[#d5ddc9] bg-white px-3 py-2.5 font-mono text-sm transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#4a7a0a] dark:border-[#6b7784] dark:bg-[#111111] dark:focus:ring-[#b8f048]">
+                            @error('password')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <button type="submit"
+                                class="flex w-full items-center justify-between rounded-lg bg-[#b8f048] px-4 py-2.5 text-sm font-semibold text-[#111111] transition hover:bg-[#a0d040] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a7a0a] dark:focus-visible:outline-[#b8f048]">
+                            Masuk
+                            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" class="h-4 w-4">
+                                <path d="M3 8h9.5M9 4.5 12.5 8 9 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <p class="mt-5 text-center text-xs leading-relaxed text-[#5b6659] lg:text-left dark:text-[#8b95a1]">
@@ -164,12 +246,26 @@
             terapkan(html.classList.contains('dark'));
 
             if (tombol) {
-                tombol.addEventListener('click', function () {
-                    var gelap = !html.classList.contains('dark');
-                    terapkan(gelap);
-                    try { localStorage.setItem('tema', gelap ? 'dark' : 'light'); } catch (e) { }
-                });
-            }
+                            tombol.addEventListener('click', function () {
+                                var gelap = !html.classList.contains('dark');
+                                terapkan(gelap);
+                                try { localStorage.setItem('tema', gelap ? 'dark' : 'light'); } catch (e) { }
+                            });
+                        }
+
+                        // Tampilkan atau sembunyikan isi password.
+                        var lihat = document.getElementById('tombol-lihat');
+                        var sandi = document.getElementById('password');
+
+                        if (lihat && sandi) {
+                            lihat.addEventListener('click', function () {
+                                var terbuka = sandi.type === 'text';
+                                sandi.type = terbuka ? 'password' : 'text';
+                                lihat.textContent = terbuka ? 'Lihat' : 'Tutup';
+                                lihat.setAttribute('aria-pressed', terbuka ? 'false' : 'true');
+                                lihat.setAttribute('aria-label', terbuka ? 'Tampilkan password' : 'Sembunyikan password');
+                            });
+                        }
         })();
     </script>
 </body>
