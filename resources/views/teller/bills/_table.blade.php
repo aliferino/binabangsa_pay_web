@@ -6,13 +6,13 @@
     memakai URL yang sedang dibuka supaya filter tetap bekerja untuk keduanya.
 --}}
 <form method="GET" action="{{ url()->current() }}"
-      class="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      class="mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white p-4 shadow-sm">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
 
         <div>
-            <label for="filter_id_siswa" class="mb-1 block text-xs font-medium text-slate-600">Siswa</label>
+            <label for="filter_id_siswa" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Siswa</label>
             <select name="id_siswa" id="filter_id_siswa"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua siswa</option>
                 @foreach ($daftar_siswa as $siswa)
                     <option value="{{ $siswa->id_siswa }}" @selected(($filter['id_siswa'] ?? '') == $siswa->id_siswa)>
@@ -23,9 +23,9 @@
         </div>
 
         <div>
-            <label for="filter_bulan" class="mb-1 block text-xs font-medium text-slate-600">Bulan</label>
+            <label for="filter_bulan" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Bulan</label>
             <select name="bulan" id="filter_bulan"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua bulan</option>
                 @foreach (['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $angka => $nama)
                     <option value="{{ $angka + 1 }}" @selected(($filter['bulan'] ?? '') == $angka + 1)>
@@ -36,9 +36,9 @@
         </div>
 
         <div>
-            <label for="filter_tahun" class="mb-1 block text-xs font-medium text-slate-600">Tahun</label>
+            <label for="filter_tahun" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Tahun</label>
             <select name="tahun" id="filter_tahun"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua tahun</option>
                 @foreach ($daftar_tahun as $tahun)
                     <option value="{{ $tahun }}" @selected(($filter['tahun'] ?? '') == $tahun)>{{ $tahun }}</option>
@@ -47,9 +47,9 @@
         </div>
 
         <div>
-            <label for="filter_status" class="mb-1 block text-xs font-medium text-slate-600">Status</label>
+            <label for="filter_status" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Status</label>
             <select name="status" id="filter_status"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua status</option>
                 <option value="belum_bayar" @selected(($filter['status'] ?? '') === 'belum_bayar')>Belum bayar</option>
                 <option value="lunas" @selected(($filter['status'] ?? '') === 'lunas')>Lunas</option>
@@ -59,11 +59,11 @@
 
         <div class="flex items-end gap-2">
             <button type="submit"
-                    class="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">
+                    class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                 Terapkan
             </button>
             <a href="{{ url()->current() }}"
-               class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+               class="rounded-lg border border-garis dark:border-garis-gelap bg-white px-4 py-2 text-sm font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
                 Reset
             </a>
         </div>
@@ -71,10 +71,10 @@
 </form>
 
 {{-- Tabel tagihan. --}}
-<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+<div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white shadow-sm">
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-200 text-sm">
-            <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+        <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
+            <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">
                 <tr>
                     <th class="px-5 py-3 font-semibold">Siswa</th>
                     <th class="px-5 py-3 font-semibold">Kelas</th>
@@ -85,19 +85,19 @@
                     <th class="px-5 py-3 text-right font-semibold">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-garis dark:divide-garis-gelap">
                 @forelse ($daftar_tagihan as $tagihan)
-                    <tr class="hover:bg-slate-50">
+                    <tr class="hover:bg-latar-2 dark:hover:bg-gelap">
                         <td class="px-5 py-3">
-                            <span class="font-medium text-slate-800">{{ $tagihan->siswa?->nama ?? '-' }}</span>
-                            <span class="block text-xs text-slate-500">{{ $tagihan->siswa?->nis }}</span>
+                            <span class="font-medium text-tinta dark:text-teks-gelap">{{ $tagihan->siswa?->nama ?? '-' }}</span>
+                            <span class="block text-xs text-redup dark:text-redup-gelap">{{ $tagihan->siswa?->nis }}</span>
                         </td>
-                        <td class="px-5 py-3 text-slate-600">{{ $tagihan->siswa?->kelas?->nama_kelas ?? '-' }}</td>
-                        <td class="px-5 py-3 text-slate-700">{{ $tagihan->namaBulan() }} {{ $tagihan->tahun }}</td>
-                        <td class="px-5 py-3 text-slate-800">
+                        <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ $tagihan->siswa?->kelas?->nama_kelas ?? '-' }}</td>
+                        <td class="px-5 py-3 text-tinta dark:text-teks-gelap">{{ $tagihan->namaBulan() }} {{ $tagihan->tahun }}</td>
+                        <td class="px-5 py-3 text-tinta dark:text-teks-gelap">
                             Rp{{ number_format((float) $tagihan->nominal, 0, ',', '.') }}
                         </td>
-                        <td class="px-5 py-3 text-slate-600">
+                        <td class="px-5 py-3 text-redup dark:text-redup-gelap">
                             {{ $tagihan->tanggal_jatuh_tempo?->format('d/m/Y') ?? '-' }}
                         </td>
                         <td class="px-5 py-3">
@@ -106,7 +106,7 @@
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
                                 <a href="{{ route('tagihan-spp.show', $tagihan) }}"
-                                   class="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                                   class="rounded-md border border-garis dark:border-garis-gelap px-2.5 py-1 text-xs font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
                                     Detail
                                 </a>
 
@@ -122,7 +122,7 @@
                                             data-nominal="{{ (int) $tagihan->nominal }}"
                                             data-tanggal_jatuh_tempo="{{ $tagihan->tanggal_jatuh_tempo?->format('Y-m-d') }}"
                                             data-status="{{ $tagihan->status }}"
-                                            class="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                                            class="rounded-md border border-garis dark:border-garis-gelap px-2.5 py-1 text-xs font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
                                         Ubah
                                     </button>
 
@@ -141,7 +141,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-5 py-8 text-center text-slate-500">
+                        <td colspan="7" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
                             Tidak ada tagihan yang cocok dengan filter ini.
                         </td>
                     </tr>

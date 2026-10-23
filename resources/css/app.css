@@ -179,6 +179,43 @@ select option {
     color: #e8ecf1;
 }
 
+/*
+    Kolom tanggal (input type="date").
+
+    Ikon kalender bawaan browser diganti ikon sendiri supaya warnanya ikut
+    tema, sama seperti dropdown di atas. Di Chrome ikon bawaan dilebarkan
+    menutupi seluruh kolom dengan opasitas 0, jadi klik di mana saja
+    membuka kalender, bukan hanya di ikon kecilnya.
+
+    ponytail: Firefox tidak punya ::-webkit-calendar-picker-indicator,
+    jadi di sana tetap ikon bawaan. Tambah penangkap sendiri kalau
+    Firefox perlu ikut bergaya.
+*/
+input[type="date"] {
+    position: relative;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%235b6659' stroke-width='1.4' stroke-linecap='round'%3E%3Crect x='2.5' y='3.5' width='11' height='10' rx='1.5'/%3E%3Cpath d='M2.5 6.5h11M5.5 2v3M10.5 2v3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.dark input[type="date"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%238b95a1' stroke-width='1.4' stroke-linecap='round'%3E%3Crect x='2.5' y='3.5' width='11' height='10' rx='1.5'/%3E%3Cpath d='M2.5 6.5h11M5.5 2v3M10.5 2v3'/%3E%3C/svg%3E");
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
 .tombol-tekan {
     box-shadow: 0 2px 0 0 rgba(17, 17, 17, 0.18);
     transition: transform 120ms ease, box-shadow 120ms ease, background-color 150ms ease;

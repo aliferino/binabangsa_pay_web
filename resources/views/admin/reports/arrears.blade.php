@@ -15,13 +15,13 @@
 
     {{-- Form filter. --}}
     <form method="GET" action="{{ route('laporan.tunggakan') }}"
-          class="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          class="mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white p-4 shadow-sm">
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 
             <div>
-                <label for="id_jurusan" class="mb-1 block text-xs font-medium text-slate-600">Jurusan</label>
+                <label for="id_jurusan" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Jurusan</label>
                 <select name="id_jurusan" id="id_jurusan"
-                        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Semua jurusan</option>
                     @foreach ($daftar_jurusan as $jurusan)
                         <option value="{{ $jurusan->id_jurusan }}" @selected(($filter['id_jurusan'] ?? '') == $jurusan->id_jurusan)>
@@ -32,9 +32,9 @@
             </div>
 
             <div>
-                <label for="id_kelas" class="mb-1 block text-xs font-medium text-slate-600">Kelas</label>
+                <label for="id_kelas" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Kelas</label>
                 <select name="id_kelas" id="id_kelas"
-                        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Semua kelas</option>
                     @foreach ($daftar_kelas as $kelas)
                         <option value="{{ $kelas->id_kelas }}" @selected(($filter['id_kelas'] ?? '') == $kelas->id_kelas)>
@@ -46,11 +46,11 @@
 
             <div class="flex items-end gap-2 sm:col-span-2">
                 <button type="submit"
-                        class="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">
+                        class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                     Terapkan
                 </button>
                 <a href="{{ route('laporan.tunggakan') }}"
-                   class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                   class="rounded-lg border border-garis dark:border-garis-gelap bg-white px-4 py-2 text-sm font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
                     Reset
                 </a>
             </div>
@@ -69,10 +69,10 @@
     </div>
 
     {{-- Tabel tunggakan. --}}
-    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white shadow-sm">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200 text-sm">
-                <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+            <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
+                <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">
                     <tr>
                         <th class="px-5 py-3 font-semibold">NIS</th>
                         <th class="px-5 py-3 font-semibold">Nama</th>
@@ -82,30 +82,30 @@
                         <th class="px-5 py-3 font-semibold">Total nominal</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-garis dark:divide-garis-gelap">
                     @forelse ($daftar_tunggakan as $baris)
-                        <tr class="hover:bg-slate-50">
-                            <td class="px-5 py-3 font-medium text-slate-800">{{ data_get($baris, 'nis') }}</td>
-                            <td class="px-5 py-3 text-slate-800">{{ data_get($baris, 'nama') }}</td>
-                            <td class="px-5 py-3 text-slate-600">{{ data_get($baris, 'kelas') ?? '-' }}</td>
-                            <td class="px-5 py-3 text-slate-600">{{ data_get($baris, 'bulan_tunggakan') ?: '-' }}</td>
-                            <td class="px-5 py-3 text-slate-600">{{ data_get($baris, 'jumlah_tunggakan') }}</td>
+                        <tr class="hover:bg-latar-2 dark:hover:bg-gelap">
+                            <td class="px-5 py-3 font-medium text-tinta dark:text-teks-gelap">{{ data_get($baris, 'nis') }}</td>
+                            <td class="px-5 py-3 text-tinta dark:text-teks-gelap">{{ data_get($baris, 'nama') }}</td>
+                            <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'kelas') ?? '-' }}</td>
+                            <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'bulan_tunggakan') ?: '-' }}</td>
+                            <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'jumlah_tunggakan') }}</td>
                             <td class="px-5 py-3 font-medium text-red-700">
                                 Rp{{ number_format((float) data_get($baris, 'total_nominal', 0), 0, ',', '.') }}
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-8 text-center text-slate-500">
+                            <td colspan="6" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
                                 Tidak ada tunggakan pada filter ini.
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
                 @if ($daftar_tunggakan->isNotEmpty())
-                    <tfoot class="bg-slate-50">
+                    <tfoot class="bg-latar-2 dark:bg-gelap">
                         <tr>
-                            <td colspan="5" class="px-5 py-3 text-right text-sm font-semibold text-slate-700">Total</td>
+                            <td colspan="5" class="px-5 py-3 text-right text-sm font-semibold text-tinta dark:text-teks-gelap">Total</td>
                             <td class="px-5 py-3 text-sm font-bold text-red-800">
                                 Rp{{ number_format((float) $total_semua, 0, ',', '.') }}
                             </td>

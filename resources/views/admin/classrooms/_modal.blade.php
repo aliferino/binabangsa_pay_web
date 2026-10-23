@@ -9,7 +9,7 @@
     <div class="absolute inset-0 bg-slate-900/50 dark:bg-black/70" data-modal-tutup></div>
 
     <div class="relative mx-auto mt-10 w-full max-w-2xl px-4 pb-10">
-        <div class="overflow-hidden rounded-xl border border-garis bg-white shadow-lg dark:border-garis-gelap dark:bg-gelap-2">
+        <div class="overflow-hidden rounded-xl border border-garis bg-white shadow-lg dark:border-garis-gelap dark:bg-gelap-2 dark:border-garis-gelap dark:bg-gelap-2">
 
             <div class="flex items-center justify-between border-b border-garis px-5 py-4 dark:border-garis-gelap">
                 <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap" data-modal-judul>Tambah Kelas</h2>

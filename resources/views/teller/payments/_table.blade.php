@@ -6,25 +6,25 @@
     memakai URL yang sedang dibuka supaya filter tetap bekerja untuk keduanya.
 --}}
 <form method="GET" action="{{ url()->current() }}"
-      class="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      class="mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white p-4 shadow-sm">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
 
         <div>
-            <label for="filter_dari" class="mb-1 block text-xs font-medium text-slate-600">Dari tanggal</label>
+            <label for="filter_dari" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Dari tanggal</label>
             <input type="date" name="dari" id="filter_dari" value="{{ $filter['dari'] ?? '' }}"
-                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                   class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
         </div>
 
         <div>
-            <label for="filter_sampai" class="mb-1 block text-xs font-medium text-slate-600">Sampai tanggal</label>
+            <label for="filter_sampai" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Sampai tanggal</label>
             <input type="date" name="sampai" id="filter_sampai" value="{{ $filter['sampai'] ?? '' }}"
-                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                   class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
         </div>
 
         <div>
-            <label for="filter_metode_pembayaran" class="mb-1 block text-xs font-medium text-slate-600">Metode</label>
+            <label for="filter_metode_pembayaran" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Metode</label>
             <select name="metode_pembayaran" id="filter_metode_pembayaran"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua metode</option>
                 <option value="tunai" @selected(($filter['metode_pembayaran'] ?? '') === 'tunai')>Tunai</option>
                 <option value="qris" @selected(($filter['metode_pembayaran'] ?? '') === 'qris')>QRIS</option>
@@ -33,9 +33,9 @@
         </div>
 
         <div>
-            <label for="filter_siswa_id" class="mb-1 block text-xs font-medium text-slate-600">Siswa</label>
+            <label for="filter_siswa_id" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Siswa</label>
             <select name="siswa_id" id="filter_siswa_id"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua siswa</option>
                 @foreach ($daftar_siswa as $siswa)
                     <option value="{{ $siswa->id_siswa }}" @selected(($filter['siswa_id'] ?? '') == $siswa->id_siswa)>
@@ -46,9 +46,9 @@
         </div>
 
         <div>
-            <label for="filter_status" class="mb-1 block text-xs font-medium text-slate-600">Status</label>
+            <label for="filter_status" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Status</label>
             <select name="status" id="filter_status"
-                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua status</option>
                 <option value="berhasil" @selected(($filter['status'] ?? '') === 'berhasil')>Berhasil</option>
                 <option value="gagal" @selected(($filter['status'] ?? '') === 'gagal')>Gagal</option>
@@ -58,11 +58,11 @@
 
         <div class="flex items-end gap-2">
             <button type="submit"
-                    class="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">
+                    class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                 Terapkan
             </button>
             <a href="{{ url()->current() }}"
-               class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+               class="rounded-lg border border-garis dark:border-garis-gelap bg-white px-4 py-2 text-sm font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
                 Reset
             </a>
         </div>
@@ -70,10 +70,10 @@
 </form>
 
 {{-- Tabel pembayaran. --}}
-<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+<div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white shadow-sm">
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-200 text-sm">
-            <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+        <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
+            <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">
                 <tr>
                     <th class="px-5 py-3 font-semibold">Tanggal</th>
                     <th class="px-5 py-3 font-semibold">Siswa</th>
@@ -83,20 +83,20 @@
                     <th class="px-5 py-3 text-right font-semibold">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-garis dark:divide-garis-gelap">
                 @forelse ($daftar_pembayaran as $pembayaran)
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-5 py-3 text-slate-600">
+                    <tr class="hover:bg-latar-2 dark:hover:bg-gelap">
+                        <td class="px-5 py-3 text-redup dark:text-redup-gelap">
                             {{ $pembayaran->created_at?->format('d/m/Y H:i') ?? '-' }}
                         </td>
                         <td class="px-5 py-3">
-                            <span class="font-medium text-slate-800">{{ $pembayaran->siswa?->nama ?? '-' }}</span>
-                            <span class="block text-xs text-slate-500">{{ $pembayaran->siswa?->nis }}</span>
+                            <span class="font-medium text-tinta dark:text-teks-gelap">{{ $pembayaran->siswa?->nama ?? '-' }}</span>
+                            <span class="block text-xs text-redup dark:text-redup-gelap">{{ $pembayaran->siswa?->nis }}</span>
                         </td>
-                        <td class="px-5 py-3 text-slate-800">
+                        <td class="px-5 py-3 text-tinta dark:text-teks-gelap">
                             Rp{{ number_format((float) $pembayaran->nominal_pembayaran, 0, ',', '.') }}
                         </td>
-                        <td class="px-5 py-3 text-slate-600">
+                        <td class="px-5 py-3 text-redup dark:text-redup-gelap">
                             @php
                                 $labelMetode = [
                                     'tunai' => 'Tunai',
@@ -111,9 +111,9 @@
                                 $petaStatus = [
                                     'berhasil' => ['label' => 'Berhasil', 'kelas' => 'bg-emerald-100 text-emerald-800'],
                                     'gagal' => ['label' => 'Gagal', 'kelas' => 'bg-red-100 text-red-800'],
-                                    'dibatalkan' => ['label' => 'Dibatalkan', 'kelas' => 'bg-slate-100 text-slate-700'],
+                                    'dibatalkan' => ['label' => 'Dibatalkan', 'kelas' => 'bg-latar-2 dark:bg-gelap text-tinta dark:text-teks-gelap'],
                                 ];
-                                $dataStatus = $petaStatus[$pembayaran->status] ?? ['label' => $pembayaran->status, 'kelas' => 'bg-slate-100 text-slate-700'];
+                                $dataStatus = $petaStatus[$pembayaran->status] ?? ['label' => $pembayaran->status, 'kelas' => 'bg-latar-2 dark:bg-gelap text-tinta dark:text-teks-gelap'];
                             @endphp
                             <span class="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $dataStatus['kelas'] }}">
                                 {{ $dataStatus['label'] }}
@@ -122,7 +122,7 @@
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
                                 <a href="{{ route('teller.payments.show', $pembayaran) }}"
-                                   class="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                                   class="rounded-md border border-garis dark:border-garis-gelap px-2.5 py-1 text-xs font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
                                     Lihat
                                 </a>
                             </div>
@@ -130,7 +130,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-5 py-8 text-center text-slate-500">
+                        <td colspan="6" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
                             Tidak ada pembayaran yang cocok dengan filter ini.
                         </td>
                     </tr>
