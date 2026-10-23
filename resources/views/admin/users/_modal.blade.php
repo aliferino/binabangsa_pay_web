@@ -1,7 +1,7 @@
 {{--
     Modal tambah dan ubah pengguna. Satu modal dipakai untuk dua keperluan.
     Tombol Tambah membuka modal dengan form kosong, tombol Ubah mengisi form
-    dari atribut data pada tombolnya. Scriptnya ada di partials._modal-script.
+    dari atribut data pada tombolnya. Scriptnya ada di layouts.partials._modal-script.
 
     Password tidak wajib di atribut required karena saat mengubah boleh kosong.
     Aturan wajib isi saat menambah tetap dijaga validasi di controller.
@@ -40,7 +40,7 @@
                             </label>
                             <input type="text" name="nama" id="nama" value="{{ old('nama') }}" required
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'nama'])
+                            @include('layouts.partials._error', ['nama' => 'nama'])
                         </div>
 
                         <div>
@@ -50,7 +50,7 @@
                             <input type="text" name="username" id="username" value="{{ old('username') }}" required
                                    autocomplete="off"
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'username'])
+                            @include('layouts.partials._error', ['nama' => 'username'])
                         </div>
 
                         <div>
@@ -58,7 +58,7 @@
                             <input type="password" name="password" id="password"
                                    autocomplete="new-password"
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'password'])
+                            @include('layouts.partials._error', ['nama' => 'password'])
                             <p class="mt-1 text-xs text-slate-500"
                                data-modal-petunjuk-tambah="Minimal 6 karakter."
                                data-modal-petunjuk-ubah="Kosongkan kalau tidak ingin mengganti password. Kalau diisi, minimal 6 karakter.">
@@ -78,7 +78,7 @@
                                 <option value="teller" @selected(old('role') === 'teller')>Teller</option>
                                 <option value="siswa" @selected(old('role') === 'siswa')>Siswa</option>
                             </select>
-                            @include('partials._error', ['nama' => 'role'])
+                            @include('layouts.partials._error', ['nama' => 'role'])
                         </div>
 
                         <div>
@@ -90,7 +90,7 @@
                                 <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
                                 <option value="nonaktif" @selected(old('status') === 'nonaktif')>Nonaktif</option>
                             </select>
-                            @include('partials._error', ['nama' => 'status'])
+                            @include('layouts.partials._error', ['nama' => 'status'])
                         </div>
                     </div>
                 </div>

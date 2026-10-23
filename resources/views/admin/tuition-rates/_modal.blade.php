@@ -1,7 +1,7 @@
 {{--
     Modal tambah dan ubah tarif SPP. Satu modal dipakai untuk dua keperluan.
     Tombol Tambah membuka modal dengan form kosong, tombol Ubah mengisi form
-    dari atribut data pada tombolnya. Scriptnya ada di partials._modal-script.
+    dari atribut data pada tombolnya. Scriptnya ada di layouts.partials._modal-script.
 --}}
 <div id="modal-tarif-spp" class="fixed inset-0 z-40 hidden" data-modal
      data-judul-tambah="Tambah Tarif SPP"
@@ -44,7 +44,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @include('partials._error', ['nama' => 'id_tahun_ajaran'])
+                            @include('layouts.partials._error', ['nama' => 'id_tahun_ajaran'])
                         </div>
 
                         <div>
@@ -54,7 +54,7 @@
                             <input type="number" name="nominal" id="nominal" min="1" step="1000"
                                    value="{{ old('nominal') }}" required placeholder="Contoh: 350000"
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'nominal'])
+                            @include('layouts.partials._error', ['nama' => 'nominal'])
                             <p class="mt-1 text-xs text-slate-500">Isi angka saja, tanpa titik atau tanda rupiah.</p>
                         </div>
 
@@ -62,7 +62,7 @@
                             <label for="keterangan" class="mb-1 block text-sm font-medium text-slate-700">Keterangan</label>
                             <textarea name="keterangan" id="keterangan" rows="3"
                                       class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">{{ old('keterangan') }}</textarea>
-                            @include('partials._error', ['nama' => 'keterangan'])
+                            @include('layouts.partials._error', ['nama' => 'keterangan'])
                         </div>
 
                         <div>
@@ -74,7 +74,7 @@
                                 <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
                                 <option value="nonaktif" @selected(old('status') === 'nonaktif')>Nonaktif</option>
                             </select>
-                            @include('partials._error', ['nama' => 'status'])
+                            @include('layouts.partials._error', ['nama' => 'status'])
                         </div>
                     </div>
                 </div>

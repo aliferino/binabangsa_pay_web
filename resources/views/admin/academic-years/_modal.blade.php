@@ -1,7 +1,7 @@
 {{--
     Modal tambah dan ubah tahun ajaran. Satu modal dipakai untuk dua keperluan.
     Tombol Tambah membuka modal dengan form kosong, tombol Ubah mengisi form
-    dari atribut data pada tombolnya. Scriptnya ada di partials._modal-script.
+    dari atribut data pada tombolnya. Scriptnya ada di layouts.partials._modal-script.
 --}}
 <div id="modal-tahun-ajaran" class="fixed inset-0 z-40 hidden" data-modal
      data-judul-tambah="Tambah Tahun Ajaran"
@@ -38,7 +38,7 @@
                             <input type="text" name="tahun_ajaran" id="tahun_ajaran"
                                    value="{{ old('tahun_ajaran') }}" required placeholder="Contoh: 2026/2027"
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'tahun_ajaran'])
+                            @include('layouts.partials._error', ['nama' => 'tahun_ajaran'])
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -49,7 +49,7 @@
                                 <input type="date" name="tanggal_mulai" id="tanggal_mulai"
                                        value="{{ old('tanggal_mulai') }}" required
                                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                                @include('partials._error', ['nama' => 'tanggal_mulai'])
+                                @include('layouts.partials._error', ['nama' => 'tanggal_mulai'])
                             </div>
 
                             <div>
@@ -59,7 +59,7 @@
                                 <input type="date" name="tanggal_selesai" id="tanggal_selesai"
                                        value="{{ old('tanggal_selesai') }}" required
                                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                                @include('partials._error', ['nama' => 'tanggal_selesai'])
+                                @include('layouts.partials._error', ['nama' => 'tanggal_selesai'])
                             </div>
                         </div>
 
@@ -72,7 +72,7 @@
                                 <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
                                 <option value="nonaktif" @selected(old('status') === 'nonaktif')>Nonaktif</option>
                             </select>
-                            @include('partials._error', ['nama' => 'status'])
+                            @include('layouts.partials._error', ['nama' => 'status'])
                             <p class="mt-1 text-xs text-slate-500">
                                 Kalau dipilih aktif, tahun ajaran lain otomatis dinonaktifkan.
                             </p>

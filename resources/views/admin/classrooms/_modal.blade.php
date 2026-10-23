@@ -1,7 +1,7 @@
 {{--
     Modal tambah dan ubah kelas. Satu modal dipakai untuk dua keperluan.
     Tombol Tambah membuka modal dengan form kosong, tombol Ubah mengisi form
-    dari atribut data pada tombolnya. Scriptnya ada di partials._modal-script.
+    dari atribut data pada tombolnya. Scriptnya ada di layouts.partials._modal-script.
 --}}
 <div id="modal-kelas" class="fixed inset-0 z-40 hidden" data-modal
      data-judul-tambah="Tambah Kelas"
@@ -38,7 +38,7 @@
                             <input type="text" name="nama_kelas" id="nama_kelas"
                                    value="{{ old('nama_kelas') }}" required placeholder="Contoh: XI RPL 1"
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'nama_kelas'])
+                            @include('layouts.partials._error', ['nama' => 'nama_kelas'])
                         </div>
 
                         <div>
@@ -48,7 +48,7 @@
                             <input type="text" name="tingkat" id="tingkat"
                                    value="{{ old('tingkat') }}" required placeholder="Contoh: XI"
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'tingkat'])
+                            @include('layouts.partials._error', ['nama' => 'tingkat'])
                         </div>
 
                         <div>
@@ -64,7 +64,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @include('partials._error', ['nama' => 'id_jurusan'])
+                            @include('layouts.partials._error', ['nama' => 'id_jurusan'])
                         </div>
 
                         <div>
@@ -80,7 +80,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            @include('partials._error', ['nama' => 'id_tahun_ajaran'])
+                            @include('layouts.partials._error', ['nama' => 'id_tahun_ajaran'])
                         </div>
                     </div>
                 </div>

@@ -28,7 +28,7 @@
 
     @if (auth()->user()->role === 'admin')
         @include('teller.bills._modal')
-        @include('partials._modal-script')
+        @include('layouts.partials._modal-script')
     @endif
 
 @endsection

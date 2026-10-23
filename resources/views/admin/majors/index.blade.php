@@ -18,7 +18,7 @@
 
     @if (auth()->user()->role === 'admin')
         @include('admin.majors._modal')
-        @include('partials._modal-script')
+        @include('layouts.partials._modal-script')
     @endif
 
 @endsection

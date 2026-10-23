@@ -9,57 +9,63 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-slate-100 font-sans text-slate-800 antialiased">
+<body class="min-h-screen bg-latar-2 font-sans text-tinta antialiased dark:bg-gelap dark:text-teks-gelap">
 
     {{-- Bilah atas untuk layar kecil, berisi tombol buka menu. --}}
-    <header class="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
+    <header class="sticky top-0 z-30 flex items-center justify-between border-b border-garis bg-white px-4 py-3 lg:hidden dark:border-garis-gelap dark:bg-gelap-2">
         <div class="flex items-center gap-2">
-            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-700 text-sm font-bold text-white">BB</span>
-            <span class="text-sm font-semibold text-slate-800">BinaBangsa Pay</span>
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-neon text-sm font-bold text-tinta">BB</span>
+            <span class="text-sm font-semibold text-tinta dark:text-teks-gelap">BinaBangsa Pay</span>
         </div>
         <button type="button" id="tombol-menu"
-                class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                class="rounded-lg border border-garis px-3 py-1.5 text-sm font-medium text-redup hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap"
                 aria-controls="menu-samping" aria-expanded="false">
             Menu
         </button>
     </header>
 
-    <div class="lg:flex">
+    <div class="lg:flex lg:items-start">
 
-        {{-- Menu samping. Di layar kecil disembunyikan dulu, dibuka lewat tombol Menu. --}}
+        {{-- Menu samping. Isinya dipilih oleh layouts.partials._sidebar sesuai role.
+             Menempel setinggi layar dan menggulir sendiri, tidak ikut halaman. --}}
         <aside id="menu-samping"
-               class="hidden w-full shrink-0 border-b border-slate-200 bg-white lg:block lg:min-h-screen lg:w-64 lg:border-b-0 lg:border-r">
-            @include('partials._navigation')
+               class="hidden w-full shrink-0 border-b border-garis lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:self-start lg:overflow-hidden lg:border-b-0 lg:border-r dark:border-garis-gelap">
+            @include('layouts.partials._sidebar')
         </aside>
 
-        {{-- Isi halaman. --}}
-        <main class="min-w-0 flex-1 px-4 py-6 lg:px-8 lg:py-8">
-            <div class="mx-auto max-w-7xl">
+        {{-- Kolom isi halaman. Footer ikut kolom ini, bukan selebar halaman. --}}
+        <div class="flex min-w-0 flex-1 flex-col">
 
-                {{-- Judul halaman dan keterangan singkat. --}}
-                <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
-                    <div>
-                        <h1 class="text-xl font-bold text-slate-900 sm:text-2xl">@yield('judul', 'Beranda')</h1>
-                        @hasSection('keterangan')
-                            <p class="mt-1 text-sm text-slate-500">@yield('keterangan')</p>
+            <main class="min-w-0 flex-1 px-4 py-6 lg:px-8 lg:py-8">
+                <div class="mx-auto max-w-6xl">
+
+                    {{-- Judul halaman dan keterangan singkat. --}}
+                    <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+                        <div class="min-w-0">
+                            <h1 class="text-xl font-bold tracking-tight text-tinta sm:text-2xl dark:text-teks-gelap">@yield('judul', 'Beranda')</h1>
+                            @hasSection('keterangan')
+                                <p class="mt-1 text-sm text-redup dark:text-redup-gelap">@yield('keterangan')</p>
+                            @endif
+                        </div>
+                        @hasSection('aksi')
+                            <div class="flex flex-wrap items-center gap-2">@yield('aksi')</div>
                         @endif
                     </div>
-                    @hasSection('aksi')
-                        <div class="flex flex-wrap items-center gap-2">@yield('aksi')</div>
-                    @endif
+
+                    {{-- Pesan sukses atau gagal dari controller. --}}
+                    @include('layouts.partials._flash')
+
+                    @yield('isi')
                 </div>
+            </main>
 
-                {{-- Pesan sukses atau gagal dari controller. --}}
-                @include('partials._flash')
-
-                @yield('isi')
-            </div>
-        </main>
+            <footer class="border-t border-garis bg-white dark:border-garis-gelap dark:bg-gelap-2">
+                <div class="mx-auto max-w-6xl px-4 py-4 text-center text-xs text-redup lg:px-8 dark:text-redup-gelap">
+                    SMK Bina Bangsa, Sistem Pembayaran SPP
+                </div>
+            </footer>
+        </div>
     </div>
-
-    <footer class="border-t border-slate-200 bg-white px-4 py-4 text-center text-xs text-slate-500 lg:px-8">
-        SMK Bina Bangsa, Sistem Pembayaran SPP
-    </footer>
 
     <script>
         // Buka dan tutup menu samping di layar kecil.

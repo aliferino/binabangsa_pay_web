@@ -1,7 +1,7 @@
 {{--
     Modal tambah dan ubah jurusan. Satu modal dipakai untuk dua keperluan.
     Tombol Tambah membuka modal dengan form kosong, tombol Ubah mengisi form
-    dari atribut data pada tombolnya. Scriptnya ada di partials._modal-script.
+    dari atribut data pada tombolnya. Scriptnya ada di layouts.partials._modal-script.
 --}}
 <div id="modal-jurusan" class="fixed inset-0 z-40 hidden" data-modal
      data-judul-tambah="Tambah Jurusan"
@@ -38,7 +38,7 @@
                             <input type="text" name="kode_jurusan" id="kode_jurusan"
                                    value="{{ old('kode_jurusan') }}" required
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'kode_jurusan'])
+                            @include('layouts.partials._error', ['nama' => 'kode_jurusan'])
                         </div>
 
                         <div>
@@ -48,14 +48,14 @@
                             <input type="text" name="nama_jurusan" id="nama_jurusan"
                                    value="{{ old('nama_jurusan') }}" required
                                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
-                            @include('partials._error', ['nama' => 'nama_jurusan'])
+                            @include('layouts.partials._error', ['nama' => 'nama_jurusan'])
                         </div>
 
                         <div>
                             <label for="keterangan" class="mb-1 block text-sm font-medium text-slate-700">Keterangan</label>
                             <textarea name="keterangan" id="keterangan" rows="3"
                                       class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">{{ old('keterangan') }}</textarea>
-                            @include('partials._error', ['nama' => 'keterangan'])
+                            @include('layouts.partials._error', ['nama' => 'keterangan'])
                         </div>
                     </div>
                 </div>

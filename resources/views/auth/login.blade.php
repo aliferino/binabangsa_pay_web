@@ -24,7 +24,7 @@
 
     <div class="grain" aria-hidden="true"></div>
 
-    @include('partials._navigation-web')
+    @include('layouts.partials._navigation-web')
 
     {{-- Dua kolom di layar lebar: keterangan di kiri, form di kanan.
          Di ponsel dan tablet hanya form yang tampil, keterangannya disembunyikan
