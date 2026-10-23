@@ -6,12 +6,12 @@
 @section('aksi')
     @if (auth()->user()->role === 'admin')
         <a href="{{ route('jurusan.edit', $jurusan) }}"
-           class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+           class="rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">
             Ubah
         </a>
     @endif
     <a href="{{ route('jurusan.index') }}"
-       class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+       class="rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">
         Kembali
     </a>
 @endsection
@@ -21,51 +21,51 @@
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
         {{-- Data jurusan. --}}
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-1">
-            <h2 class="text-sm font-semibold text-slate-700">Data jurusan</h2>
+        <div class="rounded-xl border border-garis bg-white p-5 shadow-sm dark:border-garis-gelap dark:bg-gelap-2 lg:col-span-1">
+            <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Data jurusan</h2>
             <dl class="mt-3 space-y-3 text-sm">
                 <div>
-                    <dt class="text-slate-500">Kode jurusan</dt>
-                    <dd class="font-medium text-slate-900">{{ $jurusan->kode_jurusan }}</dd>
+                    <dt class="text-redup dark:text-redup-gelap">Kode jurusan</dt>
+                    <dd class="font-medium text-tinta dark:text-teks-gelap">{{ $jurusan->kode_jurusan }}</dd>
                 </div>
                 <div>
-                    <dt class="text-slate-500">Nama jurusan</dt>
-                    <dd class="font-medium text-slate-900">{{ $jurusan->nama_jurusan }}</dd>
+                    <dt class="text-redup dark:text-redup-gelap">Nama jurusan</dt>
+                    <dd class="font-medium text-tinta dark:text-teks-gelap">{{ $jurusan->nama_jurusan }}</dd>
                 </div>
                 <div>
-                    <dt class="text-slate-500">Keterangan</dt>
-                    <dd class="text-slate-700">{{ $jurusan->keterangan ?: '-' }}</dd>
+                    <dt class="text-redup dark:text-redup-gelap">Keterangan</dt>
+                    <dd class="text-redup dark:text-redup-gelap">{{ $jurusan->keterangan ?: '-' }}</dd>
                 </div>
             </dl>
         </div>
 
         {{-- Daftar kelas di jurusan ini. --}}
-        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
-            <div class="border-b border-slate-200 px-5 py-4">
-                <h2 class="text-sm font-semibold text-slate-700">Kelas di jurusan ini</h2>
-                <p class="mt-1 text-xs text-slate-500">
+        <div class="overflow-hidden rounded-xl border border-garis bg-white shadow-sm dark:border-garis-gelap dark:bg-gelap-2 lg:col-span-2">
+            <div class="border-b border-garis px-5 py-4 dark:border-garis-gelap">
+                <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Kelas di jurusan ini</h2>
+                <p class="mt-1 text-xs text-redup dark:text-redup-gelap">
                     Total {{ $jurusan->kelas->count() }} kelas.
                 </p>
             </div>
 
             @if ($jurusan->kelas->isEmpty())
-                <p class="px-5 py-6 text-sm text-slate-500">Belum ada kelas di jurusan ini.</p>
+                <p class="px-5 py-6 text-sm text-redup dark:text-redup-gelap">Belum ada kelas di jurusan ini.</p>
             @else
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200 text-sm">
-                        <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                    <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
+                        <thead class="bg-latar-2 text-left text-xs uppercase tracking-wide text-redup dark:bg-gelap dark:text-redup-gelap">
                             <tr>
                                 <th class="px-5 py-3 font-semibold">Nama kelas</th>
                                 <th class="px-5 py-3 font-semibold">Tingkat</th>
                                 <th class="px-5 py-3 font-semibold">Tahun ajaran</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100">
+                        <tbody class="divide-y divide-garis dark:divide-garis-gelap">
                             @foreach ($jurusan->kelas as $kelas)
-                                <tr class="hover:bg-slate-50">
-                                    <td class="px-5 py-3 font-medium text-slate-800">{{ $kelas->nama_kelas }}</td>
-                                    <td class="px-5 py-3 text-slate-600">{{ $kelas->tingkat }}</td>
-                                    <td class="px-5 py-3 text-slate-600">{{ $kelas->tahunAjaran?->tahun_ajaran ?? '-' }}</td>
+                                <tr class="hover:bg-latar-2 dark:hover:bg-gelap">
+                                    <td class="px-5 py-3 font-medium text-tinta dark:text-teks-gelap">{{ $kelas->nama_kelas }}</td>
+                                    <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ $kelas->tingkat }}</td>
+                                    <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ $kelas->tahunAjaran?->tahun_ajaran ?? '-' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

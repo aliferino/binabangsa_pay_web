@@ -46,7 +46,9 @@ class MajorController extends Controller
     public function show(Major $jurusan)
     {
         return $this->render('admin.majors.show', [
-            'jurusan' => $jurusan->load('kelas'),
+            // kelas.tahunAjaran ikut dimuat, kalau tidak tiap baris tabel
+            // memicu query sendiri (N+1).
+            'jurusan' => $jurusan->load('kelas.tahunAjaran'),
         ]);
     }
 

@@ -17,9 +17,9 @@
         [
             'label' => 'Data master',
             'menu' => [
+                ['rute' => 'tahun-ajaran.index', 'pola' => 'tahun-ajaran.*', 'ikon' => 'i-kalender', 'teks' => 'Tahun Ajaran'],
                 ['rute' => 'jurusan.index', 'pola' => 'jurusan.*', 'ikon' => 'i-jurusan', 'teks' => 'Jurusan'],
                 ['rute' => 'kelas.index', 'pola' => 'kelas.*', 'ikon' => 'i-kelas', 'teks' => 'Kelas'],
-                ['rute' => 'tahun-ajaran.index', 'pola' => 'tahun-ajaran.*', 'ikon' => 'i-kalender', 'teks' => 'Tahun Ajaran'],
                 ['rute' => 'siswa.index', 'pola' => 'siswa.*', 'ikon' => 'i-siswa', 'teks' => 'Siswa'],
                 ['rute' => 'tarif-spp.index', 'pola' => 'tarif-spp.*', 'ikon' => 'i-tarif', 'teks' => 'Tarif SPP'],
             ],

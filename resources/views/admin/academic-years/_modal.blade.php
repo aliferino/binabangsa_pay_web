@@ -6,15 +6,15 @@
 <div id="modal-tahun-ajaran" class="fixed inset-0 z-40 hidden" data-modal
      data-judul-tambah="Tambah Tahun Ajaran"
      data-judul-ubah="Ubah Tahun Ajaran">
-    <div class="absolute inset-0 bg-slate-900/50" data-modal-tutup></div>
+    <div class="absolute inset-0 bg-slate-900/50 dark:bg-black/70" data-modal-tutup></div>
 
     <div class="relative mx-auto mt-10 w-full max-w-2xl px-4 pb-10">
-        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+        <div class="overflow-hidden rounded-xl border border-garis bg-white shadow-lg dark:border-garis-gelap dark:bg-gelap-2">
 
-            <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-                <h2 class="text-sm font-semibold text-slate-800" data-modal-judul>Tambah Tahun Ajaran</h2>
+            <div class="flex items-center justify-between border-b border-garis px-5 py-4 dark:border-garis-gelap">
+                <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap" data-modal-judul>Tambah Tahun Ajaran</h2>
                 <button type="button" data-modal-tutup
-                        class="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                        class="rounded-md border border-garis px-2.5 py-1 text-xs font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:text-teks-gelap dark:hover:bg-gelap">
                     Tutup
                 </button>
             </div>
@@ -32,61 +32,61 @@
                     <div class="space-y-4">
 
                         <div>
-                            <label for="tahun_ajaran" class="mb-1 block text-sm font-medium text-slate-700">
-                                Tahun ajaran <span class="text-red-600">*</span>
+                            <label for="tahun_ajaran" class="mb-1 block text-sm font-medium text-redup dark:text-redup-gelap">
+                                Tahun ajaran <span class="text-red-600 dark:text-red-400">*</span>
                             </label>
                             <input type="text" name="tahun_ajaran" id="tahun_ajaran"
                                    value="{{ old('tahun_ajaran') }}" required placeholder="Contoh: 2026/2027"
-                                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                                   class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
                             @include('layouts.partials._error', ['nama' => 'tahun_ajaran'])
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label for="tanggal_mulai" class="mb-1 block text-sm font-medium text-slate-700">
-                                    Tanggal mulai <span class="text-red-600">*</span>
+                                <label for="tanggal_mulai" class="mb-1 block text-sm font-medium text-redup dark:text-redup-gelap">
+                                    Tanggal mulai <span class="text-red-600 dark:text-red-400">*</span>
                                 </label>
                                 <input type="date" name="tanggal_mulai" id="tanggal_mulai"
                                        value="{{ old('tanggal_mulai') }}" required
-                                       class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                                       class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
                                 @include('layouts.partials._error', ['nama' => 'tanggal_mulai'])
                             </div>
 
                             <div>
-                                <label for="tanggal_selesai" class="mb-1 block text-sm font-medium text-slate-700">
-                                    Tanggal selesai <span class="text-red-600">*</span>
+                                <label for="tanggal_selesai" class="mb-1 block text-sm font-medium text-redup dark:text-redup-gelap">
+                                    Tanggal selesai <span class="text-red-600 dark:text-red-400">*</span>
                                 </label>
                                 <input type="date" name="tanggal_selesai" id="tanggal_selesai"
                                        value="{{ old('tanggal_selesai') }}" required
-                                       class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                                       class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
                                 @include('layouts.partials._error', ['nama' => 'tanggal_selesai'])
                             </div>
                         </div>
 
                         <div>
-                            <label for="status" class="mb-1 block text-sm font-medium text-slate-700">
-                                Status <span class="text-red-600">*</span>
+                            <label for="status" class="mb-1 block text-sm font-medium text-redup dark:text-redup-gelap">
+                                Status <span class="text-red-600 dark:text-red-400">*</span>
                             </label>
                             <select name="status" id="status" required
-                                    class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-100">
+                                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
                                 <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
                                 <option value="nonaktif" @selected(old('status') === 'nonaktif')>Nonaktif</option>
                             </select>
                             @include('layouts.partials._error', ['nama' => 'status'])
-                            <p class="mt-1 text-xs text-slate-500">
+                            <p class="mt-1 text-xs text-redup dark:text-redup-gelap">
                                 Kalau dipilih aktif, tahun ajaran lain otomatis dinonaktifkan.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-2 border-t border-slate-200 px-5 py-4">
+                <div class="flex flex-wrap items-center gap-2 border-t border-garis px-5 py-4 dark:border-garis-gelap">
                     <button type="submit"
-                            class="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">
+                            class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                         Simpan
                     </button>
                     <button type="button" data-modal-tutup
-                            class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                            class="rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">
                         Batal
                     </button>
                 </div>

@@ -52,7 +52,8 @@ class AcademicYearController extends Controller
     public function show(AcademicYear $tahunAjaran)
     {
         return $this->render('admin.academic-years.show', [
-            'tahun_ajaran' => $tahunAjaran->load('kelas', 'tarifSpp'),
+            // kelas.jurusan ikut dimuat supaya tabel kelas tidak query per baris.
+            'tahun_ajaran' => $tahunAjaran->load('kelas.jurusan', 'tarifSpp'),
         ]);
     }
 
