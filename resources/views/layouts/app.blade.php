@@ -12,11 +12,12 @@
 <body class="min-h-screen bg-latar-2 font-sans text-tinta antialiased dark:bg-gelap dark:text-teks-gelap">
 
     {{-- Bilah atas untuk layar kecil, berisi tombol buka menu. --}}
-    <header class="sticky top-0 z-30 flex items-center justify-between border-b border-garis bg-white px-4 py-3 lg:hidden dark:border-garis-gelap dark:bg-gelap-2">
-        <div class="flex items-center gap-2">
-            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-neon text-sm font-bold text-tinta">BB</span>
-            <span class="text-sm font-semibold text-tinta dark:text-teks-gelap">BinaBangsa Pay</span>
-        </div>
+    <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-garis bg-white px-4 lg:hidden dark:border-garis-gelap dark:bg-gelap-2">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
+            <img src="{{ asset('images/logo-smk-bina-bangsa-180.webp') }}" alt="Logo SMK Bina Bangsa"
+                 class="h-9 w-9 shrink-0 rounded-lg object-contain" width="36" height="36">
+            <span class="text-sm font-semibold tracking-tight text-tinta dark:text-teks-gelap">BinaBangsa Pay</span>
+        </a>
         <button type="button" id="tombol-menu"
                 class="rounded-lg border border-garis px-3 py-1.5 text-sm font-medium text-redup hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap"
                 aria-controls="menu-samping" aria-expanded="false">
@@ -29,14 +30,14 @@
         {{-- Menu samping. Isinya dipilih oleh layouts.partials._sidebar sesuai role.
              Menempel setinggi layar dan menggulir sendiri, tidak ikut halaman. --}}
         <aside id="menu-samping"
-               class="hidden w-full shrink-0 border-b border-garis lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:self-start lg:overflow-hidden lg:border-b-0 lg:border-r dark:border-garis-gelap">
+               class="hidden w-full shrink-0 bg-white lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:self-start lg:overflow-hidden dark:bg-gelap-2">
             @include('layouts.partials._sidebar')
         </aside>
 
         {{-- Kolom isi halaman. Footer ikut kolom ini, bukan selebar halaman. --}}
         <div class="flex min-w-0 flex-1 flex-col">
 
-            <main class="min-w-0 flex-1 px-4 py-6 lg:px-8 lg:py-8">
+            <main class="min-w-0 flex-1 bg-latar-2 px-4 py-6 lg:px-8 lg:py-8 dark:bg-gelap">
                 <div class="mx-auto max-w-6xl">
 
                     {{-- Judul halaman dan keterangan singkat. --}}
