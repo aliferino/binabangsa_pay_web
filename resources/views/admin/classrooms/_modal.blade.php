@@ -9,13 +9,11 @@
     <div class="absolute inset-0 bg-slate-900/50 dark:bg-black/70" data-modal-tutup></div>
 
     <div class="relative mx-auto mt-10 w-full max-w-2xl px-4 pb-10">
-        <div class="overflow-hidden rounded-xl border border-garis bg-white shadow-lg dark:border-garis-gelap dark:bg-gelap-2 dark:border-garis-gelap dark:bg-gelap-2">
+        <div class="overflow-hidden rounded-xl border border-garis bg-white shadow-lg dark:border-garis-gelap dark:bg-gelap-2">
 
             <div class="flex items-center justify-between border-b border-garis px-5 py-4 dark:border-garis-gelap">
                 <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap" data-modal-judul>Tambah Kelas</h2>
-                <button type="button" data-modal-tutup
-                        class="rounded-md border border-garis px-2.5 py-1 text-xs font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:text-teks-gelap dark:hover:bg-gelap">
-                    Tutup
+<button type="button" data-modal-tutup class="inline-flex h-7 w-7 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Tutup" aria-label="Tutup"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-tutup"/></svg>
                 </button>
             </div>
 
@@ -86,13 +84,9 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 border-t border-garis px-5 py-4 dark:border-garis-gelap">
-                    <button type="submit"
-                            class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
-                        Simpan
+<button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan" title="Simpan" aria-label="Simpan"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-simpan"/></svg>Simpan
                     </button>
-                    <button type="button" data-modal-tutup
-                            class="rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">
-                        Batal
+<button type="button" data-modal-tutup class="rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">Batal
                     </button>
                 </div>
             </form>

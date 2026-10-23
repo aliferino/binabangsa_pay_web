@@ -30,29 +30,18 @@
                         </td>
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
-                                <a href="{{ route('tarif-spp.show', $tarif) }}"
-                                   class="rounded-md border border-garis px-2.5 py-1 text-xs font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:text-teks-gelap dark:hover:bg-gelap">
-                                    Detail
+<a href="{{ route('tarif-spp.show', $tarif) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Lihat detail" aria-label="Lihat detail"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-lihat"/></svg>
                                 </a>
 
                                 @if (auth()->user()->role === 'admin')
-                                    <button type="button" data-modal-buka="ubah" data-modal-target="modal-tarif-spp"
-                                            data-id="{{ $tarif->id_tarif }}"
-                                            data-id_tahun_ajaran="{{ $tarif->id_tahun_ajaran }}"
-                                            data-nominal="{{ (int) $tarif->nominal }}"
-                                            data-keterangan="{{ $tarif->keterangan }}"
-                                            data-status="{{ $tarif->status }}"
-                                            class="rounded-md border border-garis px-2.5 py-1 text-xs font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:text-teks-gelap dark:hover:bg-gelap">
-                                        Ubah
+<button type="button" data-modal-buka="ubah" data-modal-target="modal-tarif-spp" data-id="{{ $tarif->id_tarif }}" data-id_tahun_ajaran="{{ $tarif->id_tahun_ajaran }}" data-nominal="{{ (int) $tarif->nominal }}" data-keterangan="{{ $tarif->keterangan }}" data-status="{{ $tarif->status }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Ubah" aria-label="Ubah"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-ubah"/></svg>
                                     </button>
 
                                     <form method="POST" action="{{ route('tarif-spp.destroy', $tarif) }}"
                                           onsubmit="return confirm('Hapus data tarif ini? Tindakan ini tidak bisa dibatalkan.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="rounded-md border border-red-300 px-2.5 py-1 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40">
-                                            Hapus
+<button type="submit" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-red-300 text-red-700 transition-colors hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40" title="Hapus" aria-label="Hapus"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-hapus"/></svg>
                                         </button>
                                     </form>
                                 @endif

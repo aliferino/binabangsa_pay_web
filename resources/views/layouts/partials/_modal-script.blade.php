@@ -23,6 +23,31 @@
             return id ? document.getElementById(id) : null;
         }
 
+        /*
+            Muncul dan hilangnya modal memakai keyframes CSS karena modal
+            disembunyikan dengan display:none dan transition tidak berjalan dari
+            display:none. Saat menutup, penyembunyian ditahan 150ms supaya
+            animasi keluarnya sempat terlihat.
+        */
+        function bukaModal(modal) {
+            clearTimeout(modal._pegangTutup);
+            modal.classList.remove('hidden', 'modal-keluar');
+            modal.classList.add('modal-masuk');
+        }
+
+        function tutupModal(modal) {
+            if (modal.classList.contains('hidden') || modal.classList.contains('modal-keluar')) {
+                return;
+            }
+
+            modal.classList.remove('modal-masuk');
+            modal.classList.add('modal-keluar');
+            modal._pegangTutup = setTimeout(function () {
+                modal.classList.add('hidden');
+                modal.classList.remove('modal-keluar');
+            }, 150);
+        }
+
         function bagian(modal) {
             var form = modal.querySelector('[data-form-modal]');
 
@@ -59,7 +84,7 @@
             b.id.value = '';
             b.judul.textContent = modal.getAttribute('data-judul-tambah') || b.judul.textContent;
             petunjuk(modal, 'tambah');
-            modal.classList.remove('hidden');
+            bukaModal(modal);
         }
 
         function bukaUbah(modal, tombol) {
@@ -110,7 +135,7 @@
                 }
             });
 
-            modal.classList.remove('hidden');
+            bukaModal(modal);
         }
 
         document.addEventListener('click', function (peristiwa) {
@@ -138,7 +163,7 @@
                 var induk = tombolTutup.closest('[data-modal]');
 
                 if (induk) {
-                    induk.classList.add('hidden');
+                    tutupModal(induk);
                 }
             }
         });
@@ -148,9 +173,7 @@
                 return;
             }
 
-            Array.prototype.forEach.call(semuaModal, function (modal) {
-                modal.classList.add('hidden');
-            });
+            Array.prototype.forEach.call(semuaModal, tutupModal);
         });
 
         // Form gagal divalidasi, modal dibuka lagi dengan isian sebelumnya.
@@ -168,7 +191,7 @@
                     || bGagal.judul.textContent;
             }
 
-            modalGagal.classList.remove('hidden');
+            bukaModal(modalGagal);
         }
 
         // Tautan Ubah di halaman detail mengalihkan ke daftar dengan ?ubah=id,

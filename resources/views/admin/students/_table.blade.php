@@ -88,9 +88,7 @@
                         <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ ucfirst($siswa->status) }}</td>
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
-                                <a href="{{ route('siswa.show', $siswa) }}"
-                                   class="rounded-md border border-garis dark:border-garis-gelap px-2.5 py-1 text-xs font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
-                                    Detail
+<a href="{{ route('siswa.show', $siswa) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Lihat detail" aria-label="Lihat detail"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-lihat"/></svg>
                                 </a>
 
                                 @if (auth()->user()->role === 'admin')
@@ -109,18 +107,14 @@
                                             data-id_kelas="{{ $siswa->id_kelas }}"
                                             data-id_tahun_ajaran="{{ $siswa->id_tahun_ajaran }}"
                                             data-id_user="{{ $siswa->id_user }}"
-                                            data-id_user_label="{{ $siswa->user ? $siswa->user->nama.' ('.$siswa->user->username.')' : '' }}"
-                                            class="rounded-md border border-garis dark:border-garis-gelap px-2.5 py-1 text-xs font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
-                                        Ubah
+                                            data-id_user_label="{{ $siswa->user ? $siswa->user->nama.' ('.$siswa->user->username.')' : '' }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Ubah" aria-label="Ubah"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-ubah"/></svg>
                                     </button>
 
                                     <form method="POST" action="{{ route('siswa.destroy', $siswa) }}"
                                           onsubmit="return confirm('Hapus data siswa ini? Tindakan ini tidak bisa dibatalkan.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="rounded-md border border-red-300 px-2.5 py-1 text-xs font-medium text-red-700 hover:bg-red-50">
-                                            Hapus
+<button type="submit" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-red-300 text-red-700 transition-colors hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40" title="Hapus" aria-label="Hapus"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-hapus"/></svg>
                                         </button>
                                     </form>
                                 @endif

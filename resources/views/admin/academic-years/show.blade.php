@@ -5,9 +5,7 @@
 
 @section('aksi')
     @if (auth()->user()->role === 'admin')
-        <a href="{{ route('tahun-ajaran.edit', $tahun_ajaran) }}"
-           class="rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">
-            Ubah
+<a href="{{ route('tahun-ajaran.edit', $tahun_ajaran) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Ubah" aria-label="Ubah"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-ubah"/></svg>
         </a>
     @endif
     <a href="{{ route('tahun-ajaran.index') }}"

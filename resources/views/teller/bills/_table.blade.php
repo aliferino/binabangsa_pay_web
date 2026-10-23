@@ -105,34 +105,18 @@
                         </td>
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
-                                <a href="{{ route('tagihan-spp.show', $tagihan) }}"
-                                   class="rounded-md border border-garis dark:border-garis-gelap px-2.5 py-1 text-xs font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
-                                    Detail
+<a href="{{ route('tagihan-spp.show', $tagihan) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Lihat detail" aria-label="Lihat detail"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-lihat"/></svg>
                                 </a>
 
                                 @if (auth()->user()->role === 'admin')
-                                    <button type="button" data-modal-buka="ubah" data-modal-target="modal-tagihan"
-                                            data-id="{{ $tagihan->id_tagihan }}"
-                                            data-id_siswa="{{ $tagihan->id_siswa }}"
-                                            data-id_siswa_label="{{ $tagihan->siswa ? $tagihan->siswa->nis.' - '.$tagihan->siswa->nama : '' }}"
-                                            data-bulan="{{ $tagihan->bulan }}"
-                                            data-tahun="{{ $tagihan->tahun }}"
-                                            data-id_tahun_ajaran="{{ $tagihan->id_tahun_ajaran }}"
-                                            data-id_tarif="{{ $tagihan->id_tarif }}"
-                                            data-nominal="{{ (int) $tagihan->nominal }}"
-                                            data-tanggal_jatuh_tempo="{{ $tagihan->tanggal_jatuh_tempo?->format('Y-m-d') }}"
-                                            data-status="{{ $tagihan->status }}"
-                                            class="rounded-md border border-garis dark:border-garis-gelap px-2.5 py-1 text-xs font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
-                                        Ubah
+<button type="button" data-modal-buka="ubah" data-modal-target="modal-tagihan" data-id="{{ $tagihan->id_tagihan }}" data-id_siswa="{{ $tagihan->id_siswa }}" data-id_siswa_label="{{ $tagihan->siswa ? $tagihan->siswa->nis.' - '.$tagihan->siswa->nama : '' }}" data-bulan="{{ $tagihan->bulan }}" data-tahun="{{ $tagihan->tahun }}" data-id_tahun_ajaran="{{ $tagihan->id_tahun_ajaran }}" data-id_tarif="{{ $tagihan->id_tarif }}" data-nominal="{{ (int) $tagihan->nominal }}" data-tanggal_jatuh_tempo="{{ $tagihan->tanggal_jatuh_tempo?->format('Y-m-d') }}" data-status="{{ $tagihan->status }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Ubah" aria-label="Ubah"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-ubah"/></svg>
                                     </button>
 
                                     <form method="POST" action="{{ route('tagihan-spp.destroy', $tagihan) }}"
                                           onsubmit="return confirm('Hapus data tagihan ini? Tindakan ini tidak bisa dibatalkan.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="rounded-md border border-red-300 px-2.5 py-1 text-xs font-medium text-red-700 hover:bg-red-50">
-                                            Hapus
+<button type="submit" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-red-300 text-red-700 transition-colors hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40" title="Hapus" aria-label="Hapus"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-hapus"/></svg>
                                         </button>
                                     </form>
                                 @endif
