@@ -63,7 +63,7 @@ class ReportController extends Controller
             'totalNominal' => (float) $rows->sum('nominal'),
             'totalPaid' => (float) $rows->where('status', 'lunas')->sum('nominal'),
             'totalUnpaid' => (float) $rows->where('status', 'belum_bayar')->sum('nominal'),
-            'totalArrears' => (float) $rows->where('status', 'tunggakan')->sum('nominal'),
+            'totalArrears' => (float) $rows->filter(fn ($b) => $b->status !== 'lunas' && $b->tanggal_jatuh_tempo?->isPast())->sum('nominal'),
             'filter' => $request->only([
                 'bulan', 'tahun', 'id_tahun_ajaran', 'id_kelas',
                 'id_jurusan', 'id_siswa', 'status',
@@ -81,7 +81,7 @@ class ReportController extends Controller
     {
         $query = Student::with('kelas.jurusan')
             ->whereHas('tagihan', function ($q) {
-                $q->where('status', 'tunggakan');
+                $q->overdue();
             });
 
         if ($request->filled('id_kelas')) {
@@ -95,7 +95,7 @@ class ReportController extends Controller
         }
 
         $rows = $query->orderBy('nama')->get()->map(function (Student $siswa) {
-            $tagihan = $siswa->tagihan()->where('status', 'tunggakan')
+            $tagihan = $siswa->tagihan()->overdue()
                 ->orderBy('bulan')
                 ->get();
 

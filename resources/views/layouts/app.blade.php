@@ -9,7 +9,7 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-latar-2 font-sans text-tinta antialiased dark:bg-gelap dark:text-teks-gelap">
+<body class="flex min-h-[100dvh] flex-col bg-latar-2 font-sans text-tinta antialiased dark:bg-gelap dark:text-teks-gelap">
 
     {{-- Bilah atas untuk layar kecil, berisi tombol buka menu. --}}
     <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-garis bg-white px-4 lg:hidden dark:border-garis-gelap dark:bg-gelap-2">
@@ -25,7 +25,7 @@
         </button>
     </header>
 
-    <div class="lg:flex lg:items-start">
+    <div class="flex min-w-0 flex-1 flex-col lg:flex-row">
 
         {{-- Menu samping. Isinya dipilih oleh layouts.partials._sidebar sesuai role.
              Menempel setinggi layar dan menggulir sendiri, tidak ikut halaman. --}}

@@ -130,6 +130,20 @@ select:focus-visible {
 }
 
 /*
+    Scrollbar disembunyikan tapi gulir tetap jalan. Dipakai menu samping yang
+    isinya panjang, supaya batang gulir tidak memotong lebar menu.
+*/
+.gulir-tanpa-batang {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.gulir-tanpa-batang::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+/*
     Tombol neon yang terasa ditekan. Bayangan bawah meniru tombol fisik,
     saat ditekan tombol turun 1px dan bayangannya hilang.
 */

@@ -61,7 +61,7 @@ class SearchController extends Controller
             return 'belum ada tagihan';
         }
 
-        if ($tagihan->contains('status', 'tunggakan')) {
+        if ($tagihan->contains(fn ($t) => $t->status !== 'lunas' && $t->tanggal_jatuh_tempo?->isPast())) {
             return 'ada tunggakan';
         }
 

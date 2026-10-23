@@ -124,7 +124,7 @@
                                         {{ $tagihan->tanggal_jatuh_tempo?->format('d/m/Y') ?? '-' }}
                                     </td>
                                     <td class="px-5 py-3">
-                                        @include('layouts.partials._status-badge', ['status' => $tagihan->status])
+                                        @include('layouts.partials._status-badge', ['tagihan' => $tagihan])
                                     </td>
                                 </tr>
                             @endforeach
