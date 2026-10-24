@@ -54,8 +54,11 @@ class ClassroomController extends Controller
      */
     public function show(Classroom $kelas)
     {
+        $kelas->load('jurusan', 'tahunAjaran', 'siswa');
+
         return $this->render('admin.classrooms.show', [
-            'kelas' => $kelas->load('jurusan', 'tahunAjaran', 'siswa'),
+            'classroom' => $kelas,
+            'totalStudents' => $kelas->siswa->count(),
         ]);
     }
 

@@ -66,8 +66,15 @@ class StudentController extends Controller
      */
     public function show(Student $siswa)
     {
+        $siswa->load('kelas.jurusan', 'tahunAjaran', 'user', 'tagihan');
+
+        $bills = $siswa->tagihan;
+
         return $this->render('admin.students.show', [
-            'siswa' => $siswa->load('kelas.jurusan', 'tahunAjaran', 'user', 'tagihan'),
+            'student' => $siswa,
+            'totalBills' => $bills->count(),
+            'totalNominal' => (float) $bills->sum('nominal'),
+            'totalArrearsBills' => $bills->where('status', 'tunggakan')->count(),
         ]);
     }
 

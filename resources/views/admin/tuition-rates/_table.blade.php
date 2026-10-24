@@ -30,9 +30,6 @@
                         </td>
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
-<a href="{{ route('tarif-spp.show', $tarif) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Lihat detail" aria-label="Lihat detail"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-lihat"/></svg>
-                                </a>
-
                                 @if (auth()->user()->role === 'admin')
 <button type="button" data-modal-buka="ubah" data-modal-target="modal-tarif-spp" data-id="{{ $tarif->id_tarif }}" data-id_tahun_ajaran="{{ $tarif->id_tahun_ajaran }}" data-nominal="{{ (int) $tarif->nominal }}" data-keterangan="{{ $tarif->keterangan }}" data-status="{{ $tarif->status }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Ubah" aria-label="Ubah"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-ubah"/></svg>
                                     </button>

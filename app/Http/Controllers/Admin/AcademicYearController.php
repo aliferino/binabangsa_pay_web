@@ -51,9 +51,13 @@ class AcademicYearController extends Controller
      */
     public function show(AcademicYear $tahunAjaran)
     {
+        // kelas.jurusan ikut dimuat supaya tabel kelas tidak query per baris.
+        $tahunAjaran->load('kelas.jurusan', 'tarifSpp');
+
         return $this->render('admin.academic-years.show', [
-            // kelas.jurusan ikut dimuat supaya tabel kelas tidak query per baris.
-            'tahun_ajaran' => $tahunAjaran->load('kelas.jurusan', 'tarifSpp'),
+            'academicYear' => $tahunAjaran,
+            'totalClassrooms' => $tahunAjaran->kelas->count(),
+            'totalTuitionRates' => $tahunAjaran->tarifSpp->count(),
         ]);
     }
 

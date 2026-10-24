@@ -38,16 +38,6 @@ class TuitionRateController extends Controller
     }
 
     /**
-     * Tampilkan detail satu tarif.
-     */
-    public function show(TuitionRate $tarifSpp)
-    {
-        return $this->render('admin.tuition-rates.show', [
-            'tarif' => $tarifSpp->load('tahunAjaran'),
-        ]);
-    }
-
-    /**
      * Form ubah sekarang berupa modal di halaman daftar. Route lama
      * tetap ada supaya tautan Ubah di halaman detail tidak rusak, tetapi
      * sekarang hanya mengalihkan ke daftar dengan penanda modal terbuka.

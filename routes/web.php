@@ -278,7 +278,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/tahun-ajaran/{tahunAjaran}', [AcademicYearController::class, 'show'])->name('tahun-ajaran.show');
         Route::get('/kelas/{kelas}', [ClassroomController::class, 'show'])->name('kelas.show');
         Route::get('/siswa/{siswa}', [StudentController::class, 'show'])->name('siswa.show');
-        Route::get('/tarif-spp/{tarifSpp}', [TuitionRateController::class, 'show'])->name('tarif-spp.show');
     });
 
     /*
