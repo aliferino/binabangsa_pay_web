@@ -71,7 +71,6 @@
 
     @include('layouts.partials._toast')
     @include('layouts.partials._konfirmasi')
-    @include('layouts.partials._menu-transisi')
 
     <script>
         // Buka dan tutup menu samping di layar kecil.

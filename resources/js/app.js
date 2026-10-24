@@ -228,9 +228,11 @@
         modal.querySelector('[data-konfirmasi-pesan]').textContent = pesan;
 
         var ya = modal.querySelector('[data-konfirmasi-ya]');
-        ya.textContent = jenis === 'hapus' ? 'Ya, hapus' : 'Ya, simpan';
+        var label = { hapus: 'Ya, hapus', keluar: 'Ya, keluar' };
+
+        ya.textContent = label[jenis] || 'Ya, simpan';
         ya.className = 'tombol-tekan rounded-lg px-4 py-2 text-sm font-semibold '
-            + (jenis === 'hapus'
+            + (jenis === 'hapus' || jenis === 'keluar'
                 ? 'bg-[#c10007] text-white hover:bg-[#a10006]'
                 : 'bg-neon text-tinta hover:bg-neon-tekan');
 
@@ -281,7 +283,7 @@
             tanya(pesanHapus, function () {
                 form.dataset.disetujui = '1';
                 form.submit();
-            }, 'hapus');
+            }, form.getAttribute('data-konfirmasi-jenis') || 'hapus');
 
             return;
         }
@@ -400,14 +402,29 @@
         dulu supaya klik berikutnya tidak menunggu.
     */
     var singgahan = new Map();
-    var JEDA_ANIMASI = 170;
 
+    var berjalan = new Map();
+
+    /*
+        Satu URL hanya diambil sekali. Kalau kursor sudah menyentuh menu dan
+        permintaannya masih jalan, klik berikutnya menumpang permintaan itu
+        alih-alih menembak ulang. Tanpa ini prefetch justru menggandakan
+        permintaan dan membuat klik lebih lambat.
+
+        php artisan serve hanya satu proses, jadi permintaan yang menumpuk
+        antre satu per satu. Karena itu prefetch hanya dilakukan untuk menu
+        yang benar-benar disentuh kursor, bukan seluruh menu sekaligus.
+    */
     function ambil(url) {
         if (singgahan.has(url)) {
             return Promise.resolve(singgahan.get(url));
         }
 
-        return fetch(url, {
+        if (berjalan.has(url)) {
+            return berjalan.get(url);
+        }
+
+        var janji = fetch(url, {
             headers: { 'X-Navigasi': '1' },
             credentials: 'same-origin',
         }).then(function (respons) {
@@ -418,15 +435,61 @@
             return respons.text();
         }).then(function (html) {
             singgahan.set(url, html);
+            berjalan.delete(url);
 
             return html;
+        }).catch(function (galat) {
+            berjalan.delete(url);
+
+            throw galat;
+        });
+
+        berjalan.set(url, janji);
+
+        return janji;
+    }
+
+    /*
+        Menu samping tidak digambar ulang. Dulu seluruh isi #menu-samping
+        ditimpa HTML dari server tiap pindah halaman; node tombolnya hancur,
+        animasi tekan ikut mati di tengah jalan, dan mata membacanya sebagai
+        kedip. Sekarang hanya penanda aktif yang ditukar: kelas warna dan
+        aria-current pada tautan yang sudah ada.
+    */
+    function tandaiMenu(url) {
+        var menu = document.getElementById('menu-samping');
+
+        if (!menu) {
+            return;
+        }
+
+        var tujuan = new URL(url, window.location.href);
+
+        menu.querySelectorAll('a[href]').forEach(function (a) {
+            var sama = new URL(a.href, window.location.href).pathname === tujuan.pathname;
+
+            // Kelas aktif diambil dari $kelasAktif di _sidebar.blade.php:
+            // bg-neon font-semibold text-tinta shadow-sm, plus varian gelapnya.
+            a.classList.toggle('bg-neon', sama);
+            a.classList.toggle('font-semibold', sama);
+            a.classList.toggle('text-tinta', sama);
+            a.classList.toggle('shadow-sm', sama);
+            a.classList.toggle('dark:bg-neon', sama);
+            a.classList.toggle('dark:text-tinta', sama);
+            a.classList.toggle('text-redup', !sama);
+            a.classList.toggle('dark:text-redup-gelap', !sama);
+
+            if (sama) {
+                a.setAttribute('aria-current', 'page');
+            } else {
+                a.removeAttribute('aria-current');
+            }
         });
     }
 
     function gantiIsi(html, url, tambahRiwayat) {
         var dokumen = new DOMParser().parseFromString(html, 'text/html');
         var isiBaru = dokumen.getElementById('isi-halaman');
-        var menuBaru = dokumen.getElementById('menu-samping');
 
         if (!isiBaru || !isiHalaman) {
             return false;
@@ -446,9 +509,7 @@
             isiHalaman.removeAttribute('data-id-gagal');
         }
 
-        if (menuBaru) {
-            document.getElementById('menu-samping').innerHTML = menuBaru.innerHTML;
-        }
+        tandaiMenu(url);
 
         document.title = dokumen.title;
 
@@ -462,29 +523,46 @@
         return true;
     }
 
-    function pindah(url, tambahRiwayat) {
+    /*
+        Arah geser isi mengikuti arah tombol menu: pindah ke menu yang lebih
+        atas membuat isi bergeser ke atas, pindah ke menu yang lebih bawah
+        membuatnya bergeser ke bawah. Diukur dari posisi layar tautan yang
+        ditekan dibanding tautan yang sedang aktif, jadi tidak perlu daftar
+        urutan menu yang harus dijaga.
+    */
+    function arahGeser(tautan) {
+        var aktif = document.querySelector('#menu-samping a[aria-current="page"]');
+
+        if (!aktif || aktif === tautan) {
+            return 8;
+        }
+
+        return tautan.getBoundingClientRect().top < aktif.getBoundingClientRect().top ? 8 : -8;
+    }
+
+    function pindah(url, tambahRiwayat, geser) {
         if (!isiHalaman) {
             window.location.href = url;
 
             return;
         }
 
-        isiHalaman.classList.add('nav-keluar');
-
-        Promise.all([
-            ambil(url),
-            new Promise(function (selesai) { setTimeout(selesai, JEDA_ANIMASI); }),
-        ]).then(function (hasil) {
-            if (!gantiIsi(hasil[0], url, tambahRiwayat)) {
+        ambil(url).then(function (html) {
+            if (!gantiIsi(html, url, tambahRiwayat)) {
                 window.location.href = url;
+
+                return;
             }
+
+            // Isi baru langsung tampil penuh, hanya digeser sedikit dari arah
+            // gerak menu lalu menetap. Tanpa memudar: memudar masuk terbaca
+            // seperti halaman memuat dua kali.
+            isiHalaman.style.setProperty('--geser', (geser || 8) + 'px');
+            isiHalaman.classList.remove('isi-geser');
+            void isiHalaman.offsetWidth;
+            isiHalaman.classList.add('isi-geser');
         }).catch(function () {
             window.location.href = url;
-        }).finally(function () {
-            isiHalaman.classList.remove('nav-keluar');
-            isiHalaman.classList.remove('nav-masuk');
-            void isiHalaman.offsetWidth;
-            isiHalaman.classList.add('nav-masuk');
         });
     }
 
@@ -507,7 +585,11 @@
             return;
         }
 
-        pindah(url.pathname + url.search, true);
+        tautan.classList.remove('tautan-ditekan');
+        void tautan.offsetWidth;
+        tautan.classList.add('tautan-ditekan');
+
+        pindah(url.pathname + url.search, true, arahGeser(tautan));
     });
 
     document.addEventListener('pointerenter', function (peristiwa) {
@@ -527,7 +609,7 @@
     window.addEventListener('popstate', function () {
         var url = window.location.pathname + window.location.search;
         singgahan.delete(url);
-        pindah(url, false);
+        pindah(url, false, 8);
     });
 
     siapkanHalaman();

@@ -345,24 +345,45 @@ select:focus-visible {
 
     Sebelumnya tiap klik menu memuat ulang seluruh dokumen: sidebar, footer, dan
     scroll ikut dipasang ulang, jadi terlihat berkedip. Sekarang app.js mengambil
-    halaman tujuan dan hanya mengganti #isi-halaman. Animasi ini yang membuat
-    perpindahannya terbaca, bukan sekadar isi berganti mendadak.
+    halaman tujuan dan hanya mengganti #isi-halaman, tanpa animasi pada isinya.
 
-    Isi baru masuk sedikit dari bawah sambil memudar. 240ms cukup untuk terasa,
-    tidak cukup untuk membuat menunggu.
+    Animasi sengaja hanya di tombol menu. Isi halaman yang memudar masuk justru
+    terbaca seperti halaman memuat dua kali: sekali saat ditukar, sekali saat
+    memudar. Isi baru langsung tampil penuh.
 */
-.isi-masuk {
-    animation: isi-masuk 240ms cubic-bezier(0.2, 0, 0, 1) both;
-}
 
-@keyframes isi-masuk {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Menu yang sedang dibuka ditandai sebentar supaya mata sempat mengikuti. */
+/* Menu yang ditekan turun sedikit lalu balik, sebagai tanda klik diterima. */
 .tautan-ditekan {
     animation: tautan-ditekan 280ms ease-out both;
+}
+
+/*
+    Menu aktif tidak ikut berubah saat disentuh kursor.
+
+    Kelas tautan biasa membawa hover:bg-latar-2, dan kelas aktif hanya menambah
+    hover:bg-neon. Keduanya hadir bersamaan, jadi aturan mana pun yang lebih
+    akhir di CSS yang menang, dan itu tidak bisa dijamin dari sisi Blade.
+    Selector ini lebih khas (id + atribut + pseudo) sehingga selalu menang:
+    menu yang sedang aktif tetap berlatar neon penuh walau kena hover.
+*/
+#menu-samping a[aria-current='page']:hover {
+    background-color: var(--color-neon);
+    color: var(--color-tinta);
+}
+
+/*
+    Isi halaman bergeser sedikit dari arah gerak menu, lalu menetap.
+    --geser diisi app.js: positif kalau menu tujuan ada di bawah (isi masuk
+    dari bawah), negatif kalau di atas. Tanpa opasitas: isi langsung terbaca,
+    hanya posisinya yang menyusul.
+*/
+.isi-geser {
+    animation: isi-geser 200ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes isi-geser {
+    from { transform: translateY(var(--geser, 8px)); }
+    to   { transform: translateY(0); }
 }
 
 @keyframes tautan-ditekan {
@@ -372,5 +393,5 @@ select:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .isi-masuk, .tautan-ditekan { animation: none; }
+    .tautan-ditekan { animation: none; }
 }

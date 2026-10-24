@@ -139,7 +139,10 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('logout') }}" class="mt-1.5">
+        {{-- Keluar langsung memutus sesi tanpa bisa dibatalkan, jadi ditanya
+             dulu lewat modal yang sama dengan hapus data. --}}
+        <form method="POST" action="{{ route('logout') }}" class="mt-1.5"
+              data-konfirmasi="Keluar dari akun ini?" data-konfirmasi-jenis="keluar">
                     @csrf
                     {{-- Warna sama dengan tombol hapus di modal konfirmasi (#c10007):
                          keluar dan hapus sama-sama tindakan yang tidak bisa dibatalkan,
