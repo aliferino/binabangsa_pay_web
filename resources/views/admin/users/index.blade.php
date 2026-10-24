@@ -14,6 +14,5 @@
 
     @include('admin.users._table')
     @include('admin.users._modal')
-    @include('layouts.partials._modal-script')
 
 @endsection

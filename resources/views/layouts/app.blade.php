@@ -38,7 +38,10 @@
         <div class="flex min-w-0 flex-1 flex-col">
 
             <main class="min-w-0 flex-1 bg-latar-2 px-4 py-6 lg:px-8 lg:py-8 dark:bg-gelap">
-                <div class="mx-auto max-w-6xl">
+                {{-- Seluruh isi halaman ada di dalam #isi-halaman supaya bisa
+                     diganti tanpa muat ulang saat menu samping diklik. --}}
+                <div id="isi-halaman" class="mx-auto max-w-6xl"
+                     @if (old('_modal')) data-modal-gagal="{{ old('_modal') }}" data-mode-gagal="{{ old('_mode') }}" data-id-gagal="{{ old('_id') }}" @endif>
 
                     {{-- Judul halaman dan keterangan singkat. --}}
                     <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
@@ -53,9 +56,7 @@
                         @endif
                     </div>
 
-                    {{-- Pesan sukses atau gagal dari controller. --}}
-                    @include('layouts.partials._flash')
-
+                    {{-- Pesan sukses atau gagal dari controller tampil sebagai toast. --}}
                     @yield('isi')
                 </div>
             </main>
@@ -67,6 +68,10 @@
             </footer>
         </div>
     </div>
+
+    @include('layouts.partials._toast')
+    @include('layouts.partials._konfirmasi')
+    @include('layouts.partials._menu-transisi')
 
     <script>
         // Buka dan tutup menu samping di layar kecil.

@@ -30,7 +30,7 @@
                                     </button>
 
                                     <form method="POST" action="{{ route('kelas.destroy', $kelas) }}"
-                                          onsubmit="return confirm('Hapus data kelas ini? Tindakan ini tidak bisa dibatalkan.')">
+                                          data-konfirmasi="Hapus data kelas ini? Tindakan ini tidak bisa dibatalkan.">
                                         @csrf
                                         @method('DELETE')
 <button type="submit" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-red-300 text-red-700 transition-colors hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40" title="Hapus" aria-label="Hapus"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-hapus"/></svg>

@@ -37,6 +37,21 @@ html { color-scheme: light; }
 html.dark { color-scheme: dark; }
 
 /*
+    Tumpukan lapisan, dari bawah ke atas:
+    40 modal formulir (kelas z-40 di tiap _modal.blade.php)
+    55 modal konfirmasi
+    60 toast
+
+    Modal konfirmasi WAJIB di atas modal formulir: konfirmasi simpan dan hapus
+    dibuka dari dalam modal formulir, jadi kalau z-nya lebih rendah ia tertimbun
+    dan halaman terlihat diam saja saat ditekan. Dipasang di sini, bukan lewat
+    kelas Tailwind arbitrer z-[55], karena kelas itu tidak terbangkit ke CSS.
+*/
+#modal-konfirmasi {
+    z-index: 55;
+}
+
+/*
     Tekstur butiran halus dari SVG feTurbulence, supaya latar tidak terasa datar.
     Overlay tetap, tidak bisa diklik, sangat tipis; di dark sedikit lebih terlihat.
 */
@@ -323,4 +338,39 @@ select:focus-visible {
     .toast-keluar {
         animation: none;
     }
+}
+
+/*
+    Pindah menu samping.
+
+    Sebelumnya tiap klik menu memuat ulang seluruh dokumen: sidebar, footer, dan
+    scroll ikut dipasang ulang, jadi terlihat berkedip. Sekarang app.js mengambil
+    halaman tujuan dan hanya mengganti #isi-halaman. Animasi ini yang membuat
+    perpindahannya terbaca, bukan sekadar isi berganti mendadak.
+
+    Isi baru masuk sedikit dari bawah sambil memudar. 240ms cukup untuk terasa,
+    tidak cukup untuk membuat menunggu.
+*/
+.isi-masuk {
+    animation: isi-masuk 240ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+@keyframes isi-masuk {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Menu yang sedang dibuka ditandai sebentar supaya mata sempat mengikuti. */
+.tautan-ditekan {
+    animation: tautan-ditekan 280ms ease-out both;
+}
+
+@keyframes tautan-ditekan {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(0.97); }
+    100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .isi-masuk, .tautan-ditekan { animation: none; }
 }

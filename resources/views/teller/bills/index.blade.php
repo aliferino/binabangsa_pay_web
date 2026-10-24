@@ -12,7 +12,7 @@
 
         {{-- Menandai tagihan yang sudah lewat jatuh tempo menjadi tunggakan. --}}
         <form method="POST" action="{{ route('tagihan-spp.tandai-tunggakan') }}"
-              onsubmit="return confirm('Tandai semua tagihan yang sudah lewat jatuh tempo sebagai tunggakan?')">
+              data-konfirmasi="Tandai semua tagihan yang sudah lewat jatuh tempo sebagai tunggakan?">
             @csrf
             <button type="submit"
                     class="rounded-lg border border-amber-400 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100">
@@ -28,7 +28,6 @@
 
     @if (auth()->user()->role === 'admin')
         @include('teller.bills._modal')
-        @include('layouts.partials._modal-script')
     @endif
 
 @endsection

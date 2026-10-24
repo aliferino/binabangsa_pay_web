@@ -140,12 +140,15 @@
         </div>
 
         <form method="POST" action="{{ route('logout') }}" class="mt-1.5">
-            @csrf
-            <button type="submit"
-                    class="flex w-full items-center gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors duration-150 hover:border-red-300 hover:bg-red-100 dark:border-red-900 dark:bg-red-950/40 dark:text-red-400 dark:hover:bg-red-950/70">
-                <svg class="{{ $kelasIkon }}" aria-hidden="true"><use href="#i-keluar"></use></svg>
-                Keluar
-            </button>
-        </form>
+                    @csrf
+                    {{-- Warna sama dengan tombol hapus di modal konfirmasi (#c10007):
+                         keluar dan hapus sama-sama tindakan yang tidak bisa dibatalkan,
+                         jadi bahasanya harus sama. --}}
+                    <button type="submit"
+                            class="tombol-tekan flex w-full items-center gap-2.5 rounded-lg bg-[#c10007] px-3 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#a10006]">
+                        <svg class="{{ $kelasIkon }}" aria-hidden="true"><use href="#i-keluar"></use></svg>
+                        Keluar
+                    </button>
+                </form>
     </div>
 </div>
