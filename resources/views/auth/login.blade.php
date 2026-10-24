@@ -9,6 +9,8 @@
     <title>Masuk | BinaBangsa Pay</title>
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @include('layouts.partials._transisi')
     {{-- Pasang tema tersimpan SEBELUM body dilukis supaya tidak ada flash. --}}
     <script>
         (function () {
@@ -25,6 +27,7 @@
     <div class="grain" aria-hidden="true"></div>
 
     @include('layouts.partials._navigation-web')
+    @include('layouts.partials._toast')
 
     {{-- Dua kolom di layar lebar: keterangan di kiri, form di kanan.
          Di ponsel dan tablet hanya form yang tampil, keterangannya disembunyikan
@@ -32,12 +35,7 @@
     <main class="mx-auto grid w-full max-w-6xl flex-1 content-center gap-12 px-4 py-10 sm:px-6 sm:py-14 lg:content-center lg:grid-cols-[1fr_0.85fr] lg:items-start lg:gap-16 lg:py-20">
 
         <div class="hidden lg:block">
-            <span class="inline-flex items-center gap-2 rounded-full border border-[#e2e8dd] bg-[#f6f8f4] px-3 py-1 text-xs font-medium text-[#5b6659] dark:border-[#2a3038] dark:bg-[#171c21] dark:text-[#8b95a1]">
-                <span class="h-1.5 w-1.5 rounded-full bg-[#b8f048]"></span>
-                Pembayaran SPP daring
-            </span>
-
-            <h1 class="mt-6 text-[2.75rem] font-bold leading-[1.08] tracking-tight">
+            <h1 class="text-[2.75rem] font-bold leading-[1.08] tracking-tight">
                 Masuk untuk melihat
                 <span class="text-[#4a7a0a] dark:text-[#b8f048]">tagihan dan riwayat</span>.
             </h1>
@@ -104,14 +102,10 @@
 
                     <h2 class="hidden text-lg font-bold tracking-tight lg:block">Masuk ke akun</h2>
 
-                    {{-- Pesan gagal dari validasi login. --}}
-                    @if ($errors->any())
-                        <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200" role="alert">
-                            {{ $errors->first() }}
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('login.proses') }}" class="mt-5 space-y-4">
+                    {{-- Galat login dan isian kosong ditampilkan lewat toast
+                         (layouts/partials/_toast.blade.php), supaya kartu login
+                         tidak memanjang dan kolom isian tidak bergeser. --}}
+                    <form method="POST" action="{{ route('login.proses') }}" data-toast class="mt-5 space-y-4">
                         @csrf
 
                         <div>
@@ -119,18 +113,16 @@
                             <input type="text" name="username" id="username"
                                    value="{{ old('username') }}"
                                    required autofocus autocomplete="username"
+                                   data-label="Username"
                                    placeholder="NIS atau username"
                                    class="h-11 w-full rounded-lg border bg-white px-3 font-mono text-sm transition-colors duration-150 placeholder:font-sans placeholder:text-[#8b95a1] border-[#d5ddc9] dark:border-[#6b7784] dark:bg-[#111111] hover:border-[#b9c4ae] dark:hover:border-[#8b95a1] focus:border-[#4a7a0a] focus:shadow-[0_0_0_3px_rgba(74,122,10,0.12)] focus:outline-none dark:focus:border-[#b8f048] dark:focus:shadow-[0_0_0_3px_rgba(184,240,72,0.16)]">
-                            @error('username')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
                         </div>
 
                         <div>
                             <label for="password" class="mb-1.5 block font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5b6659] dark:text-[#8b95a1]">Password</label>
                             <div class="relative">
                                 <input type="password" name="password" id="password"
-                                required autocomplete="current-password"
+                                required autocomplete="current-password" data-label="Password"
                                 class="h-11 w-full rounded-lg border bg-white pl-3 pr-11 font-mono text-sm transition-colors duration-150 placeholder:font-sans placeholder:text-[#8b95a1] border-[#d5ddc9] dark:border-[#6b7784] dark:bg-[#111111] hover:border-[#b9c4ae] dark:hover:border-[#8b95a1] focus:border-[#4a7a0a] focus:shadow-[0_0_0_3px_rgba(74,122,10,0.12)] focus:outline-none dark:focus:border-[#b8f048] dark:focus:shadow-[0_0_0_3px_rgba(184,240,72,0.16)]">
                                 <button type="button" id="tombol-lihat"
                                 aria-pressed="false" aria-controls="password" aria-label="Tampilkan password"
@@ -148,9 +140,6 @@
                                 </svg>
                                 </button>
                             </div>
-                            @error('password')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
                         </div>
 
                         <button type="submit"
