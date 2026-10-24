@@ -58,6 +58,26 @@
             <symbol id="i-tagihan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2V3Z"/><path d="M9 8h6M9 12h6"/>
             </symbol>
+            {{-- Virtual account: kartu dengan angka, dibedakan dari ikon tagihan
+                 yang berbentuk lembar bertepi sobek. --}}
+            {{-- Transaksi: dua panah berlawanan arah, beda dari ikon tagihan dan VA. --}}
+            {{-- Panah kembali, dipakai halaman detail untuk balik ke daftar. --}}
+            <symbol id="i-kembali" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/>
+            </symbol>
+
+            <symbol id="i-transaksi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/>
+            </symbol>
+
+            <symbol id="i-va" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 9.5h19"/><path d="M6 14.5h4M13 14.5h5"/>
+            </symbol>
+
+            {{-- Saklar daya, untuk mengaktifkan dan menonaktifkan. --}}
+            <symbol id="i-padam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3.5v8"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/>
+            </symbol>
             <symbol id="i-cari" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>
             </symbol>

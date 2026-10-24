@@ -22,6 +22,7 @@
                 ['rute' => 'kelas.index', 'pola' => 'kelas.*', 'ikon' => 'i-kelas', 'teks' => 'Kelas'],
                 ['rute' => 'siswa.index', 'pola' => 'siswa.*', 'ikon' => 'i-siswa', 'teks' => 'Siswa'],
                 ['rute' => 'tarif-spp.index', 'pola' => 'tarif-spp.*', 'ikon' => 'i-tarif', 'teks' => 'Tarif SPP'],
+                ['rute' => 'virtual-account.index', 'pola' => 'virtual-account.*', 'ikon' => 'i-va', 'teks' => 'Virtual Account'],
             ],
         ],
         [
@@ -29,6 +30,13 @@
             'menu' => [
                 ['rute' => 'tagihan-spp.index', 'pola' => 'tagihan-spp.*', 'ikon' => 'i-tagihan', 'teks' => 'Tagihan SPP'],
                 ['rute' => 'pencarian.index', 'pola' => 'pencarian.*', 'ikon' => 'i-cari', 'teks' => 'Pencarian'],
+            ],
+        ],
+        [
+            'label' => 'Transaksi',
+            'menu' => [
+                ['rute' => 'gateway-transactions.index', 'pola' => 'gateway-transactions.*', 'ikon' => 'i-transaksi', 'teks' => 'Payment Gateway'],
+                ['rute' => 'va-transactions.index', 'pola' => 'va-transactions.*', 'ikon' => 'i-va', 'teks' => 'Transaksi VA'],
             ],
         ],
         [

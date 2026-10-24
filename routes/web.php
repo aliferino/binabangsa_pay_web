@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AcademicYearController;
 use App\Http\Controllers\Admin\ClassroomController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GatewayTransactionController;
 use App\Http\Controllers\Admin\MajorController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SearchController;
@@ -167,6 +168,29 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin,teller')->group(function () {
         Route::get('/virtual-account', [VirtualAccountController::class, 'index'])->name('virtual-account.index');
         Route::get('/virtual-account/{virtualAccount}', [VirtualAccountController::class, 'show'])->name('virtual-account.show');
+    });
+
+    /*
+    |----------------------------------------------------------------------
+    | Transaksi payment gateway
+    |----------------------------------------------------------------------
+    | Read-only, dibuat oleh callback gateway, bukan oleh operator. Admin,
+    | kepala sekolah, dan teller boleh melihat, karena ini yang ditanyakan
+    | siswa saat transfernya belum terbaca. Tidak ada route tulis.
+    |
+    | Dua pintu masuk ke tabel yang sama:
+    |   /transaksi-gateway  seluruh baris gateway
+    |   /transaksi-va       hanya baris yang menempel pada virtual account
+    |
+    | Segmen tetap didaftarkan lebih dulu, sebelum route berparameter.
+    */
+    Route::middleware('role:admin,kepala_sekolah,teller')->group(function () {
+        Route::get('/transaksi-gateway', [GatewayTransactionController::class, 'index'])
+            ->name('gateway-transactions.index');
+        Route::get('/transaksi-va', [GatewayTransactionController::class, 'va'])
+            ->name('va-transactions.index');
+        Route::get('/transaksi-gateway/{transaction}', [GatewayTransactionController::class, 'show'])
+            ->name('gateway-transactions.show');
     });
 
     /*

@@ -4,136 +4,139 @@
 @section('keterangan', 'Rincian satu Virtual Account siswa')
 
 @section('aksi')
-    <a href="{{ route('teller.virtual-accounts.index') }}"
-       class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
-        Kembali
+    <a href="{{ route('virtual-account.index') }}"
+       class="inline-flex items-center gap-2 rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">
+        <svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-kembali"/></svg>Kembali
     </a>
 @endsection
 
 @section('isi')
 
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div class="space-y-5">
+        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
 
-        {{-- Data siswa. --}}
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 class="text-sm font-semibold text-slate-700">Siswa</h2>
-            <dl class="mt-3 space-y-3 text-sm">
-                <div>
-                    <dt class="text-slate-500">Nama</dt>
-                    <dd class="font-medium text-slate-900">{{ $va->siswa?->nama ?? '-' }}</dd>
-                </div>
-                <div>
-                    <dt class="text-slate-500">NIS</dt>
-                    <dd class="text-slate-700">{{ $va->siswa?->nis ?? '-' }}</dd>
-                </div>
-                <div>
-                    <dt class="text-slate-500">Kelas</dt>
-                    <dd class="text-slate-700">{{ $va->siswa?->kelas?->nama_kelas ?? '-' }}</dd>
-                </div>
-            </dl>
+            {{-- Data siswa pemilik nomor ini. --}}
+            <div class="rounded-xl border border-garis bg-white p-5 shadow-sm dark:border-garis-gelap dark:bg-gelap-2">
+                <h2 class="text-sm font-semibold text-redup dark:text-redup-gelap">Siswa</h2>
+                <dl class="mt-4 space-y-4 text-sm">
+                    <div class="flex items-baseline justify-between gap-4">
+                        <dt class="text-redup dark:text-redup-gelap">Nama</dt>
+                        <dd class="text-right font-medium text-tinta dark:text-teks-gelap">{{ $virtualAccount->siswa?->nama ?? '-' }}</dd>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-4">
+                        <dt class="text-redup dark:text-redup-gelap">NIS</dt>
+                        <dd class="text-right text-tinta dark:text-teks-gelap">{{ $virtualAccount->siswa?->nis ?? '-' }}</dd>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-4">
+                        <dt class="text-redup dark:text-redup-gelap">Kelas</dt>
+                        <dd class="text-right text-tinta dark:text-teks-gelap">{{ $virtualAccount->siswa?->kelas?->nama_kelas ?? '-' }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            {{-- Rincian nomor pembayaran. --}}
+            <div class="rounded-xl border border-garis bg-white p-5 shadow-sm dark:border-garis-gelap dark:bg-gelap-2">
+                <h2 class="text-sm font-semibold text-redup dark:text-redup-gelap">Rincian Virtual Account</h2>
+                <dl class="mt-4 space-y-4 text-sm">
+
+                    @if ($virtualAccount->account_number)
+                        <div class="flex items-baseline justify-between gap-4">
+                            <dt class="text-redup dark:text-redup-gelap">Nomor VA (bank)</dt>
+                            <dd class="font-mono text-lg font-bold text-tinta dark:text-teks-gelap">{{ $virtualAccount->account_number }}</dd>
+                        </div>
+                    @endif
+
+                    <div class="flex items-baseline justify-between gap-4">
+                        <dt class="text-redup dark:text-redup-gelap">Nomor VA internal</dt>
+                        <dd class="font-mono font-medium text-tinta dark:text-teks-gelap">{{ $virtualAccount->nomor_va }}</dd>
+                    </div>
+
+                    <div class="flex items-baseline justify-between gap-4">
+                        <dt class="text-redup dark:text-redup-gelap">Prefix</dt>
+                        <dd class="text-right text-tinta dark:text-teks-gelap">{{ $virtualAccount->prefix }}</dd>
+                    </div>
+
+                    @if ($virtualAccount->bank_code)
+                        <div class="flex items-baseline justify-between gap-4">
+                            <dt class="text-redup dark:text-redup-gelap">Kode bank</dt>
+                            <dd class="text-right text-tinta dark:text-teks-gelap">{{ $virtualAccount->bank_code }}</dd>
+                        </div>
+                    @endif
+
+                    @if ($virtualAccount->xendit_id)
+                        <div class="flex items-baseline justify-between gap-4">
+                            <dt class="shrink-0 text-redup dark:text-redup-gelap">Xendit ID</dt>
+                            <dd class="truncate font-mono text-xs text-redup dark:text-redup-gelap">{{ $virtualAccount->xendit_id }}</dd>
+                        </div>
+                    @endif
+
+                    @if ($virtualAccount->external_id)
+                        <div class="flex items-baseline justify-between gap-4">
+                            <dt class="shrink-0 text-redup dark:text-redup-gelap">External ID</dt>
+                            <dd class="truncate font-mono text-xs text-redup dark:text-redup-gelap">{{ $virtualAccount->external_id }}</dd>
+                        </div>
+                    @endif
+
+                    <div class="flex items-center justify-between gap-4">
+                        <dt class="text-redup dark:text-redup-gelap">Status</dt>
+                        <dd>
+                            <span class="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $virtualAccount->aktif() ? 'bg-emerald-100 text-emerald-800' : 'bg-latar-2 text-tinta dark:bg-gelap dark:text-teks-gelap' }}">
+                                {{ $virtualAccount->aktif() ? 'Aktif' : 'Nonaktif' }}
+                            </span>
+                        </dd>
+                    </div>
+
+                    @if ($virtualAccount->expired_at)
+                        <div class="flex items-baseline justify-between gap-4">
+                            <dt class="text-redup dark:text-redup-gelap">Kedaluwarsa</dt>
+                            <dd class="text-right text-tinta dark:text-teks-gelap">{{ $virtualAccount->expired_at->format('d/m/Y H:i') }}</dd>
+                        </div>
+                    @endif
+                </dl>
+            </div>
         </div>
 
-        {{-- Rincian Virtual Account. --}}
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 class="text-sm font-semibold text-slate-700">Rincian Virtual Account</h2>
-            <dl class="mt-3 space-y-3 text-sm">
-
-                @if ($va->account_number)
-                    <div>
-                        <dt class="text-slate-500">Nomor VA (bank)</dt>
-                        <dd class="font-mono text-lg font-bold text-slate-900">{{ $va->account_number }}</dd>
-                    </div>
-                @endif
-
-                <div>
-                    <dt class="text-slate-500">Nomor VA internal</dt>
-                    <dd class="font-mono font-medium text-slate-900">{{ $va->nomor_va }}</dd>
+        {{--
+            Riwayat transaksi yang masuk ke nomor ini. Status dan nominal dibaca
+            dari kolom gateway yang sebenarnya (status_transaksi, nominal).
+        --}}
+        @if ($virtualAccount->transaksi->isNotEmpty())
+            <div class="overflow-hidden rounded-xl border border-garis bg-white shadow-sm dark:border-garis-gelap dark:bg-gelap-2">
+                <div class="border-b border-garis px-5 py-4 dark:border-garis-gelap">
+                    <h2 class="text-sm font-semibold text-redup dark:text-redup-gelap">Riwayat transaksi gateway</h2>
                 </div>
-
-                <div>
-                    <dt class="text-slate-500">Prefix</dt>
-                    <dd class="text-slate-700">{{ $va->prefix }}</dd>
-                </div>
-
-                @if ($va->bank_code)
-                    <div>
-                        <dt class="text-slate-500">Kode bank</dt>
-                        <dd class="text-slate-700">{{ $va->bank_code }}</dd>
-                    </div>
-                @endif
-
-                @if ($va->xendit_id)
-                    <div>
-                        <dt class="text-slate-500">Xendit ID</dt>
-                        <dd class="font-mono text-xs text-slate-600">{{ $va->xendit_id }}</dd>
-                    </div>
-                @endif
-
-                @if ($va->external_id)
-                    <div>
-                        <dt class="text-slate-500">External ID</dt>
-                        <dd class="font-mono text-xs text-slate-600">{{ $va->external_id }}</dd>
-                    </div>
-                @endif
-
-                <div>
-                    <dt class="text-slate-500">Status</dt>
-                    <dd>
-                        @php
-                            $petaStatus = [
-                                'aktif' => ['label' => 'Aktif', 'kelas' => 'bg-emerald-100 text-emerald-800'],
-                                'nonaktif' => ['label' => 'Nonaktif', 'kelas' => 'bg-slate-100 text-slate-700'],
-                            ];
-                            $dataStatus = $petaStatus[$va->status] ?? ['label' => $va->status, 'kelas' => 'bg-slate-100 text-slate-700'];
-                        @endphp
-                        <span class="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $dataStatus['kelas'] }}">
-                            {{ $dataStatus['label'] }}
-                        </span>
-                    </dd>
-                </div>
-
-                @if ($va->expired_at)
-                    <div>
-                        <dt class="text-slate-500">Kedaluwarsa</dt>
-                        <dd class="text-slate-700">{{ $va->expired_at->format('d/m/Y H:i') }}</dd>
-                    </div>
-                @endif
-            </dl>
-
-            @if ($va->transaksi->isNotEmpty())
-                <div class="mt-5">
-                    <h3 class="text-sm font-semibold text-slate-700">Riwayat transaksi gateway</h3>
-                    <div class="mt-3 overflow-x-auto">
-                        <table class="min-w-full divide-y divide-slate-200 text-xs">
-                            <thead class="bg-slate-50 text-left uppercase tracking-wide text-slate-500">
-                                <tr>
-                                    <th class="px-3 py-2 font-semibold">Tanggal</th>
-                                    <th class="px-3 py-2 font-semibold">Status</th>
-                                    <th class="px-3 py-2 font-semibold">Nominal</th>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-garis text-sm dark:divide-garis-gelap">
+                        <thead class="bg-latar-2 text-left text-xs uppercase tracking-wide text-redup dark:bg-gelap dark:text-redup-gelap">
+                            <tr>
+                                <th class="px-5 py-3.5 font-semibold">Tanggal</th>
+                                <th class="px-5 py-3.5 font-semibold">ID transaksi</th>
+                                <th class="px-5 py-3.5 font-semibold">Status</th>
+                                <th class="px-5 py-3.5 text-right font-semibold">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-garis dark:divide-garis-gelap">
+                            @foreach ($virtualAccount->transaksi as $transaksi)
+                                <tr class="hover:bg-latar-2 dark:hover:bg-gelap">
+                                    <td class="whitespace-nowrap px-5 py-3.5 text-redup dark:text-redup-gelap">
+                                        {{ $transaksi->created_at?->format('d/m/Y H:i') ?? '-' }}
+                                    </td>
+                                    <td class="px-5 py-3.5">
+                                        <span class="font-mono text-xs text-tinta dark:text-teks-gelap">{{ $transaksi->transaction_id }}</span>
+                                    </td>
+                                    <td class="px-5 py-3.5">
+                                        @include('admin.gateway-transactions._status', ['status' => $transaksi->status_transaksi])
+                                    </td>
+                                    <td class="whitespace-nowrap px-5 py-3.5 text-right text-tinta dark:text-teks-gelap">
+                                        Rp{{ number_format((float) $transaksi->nominal, 0, ',', '.') }}
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                @foreach ($va->transaksi as $transaksi)
-                                    <tr>
-                                        <td class="px-3 py-2 text-slate-600">
-                                            {{ $transaksi->created_at?->format('d/m/Y H:i') ?? '-' }}
-                                        </td>
-                                        <td class="px-3 py-2 text-slate-600">{{ $transaksi->status ?? '-' }}</td>
-                                        <td class="px-3 py-2 text-slate-800">
-                                            @if ($transaksi->amount)
-                                                Rp{{ number_format((float) $transaksi->amount, 0, ',', '.') }}
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
 
 @endsection

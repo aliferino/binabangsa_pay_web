@@ -122,8 +122,9 @@
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
                                 <a href="{{ route('teller.payments.show', $pembayaran) }}"
-                                   class="rounded-md border border-garis dark:border-garis-gelap px-2.5 py-1 text-xs font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
-                                    Lihat
+                                   class="inline-flex h-7 w-7 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap"
+                                   title="Lihat" aria-label="Lihat">
+                                    <svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-lihat"/></svg>
                                 </a>
                             </div>
                         </td>

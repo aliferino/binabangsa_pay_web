@@ -42,7 +42,7 @@ class VirtualAccountController extends Controller
     public function show(VirtualAccount $virtualAccount)
     {
         return $this->render('teller.virtual-accounts.show', [
-            'va' => $virtualAccount->load('siswa.kelas', 'transaksi'),
+            'virtualAccount' => $virtualAccount->load('siswa.kelas', 'transaksi'),
         ]);
     }
 

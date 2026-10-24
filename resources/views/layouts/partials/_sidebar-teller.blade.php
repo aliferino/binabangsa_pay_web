@@ -13,6 +13,14 @@
             'menu' => [
                 ['rute' => 'tagihan-spp.index', 'pola' => 'tagihan-spp.*', 'ikon' => 'i-tagihan', 'teks' => 'Tagihan SPP'],
                 ['rute' => 'pencarian.index', 'pola' => 'pencarian.*', 'ikon' => 'i-cari', 'teks' => 'Pencarian'],
+                ['rute' => 'virtual-account.index', 'pola' => 'virtual-account.*', 'ikon' => 'i-va', 'teks' => 'Virtual Account'],
+            ],
+        ],
+        [
+            'label' => 'Transaksi',
+            'menu' => [
+                ['rute' => 'gateway-transactions.index', 'pola' => 'gateway-transactions.*', 'ikon' => 'i-transaksi', 'teks' => 'Payment Gateway'],
+                ['rute' => 'va-transactions.index', 'pola' => 'va-transactions.*', 'ikon' => 'i-va', 'teks' => 'Transaksi VA'],
             ],
         ],
         [
