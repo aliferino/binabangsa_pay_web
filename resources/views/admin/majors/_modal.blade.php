@@ -8,10 +8,10 @@
      data-judul-ubah="Ubah Jurusan">
     <div class="absolute inset-0 bg-black/50 dark:bg-black/70" data-modal-tutup></div>
 
-    <div class="pointer-events-none relative mx-auto mt-10 w-full max-w-2xl px-4 pb-10">
-        <div class="pointer-events-auto overflow-hidden rounded-xl border border-garis bg-white shadow-lg dark:border-garis-gelap dark:bg-gelap-2">
+    <div class="pointer-events-none relative mx-auto mt-6 mb-6 w-full max-w-2xl px-4 pb-10">
+        <div class="pointer-events-auto max-h-[calc(100vh-3rem)] overflow-y-auto rounded-xl border border-garis bg-white shadow-lg dark:border-garis-gelap dark:bg-gelap-2">
 
-            <div class="flex items-center justify-between border-b border-garis px-5 py-4 dark:border-garis-gelap">
+            <div class="flex items-center justify-between border-b border-garis px-5 py-4 dark:border-garis-gelap sticky top-0 z-10 bg-white dark:bg-gelap-2">
                 <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap" data-modal-judul>Tambah Jurusan</h2>
 <button type="button" data-modal-tutup class="inline-flex h-7 w-7 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Tutup" aria-label="Tutup"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-tutup"/></svg>
                 </button>
