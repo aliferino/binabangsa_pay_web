@@ -40,7 +40,7 @@
                         <dl class="mt-4 grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
                             <div class="flex items-baseline justify-between gap-4">
                                 <dt class="text-redup dark:text-redup-gelap">Nomor bank</dt>
-                                <dd class="font-mono text-lg font-bold text-tinta dark:text-teks-gelap">{{ $virtualAccount->account_number }}</dd>
+                                <dd class="font-mono text-lg font-bold text-tinta dark:text-teks-gelap">@include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->account_number])</dd>
                             </div>
                             <div class="flex items-baseline justify-between gap-4">
                                 <dt class="text-redup dark:text-redup-gelap">Bank</dt>
@@ -52,7 +52,7 @@
                             </div>
                             <div class="flex items-baseline justify-between gap-4">
                                 <dt class="text-redup dark:text-redup-gelap">Nomor internal</dt>
-                                <dd class="font-mono text-xs text-redup dark:text-redup-gelap">{{ $virtualAccount->nomor_va }}</dd>
+                                <dd class="font-mono text-xs text-redup dark:text-redup-gelap">@include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->nomor_va])</dd>
                             </div>
                         </dl>
                     @else
@@ -61,7 +61,7 @@
                             Belum terhubung ke Xendit, jadi belum ada nomor bank untuk siswa.
                         </p>
                         <p class="mt-3 text-sm text-redup dark:text-redup-gelap">
-                            Nomor internal <span class="font-mono">{{ $virtualAccount->nomor_va }}</span> tetap disimpan dan tidak berubah.
+                            Nomor internal <span class="font-mono">@include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->nomor_va])</span> tetap disimpan dan tidak berubah.
                         </p>
                     @endif
                 </div>
@@ -128,13 +128,13 @@
                     @if ($virtualAccount->account_number)
                         <div class="flex items-baseline justify-between gap-4">
                             <dt class="text-redup dark:text-redup-gelap">Nomor VA (bank)</dt>
-                            <dd class="font-mono text-lg font-bold text-tinta dark:text-teks-gelap">{{ $virtualAccount->account_number }}</dd>
+                            <dd class="font-mono text-lg font-bold text-tinta dark:text-teks-gelap">@include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->account_number])</dd>
                         </div>
                     @endif
 
                     <div class="flex items-baseline justify-between gap-4">
                         <dt class="text-redup dark:text-redup-gelap">Nomor VA internal</dt>
-                        <dd class="font-mono font-medium text-tinta dark:text-teks-gelap">{{ $virtualAccount->nomor_va }}</dd>
+                        <dd class="font-mono font-medium text-tinta dark:text-teks-gelap">@include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->nomor_va])</dd>
                     </div>
 
                     <div class="flex items-baseline justify-between gap-4">

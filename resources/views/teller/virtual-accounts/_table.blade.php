@@ -68,10 +68,9 @@
                         </td>
                         <td class="px-5 py-3.5">
                             @if ($virtualAccount->account_number)
-                                <span class="font-mono font-medium text-tinta dark:text-teks-gelap">{{ $virtualAccount->account_number }}</span>
-                                <span class="block text-xs text-redup dark:text-redup-gelap">{{ $virtualAccount->nomor_va }}</span>
+                                <span class="font-mono font-medium text-tinta dark:text-teks-gelap">@include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->account_number])</span>
                             @else
-                                <span class="font-mono font-medium text-tinta dark:text-teks-gelap">{{ $virtualAccount->nomor_va }}</span>
+                                <span class="font-mono font-medium text-tinta dark:text-teks-gelap">@include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->nomor_va])</span>
                             @endif
                         </td>
                         <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ $virtualAccount->bank_code ?: '-' }}</td>

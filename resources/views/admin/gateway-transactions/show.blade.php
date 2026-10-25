@@ -73,7 +73,7 @@
                         <div class="flex items-baseline justify-between gap-4">
                             <dt class="text-redup dark:text-redup-gelap">Virtual account</dt>
                             <dd class="font-mono text-tinta dark:text-teks-gelap">
-                                {{ $transaction->virtualAccount->account_number ?: $transaction->virtualAccount->nomor_va }}
+                                @include('layouts.partials._nomor-va', ['nomor' => $transaction->virtualAccount->account_number ?: $transaction->virtualAccount->nomor_va])
                             </dd>
                         </div>
                     @endif

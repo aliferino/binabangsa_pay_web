@@ -21,18 +21,9 @@
                 <div class="px-5 py-5">
                     {{-- Nomor VA ditampilkan besar dan jelas. --}}
                     <p class="text-xs font-medium uppercase tracking-wide text-redup dark:text-redup-gelap">Nomor Virtual Account</p>
-                    @if ($va->account_number)
-                        <p class="mt-1 font-mono text-3xl font-bold text-tinta dark:text-teks-gelap">
-                            {{ $va->account_number }}
-                        </p>
-                        <p class="mt-1 text-sm text-redup dark:text-redup-gelap">
-                            Nomor internal: {{ $va->nomor_va }}
-                        </p>
-                    @else
-                        <p class="mt-1 font-mono text-3xl font-bold text-tinta dark:text-teks-gelap">
-                            {{ $va->nomor_va }}
-                        </p>
-                    @endif
+                    <p class="mt-1 font-mono text-3xl font-bold text-tinta dark:text-teks-gelap">
+                        @include('layouts.partials._nomor-va', ['nomor' => $va->account_number ?: $va->nomor_va])
+                    </p>
 
                     <dl class="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                         @if ($va->bank_code)

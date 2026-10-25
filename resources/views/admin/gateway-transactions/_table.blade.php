@@ -85,7 +85,7 @@
                             <span class="mt-0.5 block text-xs text-redup dark:text-redup-gelap">{{ $transaction->siswa?->nis }}</span>
                         </td>
                         <td class="whitespace-nowrap px-5 py-3.5 font-mono text-xs text-redup dark:text-redup-gelap">
-                            {{ $transaction->virtualAccount?->account_number ?: ($transaction->virtualAccount?->nomor_va ?? '-') }}
+                            @include('layouts.partials._nomor-va', ['nomor' => $transaction->virtualAccount?->account_number ?: ($transaction->virtualAccount?->nomor_va ?? '-')])
                         </td>
                         <td class="whitespace-nowrap px-5 py-3.5 text-right text-tinta dark:text-teks-gelap">
                             Rp{{ number_format((float) $transaction->nominal, 0, ',', '.') }}

@@ -29,7 +29,7 @@
             <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Data belum tersedia</h2>
             <p class="mt-1 text-sm leading-relaxed text-redup dark:text-redup-gelap">
                 {{ $pesan ?? 'Akun ini belum ditautkan ke data siswa.' }}
-            </p>
+                                </p>
         </div>
     @else
 
@@ -40,9 +40,9 @@
                 <div class="grid lg:grid-cols-[1fr_auto]">
 
                     <div class="flex flex-col justify-center px-6 py-7 lg:px-8">
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-redup dark:text-redup-gelap">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-redup dark:text-redup-gelap">
                             Tahun ajaran {{ $siswa->tahunAjaran?->tahun_ajaran ?? '-' }}
-                        </p>
+                                </p>
                         <h2 class="mt-2 text-2xl font-bold leading-tight tracking-tight text-tinta dark:text-teks-gelap">
                             {{ $siswa->nama }}
                         </h2>
@@ -50,7 +50,7 @@
                             {{ $siswa->kelas?->nama_kelas ?? '-' }}
                             <span class="mx-1.5 text-garis dark:text-garis-gelap">/</span>
                             {{ $siswa->kelas?->jurusan?->nama_jurusan ?? '-' }}
-                        </p>
+                                </p>
 
                         <dl class="mt-5 flex flex-wrap gap-x-7 gap-y-2 text-xs">
                             @foreach ([['NIS', $siswa->nis], ['NISN', $siswa->nisn]] as [$label, $nilai])
@@ -63,12 +63,12 @@
                     </div>
 
                     <div class="border-t border-garis bg-latar-2 px-6 py-6 lg:min-w-[19rem] lg:border-l lg:border-t-0 lg:px-8 dark:border-garis-gelap dark:bg-gelap">
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-redup dark:text-redup-gelap">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-redup dark:text-redup-gelap">
                             Sisa tagihan
-                        </p>
+                                </p>
                         <p class="mt-1.5 text-[2.1rem] font-bold leading-none tabular-nums tracking-tight text-tinta dark:text-teks-gelap">
                             {{ $rupiah($totalOutstanding) }}
-                        </p>
+                                </p>
 
                         {{-- Satu petak per tagihan. Petak neon berarti lunas, jadi 0 lunas terlihat
                              sebagai deretan petak kosong, bukan batang penuh yang ambigu. --}}
@@ -85,7 +85,7 @@
                         <p class="mt-2 text-[11px] leading-relaxed text-redup dark:text-redup-gelap">
                             <span class="font-semibold tabular-nums text-tinta dark:text-teks-gelap">{{ $paidCount }} dari {{ $totalBills }}</span>
                             tagihan lunas, {{ $rupiah($totalBilled) }} totalnya.
-                        </p>
+                                </p>
                     </div>
 
                 </div>
@@ -107,7 +107,7 @@
                     @if ($nextBill === null)
                         <p class="mt-3 text-sm leading-relaxed text-redup dark:text-redup-gelap">
                             Semua tagihan sudah lunas. Tidak ada yang perlu dibayar.
-                        </p>
+                                </p>
                     @else
                         <div class="mt-4 flex items-end justify-between gap-4">
                             <div>
@@ -130,7 +130,7 @@
                             @if ($virtualAccount?->nomor_va)
                                 <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-redup dark:text-redup-gelap">Virtual account</p>
                                 <p class="mt-1 font-mono text-base font-bold tabular-nums tracking-tight text-tinta dark:text-teks-gelap">
-                                    {{ $virtualAccount->nomor_va }}
+                                    @include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->account_number ?: $virtualAccount->nomor_va])
                                 </p>
                                 <p class="mt-1 text-[11px] leading-relaxed text-redup dark:text-redup-gelap">
                                     Transfer ke nomor ini lewat
@@ -159,7 +159,7 @@
                             <p class="text-sm font-medium text-tinta dark:text-teks-gelap">Belum ada tagihan</p>
                             <p class="mt-1 text-[11px] leading-relaxed text-redup dark:text-redup-gelap">
                                 Tagihan muncul di sini setelah bagian keuangan menerbitkannya.
-                            </p>
+                                </p>
                         </div>
                     @else
                         <ol class="mt-4 space-y-0">
@@ -184,16 +184,16 @@
                                         <div class="flex items-baseline justify-between gap-3">
                                             <p class="truncate text-[13px] font-semibold text-tinta dark:text-teks-gelap">
                                                 {{ $tagihan->namaBulan() }} {{ $tagihan->tahun }}
-                                            </p>
+                                </p>
                                             <p class="shrink-0 text-[13px] font-semibold tabular-nums text-tinta dark:text-teks-gelap">
                                                 {{ $rupiahRingkas($tagihan->nominal) }}
-                                            </p>
+                                </p>
                                         </div>
                                         <p class="mt-0.5 text-[11px] text-redup dark:text-redup-gelap">
                                             Jatuh tempo {{ $tagihan->tanggal_jatuh_tempo?->format('d/m/Y') ?? '-' }}
                                             <span class="mx-1.5 text-garis dark:text-garis-gelap">/</span>
                                             {{ $lunas ? 'Lunas' : ($telatBaris ? 'Tunggakan' : 'Belum bayar') }}
-                                        </p>
+                                </p>
                                     </div>
                                 </li>
                             @endforeach
