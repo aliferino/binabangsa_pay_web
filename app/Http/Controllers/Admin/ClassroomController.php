@@ -31,8 +31,8 @@ class ClassroomController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'nama_kelas' => ['required', 'string', 'max:255'],
-            'tingkat' => ['required', 'string', 'max:255'],
+            'nama_kelas' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9 .\/-]+$/'],
+            'tingkat' => ['required', 'string', 'max:10', 'regex:/^[A-Za-z0-9]+$/'],
             'id_jurusan' => ['required', 'exists:jurusan,id_jurusan'],
             'id_tahun_ajaran' => ['required', 'exists:tahun_ajaran,id_tahun_ajaran'],
         ], [
@@ -80,8 +80,8 @@ class ClassroomController extends Controller
     public function update(Request $request, Classroom $kelas): RedirectResponse
     {
         $data = $request->validate([
-            'nama_kelas' => ['required', 'string', 'max:255'],
-            'tingkat' => ['required', 'string', 'max:255'],
+            'nama_kelas' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9 .\/-]+$/'],
+            'tingkat' => ['required', 'string', 'max:10', 'regex:/^[A-Za-z0-9]+$/'],
             'id_jurusan' => ['required', 'exists:jurusan,id_jurusan'],
             'id_tahun_ajaran' => ['required', 'exists:tahun_ajaran,id_tahun_ajaran'],
         ], [

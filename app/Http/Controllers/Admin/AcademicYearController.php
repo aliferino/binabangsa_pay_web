@@ -126,13 +126,14 @@ class AcademicYearController extends Controller
         }
 
         return $request->validate([
-            'tahun_ajaran' => ['required', 'string', 'max:255', $aturanUnik],
+            'tahun_ajaran' => ['required', 'string', 'regex:/^\d{4}\/\d{4}$/', $aturanUnik],
             'tanggal_mulai' => ['required', 'date'],
             'tanggal_selesai' => ['required', 'date', 'after_or_equal:tanggal_mulai'],
             'status' => ['required', Rule::in(['aktif', 'nonaktif'])],
         ], [
             'tahun_ajaran.required' => 'Tahun ajaran wajib diisi.',
             'tahun_ajaran.unique' => 'Tahun ajaran ini sudah ada.',
+            'tahun_ajaran.regex' => 'Tahun ajaran harus berbentuk 2026/2027.',
             'tanggal_mulai.required' => 'Tanggal mulai wajib diisi.',
             'tanggal_mulai.date' => 'Tanggal mulai harus berupa tanggal yang sah.',
             'tanggal_selesai.required' => 'Tanggal selesai wajib diisi.',

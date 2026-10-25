@@ -33,7 +33,7 @@
                 <label for="nis" class="mb-1 block text-sm font-medium text-tinta dark:text-teks-gelap">
                     NIS <span class="text-red-600">*</span>
                 </label>
-                <input type="text" name="nis" id="nis" value="{{ $nilai('nis') }}" required
+                <input type="text" name="nis" id="nis" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" title="NIS harus 5 angka" autocomplete="off" value="{{ $nilai('nis') }}" required
                        class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
                 @include('layouts.partials._error', ['nama' => 'nis'])
             </div>
@@ -42,7 +42,7 @@
                 <label for="nisn" class="mb-1 block text-sm font-medium text-tinta dark:text-teks-gelap">
                     NISN <span class="text-red-600">*</span>
                 </label>
-                <input type="text" name="nisn" id="nisn" value="{{ $nilai('nisn') }}" required
+                <input type="text" name="nisn" id="nisn" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" title="NISN harus 10 angka" autocomplete="off" value="{{ $nilai('nisn') }}" required
                        class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
                 @include('layouts.partials._error', ['nama' => 'nisn'])
             </div>
@@ -51,7 +51,7 @@
                 <label for="nama" class="mb-1 block text-sm font-medium text-tinta dark:text-teks-gelap">
                     Nama lengkap <span class="text-red-600">*</span>
                 </label>
-                <input type="text" name="nama" id="nama" value="{{ $nilai('nama') }}" required
+                <input type="text" name="nama" id="nama" maxlength="255" autocomplete="off" value="{{ $nilai('nama') }}" required
                        class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
                 @include('layouts.partials._error', ['nama' => 'nama'])
             </div>
@@ -113,7 +113,7 @@
 
             <div>
                 <label for="no_hp" class="mb-1 block text-sm font-medium text-tinta dark:text-teks-gelap">Nomor HP</label>
-                <input type="text" name="no_hp" id="no_hp" value="{{ $nilai('no_hp') }}"
+                <input type="text" name="no_hp" id="no_hp" inputmode="numeric" maxlength="15" pattern="[0-9]{10,15}" title="Nomor HP 10 sampai 15 angka" autocomplete="off" value="{{ $nilai('no_hp') }}"
                        class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
                 @include('layouts.partials._error', ['nama' => 'no_hp'])
             </div>

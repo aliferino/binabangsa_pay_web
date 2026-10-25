@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Classroom;
 use App\Models\Student;
+use App\Models\TuitionBill;
 use App\Models\AcademicYear;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -74,7 +75,10 @@ class StudentController extends Controller
             'student' => $siswa,
             'totalBills' => $bills->count(),
             'totalNominal' => (float) $bills->sum('nominal'),
-            'totalArrearsBills' => $bills->where('status', 'tunggakan')->count(),
+            // Tunggakan tidak pernah tersimpan sebagai status, jadi dihitung
+            // dari tanggal jatuh tempo.
+            'totalArrearsBills' => $bills->filter(fn ($t) => $t->status !== TuitionBill::STATUS_LUNAS
+                && $t->tanggal_jatuh_tempo?->isPast())->count(),
         ]);
     }
 
@@ -140,15 +144,15 @@ class StudentController extends Controller
         }
 
         return [
-            'nis' => ['required', 'string', 'max:255', $nis],
-            'nisn' => ['required', 'string', 'max:255', $nisn],
-            'nama' => ['required', 'string', 'max:255'],
+            'nis' => ['required', 'digits:5', $nis],
+            'nisn' => ['required', 'digits:10', $nisn],
+            'nama' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z][A-Za-z .\'-]*$/'],
             'jenis_kelamin' => ['required', Rule::in(['L', 'P'])],
-            'tempat_lahir' => ['required', 'string', 'max:255'],
-            'tanggal_lahir' => ['required', 'date'],
-            'alamat' => ['required', 'string'],
-            'no_hp' => ['nullable', 'string', 'max:255'],
-            'nama_orang_tua' => ['nullable', 'string', 'max:255'],
+            'tempat_lahir' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z][A-Za-z .\'-]*$/'],
+            'tanggal_lahir' => ['required', 'date', 'before:today'],
+            'alamat' => ['required', 'string', 'max:255'],
+            'no_hp' => ['nullable', 'digits_between:10,15'],
+            'nama_orang_tua' => ['nullable', 'string', 'max:255', 'regex:/^[A-Za-z][A-Za-z .\'-]*$/'],
             'id_kelas' => ['required', 'exists:kelas,id_kelas'],
             'id_tahun_ajaran' => ['required', 'exists:tahun_ajaran,id_tahun_ajaran'],
             'id_user' => ['nullable', 'exists:users,id_user'],
@@ -163,10 +167,17 @@ class StudentController extends Controller
     {
         return [
             'nis.required' => 'NIS wajib diisi.',
+            'nis.digits' => 'NIS harus tepat 5 angka.',
             'nis.unique' => 'NIS ini sudah dipakai siswa lain.',
             'nisn.required' => 'NISN wajib diisi.',
+            'nisn.digits' => 'NISN harus tepat 10 angka.',
             'nisn.unique' => 'NISN ini sudah dipakai siswa lain.',
             'nama.required' => 'Nama wajib diisi.',
+            'nama.regex' => 'Nama hanya boleh huruf, spasi, titik, dan tanda hubung.',
+            'tempat_lahir.regex' => 'Tempat lahir hanya boleh huruf, spasi, titik, dan tanda hubung.',
+            'no_hp.digits_between' => 'Nomor HP harus 10 sampai 15 angka.',
+            'nama_orang_tua.regex' => 'Nama orang tua hanya boleh huruf, spasi, titik, dan tanda hubung.',
+            'tanggal_lahir.before' => 'Tanggal lahir harus sebelum hari ini.',
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
             'jenis_kelamin.in' => 'Jenis kelamin harus L atau P.',
             'tempat_lahir.required' => 'Tempat lahir wajib diisi.',

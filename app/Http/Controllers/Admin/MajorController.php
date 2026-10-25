@@ -26,8 +26,8 @@ class MajorController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'kode_jurusan' => ['required', 'string', 'max:255', 'unique:jurusan,kode_jurusan'],
-            'nama_jurusan' => ['required', 'string', 'max:255'],
+            'kode_jurusan' => ['required', 'string', 'max:20', 'regex:/^[A-Za-z0-9.-]+$/', 'unique:jurusan,kode_jurusan'],
+            'nama_jurusan' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z][A-Za-z .\'-]*$/'],
             'keterangan' => ['nullable', 'string'],
         ], [
             'kode_jurusan.required' => 'Kode jurusan wajib diisi.',
@@ -73,9 +73,9 @@ class MajorController extends Controller
     public function update(Request $request, Major $jurusan): RedirectResponse
     {
         $data = $request->validate([
-            'kode_jurusan' => ['required', 'string', 'max:255',
+            'kode_jurusan' => ['required', 'string', 'max:20', 'regex:/^[A-Za-z0-9.-]+$/',
                 Rule::unique('jurusan', 'kode_jurusan')->ignore($jurusan->id_jurusan, 'id_jurusan')],
-            'nama_jurusan' => ['required', 'string', 'max:255'],
+            'nama_jurusan' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z][A-Za-z .\'-]*$/'],
             'keterangan' => ['nullable', 'string'],
         ], [
             'kode_jurusan.required' => 'Kode jurusan wajib diisi.',

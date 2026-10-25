@@ -30,8 +30,8 @@ class UserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
+            'nama' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z][A-Za-z .\'-]*$/'],
+            'username' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9._-]+$/', 'unique:users,username'],
             'password' => ['required', 'string', 'min:6'],
             'role' => ['required', Rule::in(['admin', 'kepala_sekolah', 'teller', 'siswa'])],
             'status' => ['required', Rule::in(['aktif', 'nonaktif'])],
@@ -80,8 +80,8 @@ class UserController extends Controller
     public function update(Request $request, User $user): RedirectResponse
     {
         $data = $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255',
+            'nama' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z][A-Za-z .\'-]*$/'],
+            'username' => ['required', 'string', 'max:50', 'regex:/^[A-Za-z0-9._-]+$/',
                 Rule::unique('users', 'username')->ignore($user->id_user, 'id_user')],
             'password' => ['nullable', 'string', 'min:6'],
             'role' => ['required', Rule::in(['admin', 'kepala_sekolah', 'teller', 'siswa'])],
