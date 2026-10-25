@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AcademicYearController;
 use App\Http\Controllers\Admin\ClassroomController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\IntegrationController;
 use App\Http\Controllers\Admin\GatewayTransactionController;
 use App\Http\Controllers\Admin\MajorController;
 use App\Http\Controllers\Admin\ReportController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Kepsek\DashboardController as KepsekDashboardController;
 use App\Http\Controllers\Public\CallbackController;
+use App\Http\Controllers\Public\SimulationController;
 use App\Http\Controllers\Public\MidtransCallbackController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Teller\DashboardController as TellerDashboardController;
@@ -20,6 +22,15 @@ use App\Http\Controllers\Teller\PaymentController;
 use App\Http\Controllers\Teller\TuitionBillController;
 use App\Http\Controllers\Teller\VirtualAccountController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Kepsek\DashboardController as KepsekDashboard;
+use App\Http\Controllers\Kepsek\ReportController as KepsekReport;
+use App\Http\Controllers\Kepsek\StudentController as KepsekStudent;
+use App\Http\Controllers\Teller\DashboardController as TellerDashboard;
+use App\Http\Controllers\Teller\SearchController as TellerSearch;
+use App\Http\Controllers\Siswa\BillController as SiswaBill;
+use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
+use App\Http\Controllers\Siswa\PaymentController as SiswaPayment;
+use App\Http\Controllers\Siswa\VirtualAccountController as SiswaVirtualAccount;
 
 /*
 |--------------------------------------------------------------------------
@@ -324,4 +335,141 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin,teller')->group(function () {
         Route::get('/pencarian', [SearchController::class, 'index'])->name('pencarian.index');
     });
+
+    /*
+    |----------------------------------------------------------------------
+    | Pengaturan integrasi
+    |----------------------------------------------------------------------
+    | Admin saja. Menyalakan tunnel dan mengirim notifikasi uji menyentuh
+    | konfigurasi pembayaran, jadi tidak dibuka untuk role lain.
+    */
+
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/pengaturan/integrasi', [IntegrationController::class, 'index'])->name('integrasi.index');
+        Route::post('/pengaturan/integrasi/kunci', [IntegrationController::class, 'simpanKunci'])->name('integrasi.kunci.simpan');
+        Route::post('/pengaturan/integrasi/kunci/reset', [IntegrationController::class, 'resetKunci'])->name('integrasi.kunci.reset');
+        Route::post('/pengaturan/integrasi/tunnel', [IntegrationController::class, 'nyalakanTunnel'])->name('integrasi.tunnel.nyalakan');
+        Route::delete('/pengaturan/integrasi/tunnel', [IntegrationController::class, 'matikanTunnel'])->name('integrasi.tunnel.matikan');
+        Route::post('/pengaturan/integrasi/uji', [IntegrationController::class, 'ujiNotifikasi'])->name('integrasi.uji');
+    });
+});
+
+/*
+|----------------------------------------------------------------------
+| Simulasi transfer publik
+|----------------------------------------------------------------------
+| Sengaja di luar grup auth, karena siswa tidak punya akun di sistem ini.
+| Tetap di dalam grup web, jadi CSRF aktif untuk route tulisnya. Isinya
+| hanya data simulasi, dan seluruh halaman ditolak 403 kalau konfigurasi
+| Midtrans ada di mode produksi.
+|
+| Route sukses didaftarkan SEBELUM route berparameter supaya tidak
+| tertukar.
+*/
+
+Route::get('/simulasi', [SimulationController::class, 'index'])->name('simulasi.index');
+Route::post('/simulasi', [SimulationController::class, 'cari'])->name('simulasi.cari');
+Route::get('/simulasi/sukses/{nomorTransaksi}', [SimulationController::class, 'sukses'])->name('simulasi.sukses');
+Route::get('/simulasi/{nomorVa}', [SimulationController::class, 'detail'])->name('simulasi.detail');
+Route::post('/simulasi/{nomorVa}/bayar', [SimulationController::class, 'bayar'])->name('simulasi.bayar');
+
+/*
+|--------------------------------------------------------------------------
+| Route kepala sekolah
+|--------------------------------------------------------------------------
+| Hanya untuk role kepala_sekolah. Kepala sekolah hanya boleh melihat.
+| Digabung ke berkas ini supaya tidak ada pendaftaran tambahan di
+| bootstrap/app.php; seluruh route aplikasi cukup di satu tempat.
+*/
+
+Route::middleware(['auth', 'role:kepala_sekolah'])->prefix('kepsek')->name('kepsek.')->group(function () {
+
+    // Dashboard.
+    Route::get('/dashboard', [KepsekDashboard::class, 'principal'])
+        ->name('dashboard');
+
+    // Siswa. Read-only: hanya index dan show.
+    Route::get('/siswa', [KepsekStudent::class, 'index'])
+        ->name('students.index');
+    Route::get('/siswa/{siswa}', [KepsekStudent::class, 'show'])
+        ->name('students.show');
+
+    // Laporan.
+    Route::get('/laporan/pembayaran', [KepsekReport::class, 'payments'])
+        ->name('reports.payments');
+    Route::get('/laporan/tunggakan', [KepsekReport::class, 'arrears'])
+        ->name('reports.arrears');
+    Route::get('/laporan/rekap', [KepsekReport::class, 'recap'])
+        ->name('reports.recap');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Route teller
+|--------------------------------------------------------------------------
+| Hanya untuk role teller. Boleh melihat dan mencatat pembayaran, tidak
+| boleh mengelola data master. Segmen tetap (/teller/pencarian)
+| didaftarkan SEBELUM route berparameter supaya kata "pencarian" tidak
+| tertangkap sebagai parameter.
+*/
+
+Route::middleware(['auth', 'role:teller'])->prefix('teller')->name('teller.')->group(function () {
+
+    // Dashboard.
+    Route::get('/dashboard', [TellerDashboard::class, 'teller'])
+        ->name('dashboard');
+
+    // Pencarian. Segmen tetap, wajib di atas route berparameter.
+    Route::get('/pencarian', [TellerSearch::class, 'index'])
+        ->name('search.index');
+
+    // Tagihan.
+    Route::get('/tagihan', [TuitionBillController::class, 'index'])
+        ->name('bills.index');
+    Route::get('/tagihan/{tagihanSpp}', [TuitionBillController::class, 'show'])
+        ->name('bills.show');
+
+    // Pembayaran.
+    Route::get('/pembayaran', [PaymentController::class, 'index'])
+        ->name('payments.index');
+    Route::get('/pembayaran/{pembayaran}', [PaymentController::class, 'show'])
+        ->name('payments.show');
+
+    // Virtual Account.
+    Route::get('/virtual-account', [VirtualAccountController::class, 'index'])
+        ->name('virtual-accounts.index');
+    Route::get('/virtual-account/{virtualAccount}', [VirtualAccountController::class, 'show'])
+        ->name('virtual-accounts.show');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Route siswa
+|--------------------------------------------------------------------------
+| Hanya untuk role siswa, dan hanya data miliknya sendiri. Prefix
+| /akun-saya dipakai, bukan /siswa, sebab /siswa/{siswa} milik admin akan
+| menangkap /siswa/tagihan sebagai {siswa} sebelum middleware sempat
+| memeriksa. Nama route tetap bersisip "siswa." supaya pemanggil lama
+| tidak perlu diubah.
+*/
+
+Route::middleware(['auth', 'role:siswa'])->prefix('akun-saya')->name('siswa.')->group(function () {
+
+    // Dashboard.
+    Route::get('/dashboard', [SiswaDashboard::class, 'student'])
+        ->name('dashboard');
+
+    // Tagihan.
+    Route::get('/tagihan', [SiswaBill::class, 'index'])
+        ->name('bills.index');
+
+    // Pembayaran.
+    Route::get('/pembayaran', [SiswaPayment::class, 'index'])
+        ->name('payments.index');
+    Route::get('/pembayaran/{pembayaran}', [SiswaPayment::class, 'show'])
+        ->name('payments.show');
+
+    // Virtual Account.
+    Route::get('/virtual-account', [SiswaVirtualAccount::class, 'index'])
+        ->name('virtual-accounts.index');
 });
