@@ -65,7 +65,7 @@
             @enderror
 
             <button type="submit"
-                    class="tombol-tekan mt-3 w-full rounded-lg bg-neon px-4 py-3 text-sm font-semibold text-tinta hover:bg-neon-tekan">
+                    class="border border-transparent tombol-tekan mt-3 w-full rounded-lg bg-neon px-4 py-3 text-sm font-semibold text-tinta hover:bg-neon-tekan">
                 Bayar sekarang
             </button>
 

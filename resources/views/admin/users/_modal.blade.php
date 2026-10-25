@@ -69,7 +69,7 @@
                                 Role <span class="text-red-600">*</span>
                             </label>
                             <select name="role" id="role" required
-                                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                                 <option value="">Pilih role</option>
                                 <option value="admin" @selected(old('role') === 'admin')>Administrator</option>
                                 <option value="kepala_sekolah" @selected(old('role') === 'kepala_sekolah')>Kepala Sekolah</option>
@@ -84,7 +84,7 @@
                                 Status <span class="text-red-600">*</span>
                             </label>
                             <select name="status" id="status" required
-                                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                                 <option value="aktif" @selected(old('status') === 'aktif')>Aktif</option>
                                 <option value="nonaktif" @selected(old('status') === 'nonaktif')>Nonaktif</option>
                             </select>
@@ -94,7 +94,7 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 border-t border-garis dark:border-garis-gelap px-5 py-4">
-<button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan" title="Simpan" aria-label="Simpan"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-simpan"/></svg>Simpan
+<button type="submit" class="border border-transparent inline-flex items-center gap-2 rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan" title="Simpan" aria-label="Simpan"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-simpan"/></svg>Simpan
                     </button>
 <button type="button" data-modal-tutup class="rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">Batal
                     </button>

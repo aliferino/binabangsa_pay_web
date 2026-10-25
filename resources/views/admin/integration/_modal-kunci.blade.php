@@ -63,7 +63,7 @@
                                 Mode produksi
                             </label>
                             <select name="midtrans_is_production" id="kunci_mode"
-                                    class="mt-1.5 w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                                    class="mt-1.5 w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                                 <option value="0" @selected(! $midtransProduksi)>Sandbox</option>
                                 <option value="1" @selected($midtransProduksi)>Produksi</option>
                             </select>
@@ -94,7 +94,7 @@
                         Batal
                     </button>
                     <button type="submit" form="form-kunci"
-                            class="tombol-tekan inline-flex items-center gap-2 rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan"
+                            class="border border-transparent tombol-tekan inline-flex items-center gap-2 rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan"
                             title="Simpan" aria-label="Simpan">
                         <svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-simpan"/></svg>Simpan
                     </button>

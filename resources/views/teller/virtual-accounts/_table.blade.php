@@ -6,13 +6,13 @@
     memakai URL yang sedang dibuka supaya filter tetap bekerja untuk keduanya.
 --}}
 <form method="GET" action="{{ url()->current() }}"
-      class="rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-4 shadow-sm">
+      class="mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-4 shadow-sm">
     <div class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 lg:grid-cols-[repeat(2,minmax(0,1fr))_auto]">
 
         <div>
             <label for="filter_siswa_id" class="mb-1.5 block text-xs font-medium text-redup dark:text-redup-gelap">Siswa</label>
             <select name="siswa_id" id="filter_siswa_id"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua siswa</option>
                 @foreach ($students as $student)
                     <option value="{{ $student->id_siswa }}" @selected(($filter['siswa_id'] ?? '') == $student->id_siswa)>
@@ -25,7 +25,7 @@
         <div>
             <label for="filter_status" class="mb-1.5 block text-xs font-medium text-redup dark:text-redup-gelap">Status</label>
             <select name="status" id="filter_status"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua status</option>
                 <option value="aktif" @selected(($filter['status'] ?? '') === 'aktif')>Aktif</option>
                 <option value="nonaktif" @selected(($filter['status'] ?? '') === 'nonaktif')>Nonaktif</option>
@@ -34,7 +34,7 @@
 
         <div class="flex items-end gap-3 sm:col-span-2 lg:col-span-1 lg:pl-1">
             <button type="submit"
-                    class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
+                    class="border border-transparent rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                 Terapkan
             </button>
             <a href="{{ url()->current() }}"
@@ -51,22 +51,22 @@
         <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
             <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">
                 <tr>
-                    <th class="px-5 py-3.5 font-semibold">Siswa</th>
-                    <th class="px-5 py-3.5 font-semibold">Nomor VA</th>
-                    <th class="px-5 py-3.5 font-semibold">Bank</th>
-                    <th class="px-5 py-3.5 font-semibold">Status</th>
-                    <th class="px-5 py-3.5 font-semibold">Kedaluwarsa</th>
-                    <th class="px-5 py-3.5 text-right font-semibold">Aksi</th>
+                    <th class="px-5 py-3 font-semibold">Siswa</th>
+                    <th class="px-5 py-3 font-semibold">Nomor VA</th>
+                    <th class="px-5 py-3 font-semibold">Bank</th>
+                    <th class="px-5 py-3 font-semibold">Status</th>
+                    <th class="px-5 py-3 font-semibold">Kedaluwarsa</th>
+                    <th class="px-5 py-3 text-right font-semibold">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-garis dark:divide-garis-gelap">
                 @forelse ($virtualAccounts as $virtualAccount)
                     <tr class="hover:bg-latar-2 dark:hover:bg-gelap">
-                        <td class="px-5 py-3.5">
+                        <td class="px-5 py-3">
                             <span class="font-medium text-tinta dark:text-teks-gelap">{{ $virtualAccount->siswa?->nama ?? '-' }}</span>
                             <span class="block text-xs text-redup dark:text-redup-gelap">{{ $virtualAccount->siswa?->nis }}</span>
                         </td>
-                        <td class="px-5 py-3.5">
+                        <td class="px-5 py-3">
                             @if ($virtualAccount->account_number)
                                 <span class="font-mono font-medium text-tinta dark:text-teks-gelap">@include('layouts.partials._nomor-va', ['nomor' => $virtualAccount->account_number])</span>
                             @else
@@ -74,7 +74,7 @@
                             @endif
                         </td>
                         <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ $virtualAccount->bank_code ?: '-' }}</td>
-                        <td class="px-5 py-3.5">
+                        <td class="px-5 py-3">
                             @php
                                 $petaStatus = [
                                     'aktif' => ['label' => 'Aktif', 'kelas' => 'bg-neon text-tinta'],
@@ -89,7 +89,7 @@
                         <td class="px-5 py-3 text-redup dark:text-redup-gelap">
                             {{ $virtualAccount->expired_at?->format('d/m/Y') ?? '-' }}
                         </td>
-                        <td class="px-5 py-3.5">
+                        <td class="px-5 py-3">
                             {{--
                                 Tombol ikon, seragam dengan tabel lain. Aksi aktif
                                 dan nonaktif hanya muncul untuk admin, karena

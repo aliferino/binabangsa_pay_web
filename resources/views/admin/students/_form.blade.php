@@ -61,7 +61,7 @@
                     Jenis kelamin <span class="text-red-600">*</span>
                 </label>
                 <select name="jenis_kelamin" id="jenis_kelamin" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Pilih jenis kelamin</option>
                     <option value="L" @selected($nilai('jenis_kelamin') === 'L')>Laki-laki</option>
                     <option value="P" @selected($nilai('jenis_kelamin') === 'P')>Perempuan</option>
@@ -74,7 +74,7 @@
                     Status <span class="text-red-600">*</span>
                 </label>
                 <select name="status" id="status" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="aktif" @selected($nilai('status') === 'aktif')>Aktif</option>
                     <option value="lulus" @selected($nilai('status') === 'lulus')>Lulus</option>
                     <option value="keluar" @selected($nilai('status') === 'keluar')>Keluar</option>
@@ -139,7 +139,7 @@
                     Kelas <span class="text-red-600">*</span>
                 </label>
                 <select name="id_kelas" id="id_kelas" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Pilih kelas</option>
                     @foreach ($daftar_kelas as $kelas)
                         <option value="{{ $kelas->id_kelas }}" @selected($nilai('id_kelas') == $kelas->id_kelas)>
@@ -155,7 +155,7 @@
                     Tahun ajaran <span class="text-red-600">*</span>
                 </label>
                 <select name="id_tahun_ajaran" id="id_tahun_ajaran" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Pilih tahun ajaran</option>
                     @foreach ($daftar_tahun_ajaran as $tahun)
                         <option value="{{ $tahun->id_tahun_ajaran }}" @selected($nilai('id_tahun_ajaran') == $tahun->id_tahun_ajaran)>
@@ -169,7 +169,7 @@
             <div class="sm:col-span-2">
                 <label for="id_user" class="mb-1 block text-sm font-medium text-tinta dark:text-teks-gelap">Akun login siswa</label>
                 <select name="id_user" id="id_user"
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Tidak ditautkan</option>
 
                     {{-- Akun yang sedang tertaut, ditambahkan kembali kalau tersaring keluar. --}}

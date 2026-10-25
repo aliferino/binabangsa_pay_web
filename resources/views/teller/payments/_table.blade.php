@@ -24,7 +24,7 @@
         <div>
             <label for="filter_metode_pembayaran" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Metode</label>
             <select name="metode_pembayaran" id="filter_metode_pembayaran"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua metode</option>
                 <option value="tunai" @selected(($filter['metode_pembayaran'] ?? '') === 'tunai')>Tunai</option>
                 <option value="qris" @selected(($filter['metode_pembayaran'] ?? '') === 'qris')>QRIS</option>
@@ -35,7 +35,7 @@
         <div>
             <label for="filter_siswa_id" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Siswa</label>
             <select name="siswa_id" id="filter_siswa_id"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua siswa</option>
                 @foreach ($daftar_siswa as $siswa)
                     <option value="{{ $siswa->id_siswa }}" @selected(($filter['siswa_id'] ?? '') == $siswa->id_siswa)>
@@ -48,7 +48,7 @@
         <div>
             <label for="filter_status" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Status</label>
             <select name="status" id="filter_status"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua status</option>
                 <option value="berhasil" @selected(($filter['status'] ?? '') === 'berhasil')>Berhasil</option>
                 <option value="gagal" @selected(($filter['status'] ?? '') === 'gagal')>Gagal</option>
@@ -58,7 +58,7 @@
 
         <div class="flex items-end gap-2">
             <button type="submit"
-                    class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
+                    class="border border-transparent rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                 Terapkan
             </button>
             <a href="{{ url()->current() }}"

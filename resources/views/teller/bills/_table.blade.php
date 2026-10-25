@@ -12,7 +12,7 @@
         <div>
             <label for="filter_id_siswa" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Siswa</label>
             <select name="id_siswa" id="filter_id_siswa"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua siswa</option>
                 @foreach ($daftar_siswa as $siswa)
                     <option value="{{ $siswa->id_siswa }}" @selected(($filter['id_siswa'] ?? '') == $siswa->id_siswa)>
@@ -25,7 +25,7 @@
         <div>
             <label for="filter_bulan" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Bulan</label>
             <select name="bulan" id="filter_bulan"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua bulan</option>
                 @foreach (['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $angka => $nama)
                     <option value="{{ $angka + 1 }}" @selected(($filter['bulan'] ?? '') == $angka + 1)>
@@ -38,7 +38,7 @@
         <div>
             <label for="filter_tahun" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Tahun</label>
             <select name="tahun" id="filter_tahun"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua tahun</option>
                 @foreach ($daftar_tahun as $tahun)
                     <option value="{{ $tahun }}" @selected(($filter['tahun'] ?? '') == $tahun)>{{ $tahun }}</option>
@@ -49,7 +49,7 @@
         <div>
             <label for="filter_status" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Status</label>
             <select name="status" id="filter_status"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua status</option>
                 <option value="belum_bayar" @selected(($filter['status'] ?? '') === 'belum_bayar')>Belum bayar</option>
                 <option value="lunas" @selected(($filter['status'] ?? '') === 'lunas')>Lunas</option>
@@ -59,7 +59,7 @@
 
         <div class="flex items-end gap-2">
             <button type="submit"
-                    class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
+                    class="border border-transparent rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                 Terapkan
             </button>
             <a href="{{ url()->current() }}"

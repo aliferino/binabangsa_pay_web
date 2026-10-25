@@ -26,7 +26,7 @@
                        value="{{ old('nomor_va') }}" placeholder="7770 1001 3333"
                        class="min-w-0 flex-1 rounded-lg border border-garis bg-white px-3 py-2 font-mono text-sm text-tinta placeholder:text-redup focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-neon-teks dark:border-garis-gelap dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap dark:focus-visible:outline-neon">
                 <button type="submit"
-                        class="tombol-tekan shrink-0 rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
+                        class="border border-transparent tombol-tekan shrink-0 rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
                     Cari
                 </button>
             </div>

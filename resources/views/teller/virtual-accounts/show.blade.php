@@ -74,7 +74,7 @@
                                   data-konfirmasi="Aktifkan kembali Virtual Account {{ $virtualAccount->nomor_va }}?" data-konfirmasi-jenis="simpan">
                                 @csrf
                                 <button type="submit"
-                                        class="tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
+                                        class="border border-transparent tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
                                     Aktifkan
                                 </button>
                             </form>
@@ -84,7 +84,7 @@
                               data-konfirmasi="Kirim pembayaran tiruan ke Xendit untuk nomor {{ $virtualAccount->account_number }}? Ini hanya untuk mode uji, tagihan berubah lunas setelah callback masuk." data-konfirmasi-jenis="simpan">
                             @csrf
                             <button type="submit"
-                                    class="tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
+                                    class="border border-transparent tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
                                 Simulasi bayar
                             </button>
                         </form>

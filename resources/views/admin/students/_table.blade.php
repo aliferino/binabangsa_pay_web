@@ -15,7 +15,7 @@
         <div>
             <label for="filter_id_kelas" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Kelas</label>
             <select name="id_kelas" id="filter_id_kelas"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua kelas</option>
                 @foreach ($daftar_kelas as $kelas)
                     <option value="{{ $kelas->id_kelas }}" @selected(($filter['id_kelas'] ?? '') == $kelas->id_kelas)>
@@ -28,7 +28,7 @@
         <div>
             <label for="filter_id_tahun_ajaran" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Tahun ajaran</label>
             <select name="id_tahun_ajaran" id="filter_id_tahun_ajaran"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua tahun</option>
                 @foreach ($daftar_tahun_ajaran as $tahun)
                     <option value="{{ $tahun->id_tahun_ajaran }}" @selected(($filter['id_tahun_ajaran'] ?? '') == $tahun->id_tahun_ajaran)>
@@ -41,7 +41,7 @@
         <div>
             <label for="filter_status" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Status</label>
             <select name="status" id="filter_status"
-                    class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                 <option value="">Semua status</option>
                 <option value="aktif" @selected(($filter['status'] ?? '') === 'aktif')>Aktif</option>
                 <option value="lulus" @selected(($filter['status'] ?? '') === 'lulus')>Lulus</option>
@@ -51,7 +51,7 @@
 
         <div class="flex items-end gap-2">
             <button type="submit"
-                    class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
+                    class="border border-transparent rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                 Terapkan
             </button>
             <a href="{{ route('siswa.index') }}"

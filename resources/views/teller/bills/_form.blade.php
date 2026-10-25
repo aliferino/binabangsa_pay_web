@@ -30,7 +30,7 @@
                     Siswa <span class="text-red-600">*</span>
                 </label>
                 <select name="id_siswa" id="id_siswa" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Pilih siswa</option>
                     @foreach ($daftar_siswa as $siswa)
                         <option value="{{ $siswa->id_siswa }}" @selected($nilai('id_siswa') == $siswa->id_siswa)>
@@ -46,7 +46,7 @@
                     Bulan <span class="text-red-600">*</span>
                 </label>
                 <select name="bulan" id="bulan" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Pilih bulan</option>
                     @foreach ($namaBulan as $angka => $nama)
                         <option value="{{ $angka }}" @selected($nilai('bulan') == $angka)>{{ $nama }}</option>
@@ -70,7 +70,7 @@
                     Tahun ajaran <span class="text-red-600">*</span>
                 </label>
                 <select name="id_tahun_ajaran" id="id_tahun_ajaran" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Pilih tahun ajaran</option>
                     @foreach ($daftar_tahun_ajaran as $tahunAjaran)
                         <option value="{{ $tahunAjaran->id_tahun_ajaran }}" @selected($nilai('id_tahun_ajaran') == $tahunAjaran->id_tahun_ajaran)>
@@ -86,7 +86,7 @@
                     Tarif acuan <span class="text-red-600">*</span>
                 </label>
                 <select name="id_tarif" id="id_tarif" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="">Pilih tarif</option>
                     @foreach ($daftar_tarif as $tarif)
                         <option value="{{ $tarif->id_tarif }}" @selected($nilai('id_tarif') == $tarif->id_tarif)>
@@ -132,7 +132,7 @@
                     Status <span class="text-red-600">*</span>
                 </label>
                 <select name="status" id="status" required
-                        class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                        class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
                     <option value="belum_bayar" @selected($nilai('status') === 'belum_bayar')>Belum bayar</option>
                     <option value="lunas" @selected($nilai('status') === 'lunas')>Lunas</option>
                     <option value="tunggakan" @selected($nilai('status') === 'tunggakan')>Tunggakan</option>

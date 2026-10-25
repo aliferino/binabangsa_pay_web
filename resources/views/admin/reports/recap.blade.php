@@ -24,7 +24,7 @@
 
             <div class="flex items-end gap-2 sm:col-span-2">
                 <button type="submit"
-                        class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
+                        class="border border-transparent rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                     Terapkan
                 </button>
                 <a href="{{ route('laporan.rekap') }}"

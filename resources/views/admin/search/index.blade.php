@@ -17,7 +17,7 @@
             </div>
             <div class="flex gap-2">
                 <button type="submit"
-                        class="tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
+                        class="border border-transparent tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
                     Cari
                 </button>
                 <a href="{{ route('pencarian.index') }}"

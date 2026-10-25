@@ -132,7 +132,7 @@
                 <form method="POST" action="{{ route('integrasi.tunnel.nyalakan') }}">
                     @csrf
                     <button type="submit"
-                            class="tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
+                            class="border border-transparent tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan">
                         Nyalakan tunnel
                     </button>
                 </form>
@@ -168,7 +168,7 @@
             @csrf
             <button type="submit"
                     @if ($midtransProduksi) disabled @endif
-                    class="tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan @if ($midtransProduksi) cursor-not-allowed opacity-50 @endif">
+                    class="border border-transparent tombol-tekan rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan @if ($midtransProduksi) cursor-not-allowed opacity-50 @endif">
                 Kirim notifikasi uji
             </button>
         </form>
