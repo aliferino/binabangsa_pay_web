@@ -54,6 +54,7 @@
         [
             'label' => 'Pengaturan',
             'menu' => [
+                ['rute' => 'integrasi.index', 'pola' => 'integrasi.*', 'ikon' => 'i-hubung', 'teks' => 'Integrasi Gateway'],
                 ['rute' => 'user.index', 'pola' => 'user.*', 'ikon' => 'i-pengguna', 'teks' => 'Pengguna'],
             ],
         ],
