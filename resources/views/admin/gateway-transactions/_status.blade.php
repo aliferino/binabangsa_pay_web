@@ -9,7 +9,7 @@
 @php
     $peta = [
         'pending' => ['label' => 'Pending', 'kelas' => 'bg-amber-100 text-amber-800'],
-        'berhasil' => ['label' => 'Berhasil', 'kelas' => 'bg-emerald-100 text-emerald-800'],
+        'berhasil' => ['label' => 'Berhasil', 'kelas' => 'bg-neon text-tinta'],
         'gagal' => ['label' => 'Gagal', 'kelas' => 'bg-red-100 text-red-800'],
         'kedaluwarsa' => ['label' => 'Kedaluwarsa', 'kelas' => 'bg-latar-2 text-tinta dark:bg-gelap dark:text-teks-gelap'],
     ];

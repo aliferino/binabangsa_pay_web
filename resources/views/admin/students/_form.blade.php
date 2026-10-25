@@ -24,7 +24,7 @@
 <div class="space-y-6">
 
     {{-- Bagian 1: identitas siswa. --}}
-    <div class="rounded-xl border border-garis dark:border-garis-gelap bg-white p-5 shadow-sm">
+    <div class="rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-5 shadow-sm">
         <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Identitas siswa</h2>
 
         <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -129,7 +129,7 @@
     </div>
 
     {{-- Bagian 2: data akademik dan akun. --}}
-    <div class="rounded-xl border border-garis dark:border-garis-gelap bg-white p-5 shadow-sm">
+    <div class="rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-5 shadow-sm">
         <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Data akademik dan akun</h2>
 
         <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -6,7 +6,7 @@
     memakai URL yang sedang dibuka supaya filter tetap bekerja untuk keduanya.
 --}}
 <form method="GET" action="{{ url()->current() }}"
-      class="mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white p-4 shadow-sm">
+      class="mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-4 shadow-sm">
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
 
         <div>
@@ -63,7 +63,7 @@
                 Terapkan
             </button>
             <a href="{{ url()->current() }}"
-               class="rounded-lg border border-garis dark:border-garis-gelap bg-white px-4 py-2 text-sm font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
+               class="rounded-lg border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 px-4 py-2 text-sm font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
                 Reset
             </a>
         </div>
@@ -71,7 +71,7 @@
 </form>
 
 {{-- Tabel tagihan. --}}
-<div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white shadow-sm">
+<div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 shadow-sm">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
             <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">

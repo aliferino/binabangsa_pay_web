@@ -8,14 +8,15 @@
     <title>@yield('judul', 'Beranda') | SMK Bina Bangsa</title>
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+        @include('layouts.partials._tema')
+    </head>
 <body class="flex min-h-[100dvh] flex-col bg-latar-2 font-sans text-tinta antialiased dark:bg-gelap dark:text-teks-gelap">
 
     {{-- Bilah atas untuk layar kecil, berisi tombol buka menu. --}}
     <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-garis bg-white px-4 lg:hidden dark:border-garis-gelap dark:bg-gelap-2">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
             <img src="{{ asset('images/logo-smk-bina-bangsa-180.webp') }}" alt="Logo SMK Bina Bangsa"
-                 class="h-9 w-9 shrink-0 rounded-lg object-contain" width="36" height="36">
+                 class="h-9 w-9 shrink-0 rounded-full object-contain ring-1 ring-garis dark:ring-garis-gelap" width="36" height="36">
             <span class="text-sm font-semibold tracking-tight text-tinta dark:text-teks-gelap">BinaBangsa Pay</span>
         </a>
         <button type="button" id="tombol-menu"
@@ -30,7 +31,7 @@
         {{-- Menu samping. Isinya dipilih oleh layouts.partials._sidebar sesuai role.
              Menempel setinggi layar dan menggulir sendiri, tidak ikut halaman. --}}
         <aside id="menu-samping"
-               class="hidden w-full shrink-0 bg-white lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:self-start lg:overflow-hidden dark:bg-gelap-2">
+               class="hidden w-full shrink-0 bg-white lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:self-start dark:bg-gelap-2">
             @include('layouts.partials._sidebar')
         </aside>
 

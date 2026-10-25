@@ -6,7 +6,7 @@
     memakai URL yang sedang dibuka supaya filter tetap bekerja untuk keduanya.
 --}}
 <form method="GET" action="{{ url()->current() }}"
-      class="rounded-xl border border-garis dark:border-garis-gelap bg-white p-4 shadow-sm">
+      class="rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-4 shadow-sm">
     <div class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 lg:grid-cols-[repeat(2,minmax(0,1fr))_auto]">
 
         <div>
@@ -38,7 +38,7 @@
                 Terapkan
             </button>
             <a href="{{ url()->current() }}"
-               class="rounded-lg border border-garis dark:border-garis-gelap bg-white px-4 py-2 text-sm font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
+               class="rounded-lg border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 px-4 py-2 text-sm font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
                 Reset
             </a>
         </div>
@@ -46,7 +46,7 @@
 </form>
 
 {{-- Tabel Virtual Account. --}}
-<div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white shadow-sm">
+<div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 shadow-sm">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
             <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">
@@ -78,7 +78,7 @@
                         <td class="px-5 py-3.5">
                             @php
                                 $petaStatus = [
-                                    'aktif' => ['label' => 'Aktif', 'kelas' => 'bg-emerald-100 text-emerald-800'],
+                                    'aktif' => ['label' => 'Aktif', 'kelas' => 'bg-neon text-tinta'],
                                     'nonaktif' => ['label' => 'Nonaktif', 'kelas' => 'bg-latar-2 dark:bg-gelap text-tinta dark:text-teks-gelap'],
                                 ];
                                 $dataStatus = $petaStatus[$virtualAccount->status] ?? ['label' => $virtualAccount->status, 'kelas' => 'bg-latar-2 dark:bg-gelap text-tinta dark:text-teks-gelap'];

@@ -105,16 +105,18 @@ class PembayaranTest extends TestCase
     }
 
     /**
-     * Aturan 1: VA dibuat dengan format 10 digit yang benar.
+     * Aturan 1: VA dibuat dengan format dua nol di depan lima digit NIS.
      */
-    public function test_va_dibuat_dengan_format_10_digit(): void
+    public function test_va_dibuat_dengan_format_dua_nol_di_depan(): void
     {
         $nomor = VirtualAccount::generateNomorVa('2612345');
 
-        $this->assertSame('8800012345', $nomor);
-        $this->assertSame(10, strlen($nomor));
-        $this->assertStringStartsWith('880', $nomor);
-        $this->assertSame('12345', substr($nomor, -5));
+        // Nomor yang dikirim ke Midtrans: dua nol lalu lima digit NIS.
+        // Midtrans yang menempelkan prefix merchant di depannya.
+        $this->assertSame('0012345', $nomor);
+        $this->assertSame(7, strlen($nomor));
+        $this->assertStringStartsWith('00', $nomor);
+        $this->assertStringEndsWith('12345', $nomor);
     }
 
     public function test_va_dibuat_lewat_endpoint_dan_tersimpan(): void
@@ -128,12 +130,12 @@ class PembayaranTest extends TestCase
         $va = VirtualAccount::where('siswa_id', $this->siswa->id_siswa)->first();
 
         $this->assertNotNull($va);
-        $this->assertSame('8800012345', $va->nomor_va);
+        $this->assertSame('0012345', $va->nomor_va);
         $this->assertSame('aktif', $va->status);
-        $this->assertSame(10, strlen($va->nomor_va));
+        $this->assertSame(7, strlen($va->nomor_va));
     }
 
-    public function test_va_untuk_nis_pendek_tetap_10_digit(): void
+    public function test_va_untuk_nis_pendek_tetap_tujuh_digit(): void
     {
         $siswa = $this->buatSiswa('77', 'Siswa Nis Pendek');
 
@@ -143,8 +145,8 @@ class PembayaranTest extends TestCase
 
         $va = VirtualAccount::where('siswa_id', $siswa->id_siswa)->first();
 
-        $this->assertSame('8800000077', $va->nomor_va);
-        $this->assertSame(10, strlen($va->nomor_va));
+        $this->assertSame('0000077', $va->nomor_va);
+        $this->assertSame(7, strlen($va->nomor_va));
     }
 
     /**

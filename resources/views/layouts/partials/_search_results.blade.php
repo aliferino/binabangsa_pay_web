@@ -8,7 +8,7 @@
 @php
     // Lencana status per bulan. Disimpan sekali, dipakai di dalam perulangan.
     $kelasLencana = fn (string $status) => match ($status) {
-        'lunas' => 'bg-emerald-100 text-emerald-800',
+        'lunas' => 'bg-neon text-tinta',
         'tunggakan' => 'bg-red-100 text-red-800',
         'belum_bayar' => 'bg-amber-100 text-amber-800',
         default => 'bg-latar-2 text-tinta dark:bg-gelap dark:text-teks-gelap',
@@ -34,7 +34,7 @@
                 $perBulan = (array) data_get($baris, 'status_per_bulan', []);
 
                 $kelasRingkas = match ($statusRingkas) {
-                    'semua lunas' => 'bg-emerald-100 text-emerald-800',
+                    'semua lunas' => 'bg-neon text-tinta',
                     'ada tunggakan' => 'bg-red-100 text-red-800',
                     'sebagian belum bayar' => 'bg-amber-100 text-amber-800',
                     default => 'bg-latar-2 text-tinta dark:bg-gelap dark:text-teks-gelap',

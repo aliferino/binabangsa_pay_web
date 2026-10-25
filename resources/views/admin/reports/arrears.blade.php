@@ -5,18 +5,83 @@
 
 @section('isi')
 
-    {{--
-        Catatan bentuk data.
-        Controller mengirim $daftar_tunggakan sebagai kumpulan array dengan kunci
-        nis, nama, kelas, bulan_tunggakan, jumlah_tunggakan, dan total_nominal.
-        Supaya tetap aman kalau nanti bentuknya diubah menjadi objek, nilai dibaca
-        lewat data_get yang bisa menangani array maupun objek.
-    --}}
+    {{-- Catatan bentuk data: $daftar_tunggakan berisi array dengan kunci nis, nama,
+         kelas, bulan_tunggakan, jumlah_tunggakan, total_nominal, hari_terlambat.
+         Dibaca lewat data_get supaya tetap jalan kalau nanti jadi objek. --}}
+
+    @php
+        $jumlahSiswa = $daftar_tunggakan->count();
+        $jumlahTagihan = $daftar_tunggakan->sum(fn ($b) => (int) data_get($b, 'jumlah_tunggakan', 0));
+        $hariTerlama = (int) $daftar_tunggakan->max(fn ($b) => (int) data_get($b, 'hari_terlambat', 0));
+        $kelasTerdampak = $daftar_tunggakan->pluck('kelas')->filter()->unique()->count();
+        $rataSiswa = $jumlahSiswa > 0 ? (float) $total_semua / $jumlahSiswa : 0.0;
+        $rupiah = fn ($n) => 'Rp'.number_format((float) $n, 0, ',', '.');
+
+        // Sebaran bulan tertunggak: dihitung dari daftar bulan tiap siswa, bukan
+        // query baru. Urutan bulan mengikuti kalender, bukan urutan abjad.
+        $urutanBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $sebaran = [];
+
+        foreach ($daftar_tunggakan as $baris) {
+            foreach (array_filter(array_map('trim', explode(',', (string) data_get($baris, 'bulan_tunggakan')))) as $namaBulanTunggakan) {
+                $sebaran[$namaBulanTunggakan] = ($sebaran[$namaBulanTunggakan] ?? 0) + 1;
+            }
+        }
+
+        $sebaran = collect($sebaran)
+            ->sortBy(fn ($jumlah, $nama) => array_search($nama, $urutanBulan, true) ?: 99);
+        $puncakSebaran = $sebaran->max() ?: 1;
+    @endphp
+
+    @if ($jumlahSiswa > 0)
+        {{-- Neraca tunggakan: satu panel bergaris tipis, sejalan dengan dashboard. --}}
+        <section class="mb-5 overflow-hidden rounded-xl border border-garis bg-white dark:border-garis-gelap dark:bg-gelap-2">
+
+            <div class="grid gap-px bg-garis sm:grid-cols-[1.35fr_1fr] dark:bg-garis-gelap">
+
+                <div class="bg-white px-5 py-5 dark:bg-gelap-2">
+                    <p class="text-xs font-medium text-redup dark:text-redup-gelap">Total tunggakan</p>
+                    <p class="mt-1.5 text-3xl font-bold tabular-nums tracking-tight text-red-700 sm:text-4xl dark:text-red-400">
+                        {{ $rupiah($total_semua) }}
+                    </p>
+                    <p class="mt-1 text-xs leading-relaxed text-redup dark:text-redup-gelap">
+                        Dari {{ $jumlahTagihan }} tagihan lewat jatuh tempo.
+                        Tunggakan terlama <span class="font-semibold text-tinta dark:text-teks-gelap">{{ $hariTerlama }} hari</span>.
+                    </p>
+                </div>
+
+                <dl class="grid grid-cols-2 gap-px bg-garis dark:bg-garis-gelap">
+                    <div class="bg-white px-4 py-4 dark:bg-gelap-2">
+                        <dt class="text-[11px] font-medium text-redup dark:text-redup-gelap">Siswa menunggak</dt>
+                        <dd class="mt-1 text-xl font-bold tabular-nums tracking-tight text-tinta dark:text-teks-gelap">{{ $jumlahSiswa }}</dd>
+                        <dd class="mt-0.5 text-[11px] leading-snug text-redup dark:text-redup-gelap">pada filter ini</dd>
+                    </div>
+                    <div class="bg-white px-4 py-4 dark:bg-gelap-2">
+                        <dt class="text-[11px] font-medium text-redup dark:text-redup-gelap">Tagihan tertunggak</dt>
+                        <dd class="mt-1 text-xl font-bold tabular-nums tracking-tight text-tinta dark:text-teks-gelap">{{ $jumlahTagihan }}</dd>
+                        <dd class="mt-0.5 text-[11px] leading-snug text-redup dark:text-redup-gelap">bulan belum dibayar</dd>
+                    </div>
+                    <div class="bg-white px-4 py-4 dark:bg-gelap-2">
+                        <dt class="text-[11px] font-medium text-redup dark:text-redup-gelap">Kelas terdampak</dt>
+                        <dd class="mt-1 text-xl font-bold tabular-nums tracking-tight text-tinta dark:text-teks-gelap">{{ $kelasTerdampak }}</dd>
+                        <dd class="mt-0.5 text-[11px] leading-snug text-redup dark:text-redup-gelap">kelas menunggak</dd>
+                    </div>
+                    <div class="bg-white px-4 py-4 dark:bg-gelap-2">
+                        <dt class="text-[11px] font-medium text-redup dark:text-redup-gelap">Rata-rata per siswa</dt>
+                        <dd class="mt-1 text-base font-bold tabular-nums tracking-tight text-tinta dark:text-teks-gelap">{{ $rupiah($rataSiswa) }}</dd>
+                        <dd class="mt-0.5 text-[11px] leading-snug text-redup dark:text-redup-gelap">beban tiap siswa</dd>
+                    </div>
+                </dl>
+
+            </div>
+        </section>
+    @endif
 
     {{-- Form filter. --}}
     <form method="GET" action="{{ route('laporan.tunggakan') }}"
-          class="mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white p-4 shadow-sm">
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          class="mb-5 rounded-xl border border-garis bg-white px-4 py-3 dark:border-garis-gelap dark:bg-gelap-2">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
 
             <div>
                 <label for="id_jurusan" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Jurusan</label>
@@ -44,80 +109,111 @@
                 </select>
             </div>
 
-            <div class="flex items-end gap-2 sm:col-span-2">
+            <div class="flex items-end gap-2">
                 <button type="submit"
                         class="rounded-lg bg-neon px-4 py-2 text-sm font-semibold text-tinta hover:bg-neon-tekan tombol-tekan">
                     Terapkan
                 </button>
                 <a href="{{ route('laporan.tunggakan') }}"
-                   class="rounded-lg border border-garis dark:border-garis-gelap bg-white px-4 py-2 text-sm font-medium text-tinta dark:text-teks-gelap hover:bg-latar-2 dark:hover:bg-gelap">
+                   class="rounded-lg border border-garis bg-white px-4 py-2 text-sm font-medium text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:bg-gelap-2 dark:text-teks-gelap dark:hover:bg-gelap">
                     Reset
                 </a>
             </div>
         </div>
     </form>
 
-    {{-- Total keseluruhan. --}}
-    <div class="mb-4 rounded-xl border border-red-200 bg-red-50 p-5">
-        <p class="text-sm font-medium text-red-700">Total seluruh tunggakan</p>
-        <p class="mt-1 text-3xl font-bold text-red-800">
-            Rp{{ number_format((float) $total_semua, 0, ',', '.') }}
-        </p>
-        <p class="mt-1 text-xs text-red-600">
-            {{ $daftar_tunggakan->count() }} siswa menunggak pada filter ini.
-        </p>
-    </div>
+    {{-- Daftar siswa menunggak. --}}
+    <section class="overflow-hidden rounded-xl border border-garis bg-white dark:border-garis-gelap dark:bg-gelap-2">
+        <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-garis px-5 py-3.5 dark:border-garis-gelap">
+            <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Siswa menunggak</h2>
+            <span class="text-[11px] text-redup dark:text-redup-gelap">
+                {{ $jumlahSiswa }} siswa &middot; {{ $jumlahTagihan }} tagihan
+            </span>
+        </div>
 
-    {{-- Tabel tunggakan. --}}
-    <div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white shadow-sm">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
-                <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">
-                    <tr>
-                        <th class="px-5 py-3 font-semibold">NIS</th>
-                        <th class="px-5 py-3 font-semibold">Nama</th>
-                        <th class="px-5 py-3 font-semibold">Kelas</th>
-                        <th class="px-5 py-3 font-semibold">Bulan tunggakan</th>
-                        <th class="px-5 py-3 font-semibold">Jumlah</th>
-                        <th class="px-5 py-3 font-semibold">Terlambat</th>
-                        <th class="px-5 py-3 font-semibold">Total nominal</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-garis dark:divide-garis-gelap">
-                    @forelse ($daftar_tunggakan as $baris)
-                        <tr class="hover:bg-latar-2 dark:hover:bg-gelap">
-                            <td class="px-5 py-3 font-medium text-tinta dark:text-teks-gelap">{{ data_get($baris, 'nis') }}</td>
-                            <td class="px-5 py-3 text-tinta dark:text-teks-gelap">{{ data_get($baris, 'nama') }}</td>
-                            <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'kelas') ?? '-' }}</td>
-                            <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'bulan_tunggakan') ?: '-' }}</td>
-                            <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'jumlah_tunggakan') }}</td>
-                            <td class="px-5 py-3 text-redup dark:text-redup-gelap">
-                                {{ (int) data_get($baris, 'hari_terlambat', 0) }} hari
-                            </td>
-                            <td class="px-5 py-3 font-medium text-red-700">
-                                Rp{{ number_format((float) data_get($baris, 'total_nominal', 0), 0, ',', '.') }}
-                            </td>
-                        </tr>
-                    @empty
+        @if ($daftar_tunggakan->isEmpty())
+            <p class="px-5 py-6 text-sm leading-relaxed text-redup dark:text-redup-gelap">
+                Tidak ada tunggakan pada filter ini. Semua tagihan yang jatuh tempo sudah lunas.
+            </p>
+        @else
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-garis text-sm dark:divide-garis-gelap">
+                    <thead class="bg-latar-2 text-left text-xs uppercase tracking-wide text-redup dark:bg-gelap dark:text-redup-gelap">
                         <tr>
-                            <td colspan="7" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
-                                Tidak ada tunggakan pada filter ini.
-                            </td>
+                            <th class="px-5 py-3 font-semibold">Siswa</th>
+                            <th class="px-5 py-3 font-semibold">Kelas</th>
+                            <th class="px-5 py-3 font-semibold">Bulan tertunggak</th>
+                            <th class="px-5 py-3 text-right font-semibold">Terlambat</th>
+                            <th class="px-5 py-3 text-right font-semibold">Nominal</th>
                         </tr>
-                    @endforelse
-                </tbody>
-                @if ($daftar_tunggakan->isNotEmpty())
+                    </thead>
+                    <tbody class="divide-y divide-garis dark:divide-garis-gelap">
+                        @foreach ($daftar_tunggakan as $baris)
+                            @php
+                                $hari = (int) data_get($baris, 'hari_terlambat', 0);
+                                $bulan = array_filter(array_map('trim', explode(',', (string) data_get($baris, 'bulan_tunggakan'))));
+                            @endphp
+                            <tr class="align-top hover:bg-latar-2 dark:hover:bg-gelap">
+                                <td class="px-5 py-3">
+                                    <span class="font-medium text-tinta dark:text-teks-gelap">{{ data_get($baris, 'nama') }}</span>
+                                    <span class="mt-0.5 block font-mono text-[11px] text-redup dark:text-redup-gelap">{{ data_get($baris, 'nis') }}</span>
+                                </td>
+                                <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'kelas') ?? '-' }}</td>
+                                <td class="px-5 py-3">
+                                    <span class="flex flex-wrap gap-1">
+                                        @foreach ($bulan as $namaBulanTunggakan)
+                                            <span class="rounded-md bg-latar-2 px-2 py-0.5 text-[11px] font-medium text-tinta dark:bg-gelap dark:text-teks-gelap">{{ $namaBulanTunggakan }}</span>
+                                        @endforeach
+                                    </span>
+                                </td>
+                                <td class="px-5 py-3 text-right tabular-nums {{ $hari >= 60 ? 'font-semibold text-red-700 dark:text-red-400' : 'text-redup dark:text-redup-gelap' }}">
+                                    {{ $hari }} hari
+                                </td>
+                                <td class="px-5 py-3 text-right font-semibold tabular-nums text-tinta dark:text-teks-gelap">
+                                    {{ $rupiah(data_get($baris, 'total_nominal', 0)) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                     <tfoot class="bg-latar-2 dark:bg-gelap">
                         <tr>
-                            <td colspan="6" class="px-5 py-3 text-right text-sm font-semibold text-tinta dark:text-teks-gelap">Total</td>
-                            <td class="px-5 py-3 text-sm font-bold text-red-800">
-                                Rp{{ number_format((float) $total_semua, 0, ',', '.') }}
+                            <td colspan="4" class="px-5 py-3 text-right text-sm font-semibold text-tinta dark:text-teks-gelap">Total</td>
+                            <td class="px-5 py-3 text-right text-sm font-bold tabular-nums text-red-700 dark:text-red-400">
+                                {{ $rupiah($total_semua) }}
                             </td>
                         </tr>
                     </tfoot>
-                @endif
-            </table>
-        </div>
-    </div>
+                </table>
+            </div>
+        @endif
+    </section>
+
+{{-- Sebaran bulan tertunggak. Batang disusun dari jumlah siswa per bulan,
+         tanpa pustaka grafik, sama seperti grafik di dashboard. --}}
+    @if ($sebaran->isNotEmpty())
+        <section class="mt-5 rounded-xl border border-garis bg-white px-5 py-5 dark:border-garis-gelap dark:bg-gelap-2">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Sebaran bulan tertunggak</h2>
+                <span class="text-[11px] text-redup dark:text-redup-gelap">
+                    Jumlah siswa yang belum membayar tiap bulan
+                </span>
+            </div>
+
+            <div class="mt-4 flex items-end gap-2 sm:gap-3">
+                @foreach ($sebaran as $namaBulanTunggakan => $jumlahSiswaBulan)
+                    @php($tinggi = max(6, (int) round($jumlahSiswaBulan / $puncakSebaran * 96)))
+                    <div class="flex min-w-0 flex-1 flex-col items-center gap-1.5">
+                        <span class="text-[11px] font-medium tabular-nums text-redup dark:text-redup-gelap">{{ $jumlahSiswaBulan }}</span>
+                        <div class="w-9 rounded-t-md bg-red-600 dark:bg-red-500"
+                             style="height: {{ $tinggi }}px"
+                             title="{{ $namaBulanTunggakan }}: {{ $jumlahSiswaBulan }} siswa"></div>
+                        <span class="w-full truncate border-t border-garis pt-1.5 text-center text-[11px] text-redup dark:border-garis-gelap dark:text-redup-gelap">
+                            {{ mb_substr($namaBulanTunggakan, 0, 3) }}
+                        </span>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
 
 @endsection

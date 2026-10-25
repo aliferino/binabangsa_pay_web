@@ -20,7 +20,7 @@
 <div class="space-y-6">
 
     {{-- Bagian 1: siswa dan periode. --}}
-    <div class="rounded-xl border border-garis dark:border-garis-gelap bg-white p-5 shadow-sm">
+    <div class="rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-5 shadow-sm">
         <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Siswa dan periode</h2>
 
         <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -101,7 +101,7 @@
     </div>
 
     {{-- Bagian 2: nominal dan status. --}}
-    <div class="rounded-xl border border-garis dark:border-garis-gelap bg-white p-5 shadow-sm">
+    <div class="rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-5 shadow-sm">
         <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Nominal dan status</h2>
 
         <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">

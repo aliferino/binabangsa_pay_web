@@ -528,6 +528,6 @@ class CallbackController extends Controller
      */
     private function karenaDuplikat(QueryException $e): bool
     {
-        return (int) $e->errorInfo[1] === 1062;
+        return (int) ($e->errorInfo[1] ?? 0) === 1062;
     }
 }

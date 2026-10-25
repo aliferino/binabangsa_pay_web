@@ -6,7 +6,7 @@
 --}}
 
 @if (session('sukses'))
-    <div class="mb-4 flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+    <div class="mb-4 flex items-start gap-3 rounded-lg border border-neon/40 bg-neon text-tinta px-4 py-3 text-sm"
          role="status">
         <span class="mt-0.5 font-bold">Berhasil</span>
         <span>{{ session('sukses') }}</span>

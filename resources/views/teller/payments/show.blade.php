@@ -20,7 +20,7 @@
             'virtual_account' => 'Virtual Account',
         ];
         $statusMap = [
-            'berhasil' => ['label' => 'Berhasil', 'class' => 'bg-emerald-100 text-emerald-800'],
+            'berhasil' => ['label' => 'Berhasil', 'class' => 'bg-neon text-tinta'],
             'gagal' => ['label' => 'Gagal', 'class' => 'bg-red-100 text-red-800'],
             'dibatalkan' => ['label' => 'Dibatalkan', 'class' => 'bg-latar-2 text-redup'],
         ];

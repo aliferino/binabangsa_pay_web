@@ -11,16 +11,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @include('layouts.partials._transisi')
-    {{-- Pasang tema tersimpan SEBELUM body dilukis supaya tidak ada flash. --}}
-    <script>
-        (function () {
-            try {
-                if (localStorage.getItem('tema') === 'dark') {
-                    document.documentElement.classList.add('dark');
-                }
-            } catch (e) { /* localStorage bisa terblokir; tetap light. */ }
-        })();
-    </script>
+    @include('layouts.partials._tema')
 </head>
 <body class="flex min-h-screen flex-col bg-white font-sans text-[#111111] antialiased dark:bg-[#111111] dark:text-[#e8ecf1]">
 
@@ -59,7 +50,7 @@
                     <text x="28" y="55" font-family="'Instrument Sans', sans-serif" font-size="7.5" letter-spacing="0.9"
                           class="fill-[#5b6659] dark:fill-[#8b95a1]">VIRTUAL ACCOUNT</text>
                     <text x="28" y="72" font-family="ui-monospace, monospace" font-size="10" font-weight="700"
-                          class="fill-[#111111] dark:fill-[#e8ecf1]">8800012345</text>
+                          class="fill-[#111111] dark:fill-[#e8ecf1]">7770 1001 3333</text>
 
                     {{-- Jalur transfer: garis putus-putus yang mengalir. --}}
                     <line x1="132" y1="60" x2="208" y2="60" stroke-width="1.4" stroke-dasharray="4 4"
@@ -163,24 +154,6 @@
 
     <script>
         (function () {
-            var html = document.documentElement;
-            var tombol = document.getElementById('tombol-tema');
-
-            function terapkan(gelap) {
-                html.classList.toggle('dark', gelap);
-                if (tombol) tombol.setAttribute('aria-pressed', gelap ? 'true' : 'false');
-            }
-
-            terapkan(html.classList.contains('dark'));
-
-            if (tombol) {
-                tombol.addEventListener('click', function () {
-                    var gelap = !html.classList.contains('dark');
-                    terapkan(gelap);
-                    try { localStorage.setItem('tema', gelap ? 'dark' : 'light'); } catch (e) { }
-                });
-            }
-
             // Tombol mata: ganti ikon dan jenis input, tanpa menulis teks.
             var lihat = document.getElementById('tombol-lihat');
             var sandi = document.getElementById('password');

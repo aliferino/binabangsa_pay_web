@@ -14,11 +14,11 @@
     $roleSekarang = $pengguna?->role;
 
     $labelRole = [
-        'admin' => 'Administrator',
-        'kepala_sekolah' => 'Kepala Sekolah',
-        'teller' => 'Teller',
-        'siswa' => 'Siswa',
-    ][$roleSekarang] ?? 'Pengguna';
+            'admin' => 'Administrator',
+            'kepala_sekolah' => 'Kepala Sekolah',
+            'teller' => 'Teller',
+            'siswa' => 'Siswa',
+        ][$roleSekarang] ?? 'Pengguna';
 
     // Tautan biasa dan tautan aktif. Aktif memakai latar neon penuh supaya
     // terbaca seperti tombol, bukan sekadar teks yang diberi warna.
@@ -132,7 +132,7 @@
     {{-- Merek aplikasi. Tinggi tetap supaya sejajar dengan bilah atas di layar kecil. --}}
     <a href="{{ route('dashboard') }}" class="flex h-20 shrink-0 items-center gap-3 border-b border-garis px-4 dark:border-garis-gelap">
         <img src="{{ asset('images/logo-smk-bina-bangsa-180.webp') }}" alt="Logo SMK Bina Bangsa"
-             class="h-11 w-11 shrink-0 object-contain" width="44" height="44">
+             class="h-11 w-11 shrink-0 rounded-full object-contain ring-1 ring-garis dark:ring-garis-gelap" width="44" height="44">
         <div class="min-w-0 leading-normal">
             <p class="truncate text-base font-semibold tracking-tight text-tinta dark:text-teks-gelap">BinaBangsa Pay</p>
             <p class="truncate text-xs text-redup dark:text-redup-gelap">SMK Bina Bangsa</p>
@@ -156,33 +156,54 @@
         @endswitch
     </nav>
 
-    {{-- Profil pengguna yang sedang masuk, lalu tombol keluar di bawahnya. --}}
-    <div class="px-2.5 pb-3 pt-1">
-        <div class="flex items-center gap-2.5 rounded-xl bg-latar-2 px-2.5 py-2 dark:bg-gelap">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neon text-xs font-bold text-tinta">
-                {{ strtoupper(substr($pengguna?->nama ?? '?', 0, 1)) }}
-            </span>
-            <div class="min-w-0">
-                <p class="truncate text-sm font-semibold text-tinta dark:text-teks-gelap">{{ $pengguna?->nama }}</p>
-                @if ($labelRole !== $pengguna?->nama)
-                    <p class="truncate text-xs text-redup dark:text-redup-gelap">{{ $labelRole }}</p>
-                @endif
+    {{-- Kartu profil. Tombol, bukan <details>, karena bubble-nya harus menutup
+             saat klik di luar dan <details> bawaan peramban tidak melakukannya.
+             Identitas cukup di kartu ini; bubble hanya berisi dua tombol. --}}
+        <div class="px-2.5 pb-3 pt-1">
+            <div class="relative" data-profil>
+                <button type="button" data-profil-pemicu aria-expanded="false" aria-controls="bubble-profil"
+                        @class(['tombol-tekan flex w-full cursor-pointer items-center gap-3 rounded-xl bg-latar-2 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-garis/60 dark:bg-gelap dark:hover:bg-garis-gelap/40'])>
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-neon text-base font-bold text-tinta">
+                        {{ strtoupper(substr($pengguna?->nama ?? '?', 0, 1)) }}
+                    </span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block truncate text-sm font-semibold leading-tight text-tinta dark:text-teks-gelap">{{ $pengguna?->nama }}</span>
+                        <span class="block truncate text-xs leading-tight text-redup dark:text-redup-gelap">{{ $labelRole }}</span>
+                    </span>
+                </button>
+
+                {{-- Di layar besar bubble menempel di sisi KANAN kartu, mengarah ke
+                     isi halaman. Di layar kecil panel selebar layar, jadi bubble
+                     ditaruh di atas kartu supaya tidak keluar tepi. --}}
+                <div id="bubble-profil" data-profil-bubble hidden
+                     class="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-garis bg-white p-1.5 shadow-lg lg:bottom-0 lg:left-full lg:right-auto lg:mb-0 lg:ml-3 lg:w-56 dark:border-garis-gelap dark:bg-gelap-2">
+
+                    <button type="button" data-tombol-tema aria-pressed="false"
+                            class="tombol-tekan flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-tinta transition-colors duration-150 hover:bg-latar-2 dark:text-teks-gelap dark:hover:bg-gelap">
+                        <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                            <path d="M16 11.5A6.5 6.5 0 0 1 8.5 4a6.5 6.5 0 1 0 7.5 7.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" class="dark:hidden"/>
+                            <g class="hidden dark:block">
+                                <circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </g>
+                        </svg>
+                        <span data-label-tema>Mode gelap</span>
+                    </button>
+
+                    <div class="my-1 h-px bg-garis dark:bg-garis-gelap"></div>
+
+                    {{-- Keluar memutus sesi tanpa bisa dibatalkan, jadi tetap lewat
+                         modal konfirmasi yang sama dengan hapus data. --}}
+                    <form method="POST" action="{{ route('logout') }}"
+                          data-konfirmasi="Keluar dari akun ini?" data-konfirmasi-jenis="keluar">
+                        @csrf
+                        <button type="submit"
+                                class="tombol-tekan flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-semibold text-[#c10007] transition-colors duration-150 hover:bg-[#fdf3f2] dark:hover:bg-[#2a1a1a]">
+                            <svg class="{{ $kelasIkon }}" aria-hidden="true"><use href="#i-keluar"></use></svg>
+                            Keluar
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-
-        {{-- Keluar langsung memutus sesi tanpa bisa dibatalkan, jadi ditanya
-             dulu lewat modal yang sama dengan hapus data. --}}
-        <form method="POST" action="{{ route('logout') }}" class="mt-1.5"
-              data-konfirmasi="Keluar dari akun ini?" data-konfirmasi-jenis="keluar">
-                    @csrf
-                    {{-- Warna sama dengan tombol hapus di modal konfirmasi (#c10007):
-                         keluar dan hapus sama-sama tindakan yang tidak bisa dibatalkan,
-                         jadi bahasanya harus sama. --}}
-                    <button type="submit"
-                            class="tombol-tekan flex w-full items-center gap-2.5 rounded-lg bg-[#c10007] px-3 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#a10006]">
-                        <svg class="{{ $kelasIkon }}" aria-hidden="true"><use href="#i-keluar"></use></svg>
-                        Keluar
-                    </button>
-                </form>
     </div>
-</div>

@@ -12,7 +12,7 @@
             <div class="flex-1">
                 <label for="q" class="mb-1.5 block text-xs font-medium text-redup dark:text-redup-gelap">Kata kunci</label>
                 <input type="text" name="q" id="q" value="{{ $keyword }}"
-                       placeholder="Contoh: 12345, Ahmad, 8800012345, atau ID transaksi"
+                       placeholder="Contoh: 12345, Ahmad, 7770 1001 3333, atau ID transaksi"
                        class="w-full rounded-lg border border-garis px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap dark:placeholder:text-redup-gelap">
             </div>
             <div class="flex gap-2">

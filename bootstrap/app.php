@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'callback/payment',
             'callback/xendit',
+            'callback/midtrans',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

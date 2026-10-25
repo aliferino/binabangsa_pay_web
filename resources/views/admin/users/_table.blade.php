@@ -8,10 +8,10 @@
     ];
 @endphp
 
-<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+<div class="overflow-hidden rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 shadow-sm">
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-200 text-sm">
-            <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+        <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
+            <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">
                 <tr>
                     <th class="px-5 py-3 font-semibold">Nama</th>
                     <th class="px-5 py-3 font-semibold">Username</th>
@@ -20,17 +20,17 @@
                     <th class="px-5 py-3 text-right font-semibold">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-garis dark:divide-garis-gelap">
                 @forelse ($daftar_user as $user)
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-5 py-3 font-medium text-slate-800">{{ $user->nama }}</td>
-                        <td class="px-5 py-3 text-slate-600">{{ $user->username }}</td>
-                        <td class="px-5 py-3 text-slate-600">{{ $labelRole[$user->role] ?? $user->role }}</td>
+                    <tr class="hover:bg-latar-2 dark:hover:bg-garis-gelap/40">
+                        <td class="px-5 py-3 font-medium text-tinta dark:text-teks-gelap">{{ $user->nama }}</td>
+                        <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ $user->username }}</td>
+                        <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ $labelRole[$user->role] ?? $user->role }}</td>
                         <td class="px-5 py-3">
                             @if ($user->status === 'aktif')
-                                <span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">Aktif</span>
+                                <span class="inline-flex rounded-full bg-neon text-tinta px-2.5 py-0.5 text-xs font-semibold">Aktif</span>
                             @else
-                                <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700">Nonaktif</span>
+                                <span class="inline-flex rounded-full bg-latar-2 dark:bg-gelap px-2.5 py-0.5 text-xs font-semibold text-redup dark:text-redup-gelap">Nonaktif</span>
                             @endif
                         </td>
                         <td class="px-5 py-3">
@@ -53,7 +53,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-5 py-8 text-center text-slate-500">
+                        <td colspan="5" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
                             Belum ada data pengguna.
                         </td>
                     </tr>

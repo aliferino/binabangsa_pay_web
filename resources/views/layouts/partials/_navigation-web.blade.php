@@ -11,7 +11,7 @@
             <span class="text-sm font-semibold tracking-tight text-[#111111] dark:text-[#e8ecf1]">BinaBangsa Pay</span>
         </a>
         <div class="flex items-center gap-2.5">
-            <button type="button" id="tombol-tema" aria-pressed="false" aria-label="Ganti tema terang atau gelap"
+            <button type="button" data-tombol-tema aria-pressed="false" aria-label="Ganti tema terang atau gelap"
                     class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#e2e8dd] text-[#5b6659] transition hover:bg-[#f6f8f4] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4a7a0a] dark:border-[#2a3038] dark:text-[#8b95a1] dark:hover:bg-[#1b2026]">
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" class="hidden h-5 w-5 dark:block">
                     <circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.5"/>

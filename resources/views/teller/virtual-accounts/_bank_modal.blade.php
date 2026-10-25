@@ -8,7 +8,7 @@
 --}}
 <div id="modal-bank" class="fixed inset-0 z-40 hidden" data-modal
      data-judul-tambah="Hubungkan ke Xendit">
-    <div class="absolute inset-0 bg-slate-900/50 dark:bg-black/70" data-modal-tutup></div>
+    <div class="absolute inset-0 bg-black/50 dark:bg-black/70" data-modal-tutup></div>
 
     {{-- Tengah vertikal lewat flex setinggi layar, sama seperti modal konfirmasi.
          pointer-events-none wajib supaya lapisan gelap di belakang tetap bisa

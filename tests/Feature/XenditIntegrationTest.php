@@ -128,7 +128,7 @@ class XenditIntegrationTest extends TestCase
     {
         return VirtualAccount::create([
             'siswa_id' => $this->siswa->id_siswa,
-            'nomor_va' => '8800012345',
+            'nomor_va' => '0012345',
             'prefix' => '880',
             'status' => 'aktif',
             'xendit_id' => '5f2a1b3c4d5e6f708192a3b4',
@@ -166,7 +166,7 @@ class XenditIntegrationTest extends TestCase
         $response->assertRedirect(route('virtual-account.show', $va->id));
 
         // Nomor internal dan nomor Xendit harus berbeda dan keduanya tersimpan.
-        $this->assertSame('8800012345', $va->nomor_va);
+        $this->assertSame('0012345', $va->nomor_va);
         $this->assertSame('8808123456789012', $va->account_number);
         $this->assertSame('5f2a1b3c4d5e6f708192a3b4', $va->xendit_id);
         $this->assertSame('8800012345', $va->external_id);
@@ -194,7 +194,7 @@ class XenditIntegrationTest extends TestCase
 
             return $request->url() === 'https://api.xendit.co/callback_virtual_accounts'
                 && $request->hasHeader('Authorization', $harapan)
-                && $request['external_id'] === '8800012345'
+                && $request['external_id'] === '0012345'
                 && $request['bank_code'] === 'BRI'
                 && $request['is_closed'] === true;
         });

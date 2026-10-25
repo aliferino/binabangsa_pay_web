@@ -14,7 +14,7 @@
     jadi modal ini tidak punya z-index dan tertimbun modal formulir z-40.
 --}}
 <div id="modal-konfirmasi" class="fixed inset-0 hidden" data-modal>
-    <div class="absolute inset-0 bg-slate-900/50 dark:bg-black/70" data-modal-tutup></div>
+    <div class="absolute inset-0 bg-black/50 dark:bg-black/70" data-modal-tutup></div>
 
     {{-- Tengah vertikal: pembungkus setinggi layar dengan flex, bukan mt-24.
          flex-col + justify-center membuat kotak benar-benar di tengah, dan

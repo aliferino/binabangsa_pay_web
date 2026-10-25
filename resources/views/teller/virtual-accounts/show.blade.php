@@ -34,7 +34,7 @@
                         </p>
                     @elseif ($terhubung)
                         <p class="mt-2 flex items-center gap-2 text-sm font-medium text-tinta dark:text-teks-gelap">
-                            <span class="inline-flex whitespace-nowrap rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">Terhubung</span>
+                            <span class="inline-flex whitespace-nowrap rounded-full bg-neon text-tinta px-2.5 py-0.5 text-xs font-semibold">Terhubung</span>
                             Nomor bank dari Xendit sudah aktif dan bisa dipakai membayar.
                         </p>
                         <dl class="mt-4 grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
@@ -166,7 +166,7 @@
                     <div class="flex items-center justify-between gap-4">
                         <dt class="text-redup dark:text-redup-gelap">Status</dt>
                         <dd>
-                            <span class="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $aktif ? 'bg-emerald-100 text-emerald-800' : 'bg-latar-2 text-tinta dark:bg-gelap dark:text-teks-gelap' }}">
+                            <span class="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $aktif ? 'bg-neon text-tinta' : 'bg-latar-2 text-tinta dark:bg-gelap dark:text-teks-gelap' }}">
                                 {{ $aktif ? 'Aktif' : 'Nonaktif' }}
                             </span>
                         </dd>

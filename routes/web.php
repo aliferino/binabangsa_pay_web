@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Kepsek\DashboardController as KepsekDashboardController;
 use App\Http\Controllers\Public\CallbackController;
+use App\Http\Controllers\Public\MidtransCallbackController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Teller\DashboardController as TellerDashboardController;
 use App\Http\Controllers\Teller\PaymentController;
@@ -67,6 +68,18 @@ Route::post('/callback/payment', [CallbackController::class, 'handle'])
 
 Route::post('/callback/xendit', [CallbackController::class, 'xendit'])
     ->name('callback.xendit');
+
+/*
+|--------------------------------------------------------------------------
+| Callback Midtrans
+|--------------------------------------------------------------------------
+| Tanpa auth dan tanpa CSRF, karena pemanggilnya server Midtrans. Pengamannya
+| adalah signature_key SHA512 yang diperiksa lebih dulu di
+| MidtransCallbackController. Xendit tetap ada sebagai jalur cadangan.
+*/
+
+Route::post('/callback/midtrans', [MidtransCallbackController::class, 'handle'])
+    ->name('callback.midtrans');
 
 /*
 |--------------------------------------------------------------------------
@@ -144,8 +157,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/virtual-account/{virtualAccount}/aktifkan', [VirtualAccountController::class, 'activate'])
             ->name('virtual-account.aktifkan');
 
-        // Xendit. Segmen terakhirnya kata tetap, jadi tidak tertukar dengan
+        // Midtrans. Segmen terakhirnya kata tetap, jadi tidak tertukar dengan
         // route berparameter di atas.
+        Route::post('/virtual-account/{siswa}/buat-midtrans', [VirtualAccountController::class, 'createMidtrans'])
+            ->name('virtual-account.buat-midtrans');
+
+        // Xendit. Tetap ada sebagai jalur cadangan.
         Route::post('/virtual-account/{siswa}/buat-xendit', [VirtualAccountController::class, 'createXendit'])
             ->name('virtual-account.buat-xendit');
         Route::post('/virtual-account/{virtualAccount}/simulasi', [VirtualAccountController::class, 'simulasi'])

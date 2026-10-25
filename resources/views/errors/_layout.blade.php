@@ -40,7 +40,7 @@
     <meta name="robots" content="noindex">
     <title>{{ $kode }} | BinaBangsa Pay</title>
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         (function () {
             try {

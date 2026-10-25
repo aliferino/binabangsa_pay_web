@@ -33,7 +33,10 @@ class VirtualAccount extends Model
         $tail = substr($digits, -5);
         $tail = str_pad($tail, 5, '0', STR_PAD_LEFT);
 
-        return '880'.'00'.$tail;
+        // Nomor yang kita kirim ke Midtrans: dua nol di depan, lima digit
+        // terakhir NIS di belakang. Midtrans menempelkan prefix merchant di
+        // depannya, jadi nomor final di rekening siswa tetap berakhiran NIS.
+        return '00'.$tail;
     }
 
     public function student(): BelongsTo

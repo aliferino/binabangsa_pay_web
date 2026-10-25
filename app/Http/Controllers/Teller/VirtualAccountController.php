@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Teller;
 
 use App\Http\Controllers\Controller;
 use App\Exceptions\XenditException;
+use App\Exceptions\MidtransException;
+use App\Models\PaymentGatewayTransaction;
 use App\Models\Student;
+use App\Models\TuitionBill;
 use App\Models\VirtualAccount;
+use App\Services\MidtransService;
 use App\Services\XenditService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -89,7 +93,6 @@ class VirtualAccountController extends Controller
         VirtualAccount::create([
             'siswa_id' => $siswa->id_siswa,
             'nomor_va' => $nomor,
-            'prefix' => '880',
             'status' => 'aktif',
         ]);
 
@@ -223,7 +226,6 @@ class VirtualAccountController extends Controller
         $va ??= new VirtualAccount([
             'siswa_id' => $siswa->id_siswa,
             'nomor_va' => $nomorInternal,
-            'prefix' => '880',
             'status' => 'aktif',
         ]);
 
@@ -240,6 +242,185 @@ class VirtualAccountController extends Controller
         return redirect()->route('virtual-account.show', $va->id)
             ->with('sukses', 'Virtual Account Xendit '.$va->account_number
                 .' ('.$va->bank_code.') berhasil dibuat untuk '.$siswa->nama.'.');
+    }
+
+    /**
+     * Buat Virtual Account Midtrans untuk satu siswa, lalu simpan hasilnya.
+     *
+     * Aturan satu VA aktif per siswa dipegang di sini. Midtrans diam-diam
+     * mengganti nomor kalau nomor yang kita minta sedang dipakai transaksi
+     * lain, dan nomor pengganti itu tidak berakhiran NIS, jadi tidak bisa
+     * dipakai siswa. Karena itu:
+     *
+     * 1. Kalau siswa ini masih punya transaksi pending, transaksinya DIPAKAI
+     *    ULANG. Tidak ada charge baru, supaya nomornya tidak berubah dan kuota
+     *    pembuatan tidak terbuang.
+     * 2. Sesudah charge, nomor hasil wajib berakhiran '00' + lima digit NIS.
+     *    Kalau tidak, transaksi ditandai gagal dan tidak ditampilkan ke siswa.
+     */
+    public function createMidtrans(
+        Request $request,
+        Student $siswa,
+        MidtransService $midtrans
+    ): RedirectResponse {
+        $data = $request->validate([
+            'bank' => ['required', 'string', 'max:20'],
+            'nominal' => ['nullable', 'numeric', 'gt:0'],
+        ], [
+            'bank.required' => 'Bank wajib dipilih.',
+            'bank.max' => 'Kode bank terlalu panjang.',
+            'nominal.numeric' => 'Nominal tagihan harus berupa angka.',
+            'nominal.gt' => 'Nominal tagihan harus lebih besar dari nol.',
+        ]);
+
+        $va = VirtualAccount::where('siswa_id', $siswa->id_siswa)->first();
+
+        // Aturan satu VA aktif per siswa: pakai ulang transaksi pending.
+        $pending = PaymentGatewayTransaction::where('siswa_id', $siswa->id_siswa)
+            ->where('status_transaksi', 'pending')
+            ->latest('id')
+            ->first();
+
+        if ($pending !== null) {
+            $nomorPending = $pending->reference_number;
+
+            if ($va !== null && $nomorPending !== null) {
+                return redirect()->route('virtual-account.show', $va->id)
+                    ->with('sukses', 'Siswa ini masih punya Virtual Account aktif '
+                        .$nomorPending.'. Nomor itu dipakai ulang, tidak dibuat yang baru.');
+            }
+        }
+
+        $nomorKirim = $va?->nomor_va ?? VirtualAccount::generateNomorVa($siswa->nis);
+
+        if ($va === null) {
+            $dipakai = VirtualAccount::where('nomor_va', $nomorKirim)->exists();
+
+            if ($dipakai) {
+                return back()->withInput()->withErrors([
+                    'bank' => 'Nomor VA '.$nomorKirim.' sudah dipakai siswa lain. '
+                        .'Lima digit terakhir NIS siswa ini bentrok, jadi nomornya perlu ditentukan manual.',
+                ]);
+            }
+        }
+
+        $tagihan = TuitionBill::where('id_siswa', $siswa->id_siswa)
+            ->whereIn('status', ['belum_bayar', 'tunggakan'])
+            ->orderBy('tahun')
+            ->orderBy('bulan')
+            ->first();
+
+        $nominal = (float) ($data['nominal']
+            ?? $tagihan?->nominal
+            ?? 0);
+
+        if ($nominal <= 0) {
+            return back()->withInput()->withErrors([
+                'nominal' => 'Tidak ada tagihan yang bisa dijadikan nominal Virtual Account.',
+            ]);
+        }
+
+        $orderId = 'MT-'.$siswa->nis.'-'.now()->format('YmdHis');
+
+        try {
+            $balasan = $midtrans->charge([
+                'order_id' => $orderId,
+                'gross_amount' => $nominal,
+                'bank' => $data['bank'],
+                'va_number' => $nomorKirim,
+                'first_name' => $siswa->nama,
+                'email' => null,
+            ]);
+        } catch (MidtransException $e) {
+            Log::warning('Gagal membuat VA Midtrans', [
+                'siswa_id' => $siswa->id_siswa,
+                'bank' => $data['bank'],
+                'pesan' => $e->getMessage(),
+            ]);
+
+            return back()->withInput()->withErrors([
+                'bank' => 'Midtrans menolak pembuatan Virtual Account. Tidak ada data yang disimpan. '
+                    .'Pesan dari Midtrans: '.$e->getMessage(),
+            ]);
+        }
+
+        $nomorHasil = $midtrans->ambilNomorVa($balasan);
+
+        // Nomor hasil wajib berakhiran nomor yang kita kirim. Kalau Midtrans
+        // menggantinya, transaksi ini tidak berguna bagi siswa.
+        if ($nomorHasil === null || ! str_ends_with($nomorHasil, $nomorKirim)) {
+            PaymentGatewayTransaction::updateOrCreate(
+                ['transaction_id' => $orderId],
+                [
+                    'virtual_account_id' => $va?->id,
+                    'siswa_id' => $siswa->id_siswa,
+                    'nominal' => $nominal,
+                    'status_transaksi' => 'gagal',
+                    'payment_channel' => strtoupper($data['bank']),
+                    'reference_number' => $nomorHasil,
+                    'raw_response' => $balasan,
+                ]
+            );
+
+            Log::warning('Midtrans mengganti nomor VA, transaksi dibatalkan', [
+                'siswa_id' => $siswa->id_siswa,
+                'nomor_kirim' => $nomorKirim,
+                'nomor_hasil' => $nomorHasil,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'bank' => 'Midtrans mengganti nomor Virtual Account, jadi nomor itu tidak berakhiran NIS. '
+                    .'Transaksi dibatalkan, coba lagi beberapa saat lagi.',
+            ]);
+        }
+
+        $va ??= new VirtualAccount([
+            'siswa_id' => $siswa->id_siswa,
+            'nomor_va' => $nomorKirim,
+            'status' => 'aktif',
+        ]);
+
+        $va->fill([
+            'prefix' => substr($nomorHasil, 0, strlen($nomorHasil) - strlen($nomorKirim)),
+            'account_number' => $nomorHasil,
+            'bank_code' => strtoupper($data['bank']),
+            'external_id' => $orderId,
+            'expired_at' => $this->bacaWaktu($balasan['expiry_time'] ?? null),
+        ]);
+
+        $va->save();
+
+        PaymentGatewayTransaction::updateOrCreate(
+            ['transaction_id' => $orderId],
+            [
+                'virtual_account_id' => $va->id,
+                'siswa_id' => $siswa->id_siswa,
+                'nominal' => $nominal,
+                'status_transaksi' => $this->mapStatusMidtrans(
+                    (string) ($balasan['transaction_status'] ?? 'pending')
+                ),
+                'payment_channel' => strtoupper($data['bank']),
+                'reference_number' => $nomorHasil,
+                'raw_response' => $balasan,
+            ]
+        );
+
+        return redirect()->route('virtual-account.show', $va->id)
+            ->with('sukses', 'Virtual Account Midtrans '.$nomorHasil
+                .' berhasil dibuat untuk '.$siswa->nama.'.');
+    }
+
+    /**
+     * Peta status transaksi Midtrans ke status yang dipakai tabel.
+     */
+    private function mapStatusMidtrans(string $status): string
+    {
+        return match (strtolower(trim($status))) {
+            'settlement', 'capture' => 'berhasil',
+            'expire' => 'kedaluwarsa',
+            'cancel', 'deny', 'failure' => 'gagal',
+            default => 'pending',
+        };
     }
 
     /**
