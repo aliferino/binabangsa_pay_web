@@ -218,8 +218,12 @@ class MidtransIntegrationTest extends TestCase
 
         $this->assertNotNull($va);
 
-        // Yang kita kirim: lima digit NIS di belakang.
-        $this->assertSame('0012345', $va->nomor_va);
+        // Yang kita kirim ke Midtrans: 00 + lima digit NIS. Nilai ini yang
+        // dicek Http::fake di bawah, dan tidak disimpan lagi di nomor_va.
+        $this->assertSame('0012345', VirtualAccount::generateNumber($this->siswa->nis));
+
+        // Yang disimpan: satu nomor saja, 12 digit, dipakai tampil dan cari.
+        $this->assertSame('777010012345', $va->nomor_va);
 
         // Yang disimpan untuk siswa: nomor hasil Midtrans, berakhiran NIS.
         $this->assertSame('777010012345', $va->account_number);

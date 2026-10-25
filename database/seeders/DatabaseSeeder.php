@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
                 'bulan' => $bulan, 'tahun' => 2026,
                 'nominal' => $tarif->nominal,
                 'tanggal_jatuh_tempo' => sprintf('2026-%02d-%02d', $bulan, 30),
-                'status' => 'belum_bayar',
+                'status' => TuitionBill::STATUS_BELUM,
             ]);
         }
 

@@ -259,7 +259,7 @@ class CallbackController extends Controller
                 }
 
                 $tagihan = TuitionBill::where('id_siswa', $vaTerkunci->siswa_id)
-                    ->whereIn('status', ['belum_bayar', 'tunggakan'])
+                    ->where('status', '!=', TuitionBill::STATUS_LUNAS)
                     ->orderBy('tahun')
                     ->orderBy('bulan')
                     ->lockForUpdate()
@@ -499,12 +499,12 @@ class CallbackController extends Controller
         if ($tagihanId !== null) {
             return TuitionBill::whereKey($tagihanId)
                 ->where('id_siswa', $transaksi->siswa_id)
-                ->where('status', '!=', 'lunas')
+                ->where('status', '!=', TuitionBill::STATUS_LUNAS)
                 ->first();
         }
 
         return TuitionBill::where('id_siswa', $transaksi->siswa_id)
-            ->whereIn('status', ['belum_bayar', 'tunggakan'])
+            ->where('status', '!=', TuitionBill::STATUS_LUNAS)
             ->orderBy('tahun')
             ->orderBy('bulan')
             ->first();

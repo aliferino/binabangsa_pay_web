@@ -130,9 +130,16 @@ class PembayaranTest extends TestCase
         $va = VirtualAccount::where('siswa_id', $this->siswa->id_siswa)->first();
 
         $this->assertNotNull($va);
-        $this->assertSame('0012345', $va->nomor_va);
+
+        // Yang disimpan sekarang nomor lengkap 12 digit, satu nomor untuk
+        // ditampilkan, dicari, dan dirujuk. Nomor 7 digit hanya dipakai saat
+        // mengirim ke Midtrans.
+        $this->assertSame('777010012345', $va->nomor_va);
+        $this->assertSame($va->nomor_va, $va->account_number);
+        $this->assertSame('77701', $va->prefix);
         $this->assertSame('aktif', $va->status);
-        $this->assertSame(7, strlen($va->nomor_va));
+        $this->assertSame(12, strlen($va->nomor_va));
+        $this->assertStringEndsWith('12345', $va->nomor_va);
     }
 
     public function test_va_untuk_nis_pendek_tetap_tujuh_digit(): void
@@ -145,8 +152,10 @@ class PembayaranTest extends TestCase
 
         $va = VirtualAccount::where('siswa_id', $siswa->id_siswa)->first();
 
-        $this->assertSame('0000077', $va->nomor_va);
-        $this->assertSame(7, strlen($va->nomor_va));
+        // NIS pendek tetap lima digit di belakang, dengan nol di depan.
+        $this->assertSame('777010000077', $va->nomor_va);
+        $this->assertSame(12, strlen($va->nomor_va));
+        $this->assertStringEndsWith('00077', $va->nomor_va);
     }
 
     /**

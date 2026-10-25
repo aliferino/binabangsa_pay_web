@@ -55,7 +55,7 @@ class DashboardController extends Controller
             'totalStudents' => Student::count(),
             'totalBills' => TuitionBill::count(),
             'totalArrears' => TuitionBill::overdue()->count(),
-            'totalUnpaidStudents' => TuitionBill::where('status', 'belum_bayar')
+            'totalUnpaidStudents' => TuitionBill::where('status', '!=', TuitionBill::STATUS_LUNAS)
                 ->distinct('id_siswa')
                 ->count('id_siswa'),
             'arrearsAmount' => (float) TuitionBill::overdue()->sum('nominal'),

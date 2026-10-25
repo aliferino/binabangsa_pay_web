@@ -26,8 +26,8 @@ class DashboardController extends Controller
 
         // Tagihan terdekat yang belum dibayar, supaya siswa tahu apa yang harus dilunasi dulu.
         // Yang paling mendesak: yang sudah lewat jatuh tempo dulu, baru yang belum.
-        $berikutnya = $tagihan->first(fn ($t) => $t->status !== 'lunas' && $t->tanggal_jatuh_tempo?->isPast())
-            ?? $tagihan->firstWhere('status', 'belum_bayar');
+        $berikutnya = $tagihan->first(fn ($t) => $t->status !== TuitionBill::STATUS_LUNAS && $t->tanggal_jatuh_tempo?->isPast())
+            ?? $tagihan->first(fn ($t) => $t->status !== TuitionBill::STATUS_LUNAS);
 
         $belumLunas = $tagihan->where('status', '!=', 'lunas');
         $totalTagihan = (float) $tagihan->sum('nominal');

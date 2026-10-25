@@ -77,7 +77,9 @@ class VirtualAccountController extends Controller
                 ->withErrors(['siswa_id' => 'Siswa ini sudah punya Virtual Account.']);
         }
 
-        $nomor = VirtualAccount::generateNomorVa($siswa->nis);
+        // VA lokal tanpa gateway: simpan langsung nomor lengkap 12 digit,
+        // supaya yang ditampilkan sama dengan yang dikirim ke Midtrans nanti.
+        $nomor = VirtualAccount::nomorLengkap($siswa->nis);
 
         $dipakai = VirtualAccount::where('nomor_va', $nomor)->exists();
 
@@ -93,6 +95,8 @@ class VirtualAccountController extends Controller
         VirtualAccount::create([
             'siswa_id' => $siswa->id_siswa,
             'nomor_va' => $nomor,
+            'prefix' => VirtualAccount::PREFIX_MIDTRANS,
+            'account_number' => $nomor,
             'status' => 'aktif',
         ]);
 
@@ -231,6 +235,14 @@ class VirtualAccountController extends Controller
 
         $va->fill([
             'xendit_id' => $balasan['id'] ?? null,
+            // Xendit memberi nomor sendiri. Prefix diambil dari nomor itu,
+            // bukan ditulis 880 di kode seperti dulu. Kolomnya NOT NULL, jadi
+            // nomor internal dipakai kalau balasan tidak memberi nomor.
+            'prefix' => substr(
+                (string) ($balasan['account_number'] ?? $nomorInternal),
+                0,
+                max(strlen((string) ($balasan['account_number'] ?? $nomorInternal)) - strlen($nomorInternal), 0)
+            ),
             'account_number' => $balasan['account_number'] ?? null,
             'bank_code' => $balasan['bank_code'] ?? $permintaan['bank_code'],
             'external_id' => $balasan['external_id'] ?? $nomorInternal,
@@ -305,7 +317,7 @@ class VirtualAccountController extends Controller
         }
 
         $tagihan = TuitionBill::where('id_siswa', $siswa->id_siswa)
-            ->whereIn('status', ['belum_bayar', 'tunggakan'])
+            ->where('status', '!=', TuitionBill::STATUS_LUNAS)
             ->orderBy('tahun')
             ->orderBy('bulan')
             ->first();
@@ -376,12 +388,17 @@ class VirtualAccountController extends Controller
 
         $va ??= new VirtualAccount([
             'siswa_id' => $siswa->id_siswa,
-            'nomor_va' => $nomorKirim,
             'status' => 'aktif',
         ]);
 
+        // prefix = bagian depan nomor hasil di luar nomor yang kita kirim.
+        // Itu prefix merchant Midtrans (77701), bukan sisa Xendit (880).
+        $prefix = substr($nomorHasil, 0, strlen($nomorHasil) - strlen($nomorKirim));
+
         $va->fill([
-            'prefix' => substr($nomorHasil, 0, strlen($nomorHasil) - strlen($nomorKirim)),
+            'prefix' => $prefix,
+            // Satu nomor untuk ditampilkan, dicari, dan dirujuk.
+            'nomor_va' => $nomorHasil,
             'account_number' => $nomorHasil,
             'bank_code' => strtoupper($data['bank']),
             'external_id' => $orderId,
@@ -443,7 +460,7 @@ class VirtualAccountController extends Controller
 
         $tagihan = $virtualAccount->siswa
             ?->tagihan()
-            ->whereIn('status', ['belum_bayar', 'tunggakan'])
+            ->where('status', '!=', TuitionBill::STATUS_LUNAS)
             ->orderBy('tahun')
             ->orderBy('bulan')
             ->first();

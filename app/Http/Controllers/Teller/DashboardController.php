@@ -18,7 +18,7 @@ class DashboardController extends Controller
 
         $data = [
             'billsDueToday' => TuitionBill::whereDate('tanggal_jatuh_tempo', $today)->count(),
-            'unpaidStudents' => TuitionBill::where('status', 'belum_bayar')
+            'unpaidStudents' => TuitionBill::where('status', '!=', TuitionBill::STATUS_LUNAS)
                 ->distinct('id_siswa')
                 ->count('id_siswa'),
             'overdueBills' => TuitionBill::overdue()->count(),

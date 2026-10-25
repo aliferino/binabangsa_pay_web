@@ -9,7 +9,6 @@ use App\Models\AcademicYear;
 use App\Models\TuitionRate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 
 class TuitionBillController extends Controller
@@ -137,36 +136,25 @@ class TuitionBillController extends Controller
     }
 
     /**
-     * Ubah tagihan yang sudah lewat jatuh tempo menjadi tunggakan.
+     * Hitung tagihan yang sudah lewat jatuh tempo.
      *
-     * Aturannya: batas pembayaran adalah tanggal terakhir bulan tagihan.
-     * Jadi mulai tanggal 1 bulan berikutnya, tagihan yang masih berstatus
-     * belum_bayar otomatis menjadi tunggakan. Tagihan yang sudah lunas
-     * tidak pernah disentuh.
+     * Tunggakan TIDAK disimpan sebagai status. Kolom status hanya berisi
+     * belum_bayar atau lunas, dan tunggakan dihitung dari tanggal jatuh tempo
+     * lewat scopeOverdue(). Dulu method ini menulis status 'tunggakan' ke kolom
+     * yang tidak pernah dibaca query mana pun, sehingga barisnya tidak
+     * terpilih sama sekali.
      */
     public function markAsArrears(): RedirectResponse
     {
-        $hariIni = Carbon::today();
-        $jumlah = 0;
-
-        TuitionBill::where('status', 'belum_bayar')
-            ->get()
-            ->each(function (TuitionBill $tagihan) use ($hariIni, &$jumlah) {
-                $batas = Carbon::create($tagihan->tahun, $tagihan->bulan, 1)->endOfMonth();
-
-                if ($hariIni->greaterThan($batas)) {
-                    $tagihan->update(['status' => 'tunggakan']);
-                    $jumlah++;
-                }
-            });
+        $jumlah = TuitionBill::overdue()->count();
 
         if ($jumlah === 0) {
             return redirect()->route('tagihan-spp.index')
-                ->with('sukses', 'Tidak ada tagihan yang perlu ditandai tunggakan.');
+                ->with('sukses', 'Tidak ada tagihan yang lewat jatuh tempo.');
         }
 
         return redirect()->route('tagihan-spp.index')
-            ->with('sukses', $jumlah.' tagihan ditandai sebagai tunggakan.');
+            ->with('sukses', $jumlah.' tagihan sudah lewat jatuh tempo.');
     }
 
     /**
@@ -182,7 +170,7 @@ class TuitionBillController extends Controller
             'tahun' => ['required', 'integer', 'min:2000', 'max:2100'],
             'nominal' => ['required', 'numeric', 'gt:0'],
             'tanggal_jatuh_tempo' => ['required', 'date'],
-            'status' => ['required', Rule::in(['belum_bayar', 'lunas', 'tunggakan'])],
+            'status' => ['required', Rule::in([TuitionBill::STATUS_BELUM, TuitionBill::STATUS_LUNAS])],
         ];
     }
 
@@ -208,7 +196,7 @@ class TuitionBillController extends Controller
             'nominal.gt' => 'Nominal harus lebih besar dari nol.',
             'tanggal_jatuh_tempo.required' => 'Tanggal jatuh tempo wajib diisi.',
             'tanggal_jatuh_tempo.date' => 'Tanggal jatuh tempo harus berupa tanggal yang sah.',
-            'status.in' => 'Status harus belum_bayar, lunas, atau tunggakan.',
+            'status.in' => 'Status harus belum bayar atau lunas.',
         ];
     }
 

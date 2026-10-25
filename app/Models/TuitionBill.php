@@ -12,6 +12,18 @@ class TuitionBill extends Model
 {
     use HasFactory;
 
+    /**
+     * Satu-satunya dua nilai yang sah di kolom status.
+     *
+     * Tunggakan TIDAK disimpan sebagai status: dihitung dari tanggal jatuh
+     * tempo lewat scopeOverdue(). Dulu ada baris berstatus 'belum' dan
+     * 'tunggakan' yang tidak pernah terpilih oleh query mana pun, dan itu
+     * menyebabkan tagihan termuda yang terbayar, bukan yang tertua.
+     */
+    public const STATUS_BELUM = 'belum_bayar';
+
+    public const STATUS_LUNAS = 'lunas';
+
     protected $table = 'tagihan_spp';
 
     protected $primaryKey = 'id_tagihan';
@@ -109,7 +121,7 @@ class TuitionBill extends Model
 
     public function isPayable(): bool
     {
-        return $this->status !== 'lunas';
+        return $this->status !== self::STATUS_LUNAS;
     }
 
     /**
@@ -154,7 +166,10 @@ class TuitionBill extends Model
             if ($status === 'tunggakan') {
                 $query->overdue();
             } elseif ($status === 'belum_bayar') {
-                $query->where('status', 'belum_bayar')
+                // Belum lunas dan belum lewat jatuh tempo. Memakai status
+                // tersimpan apa adanya membuat baris berstatus aneh ikut
+                // hilang dari laporan.
+                $query->where('status', '!=', self::STATUS_LUNAS)
                     ->whereDate('tanggal_jatuh_tempo', '>=', today());
             } else {
                 $query->where('status', $status);
@@ -191,8 +206,8 @@ class TuitionBill extends Model
         return [
             'totalNominal' => (float) $rows->sum('nominal'),
             'totalPaid' => (float) $paidRows->sum('nominal_pembayaran'),
-            'totalUnpaid' => (float) $rows->where('status', '!=', 'lunas')->sum('nominal'),
-            'totalArrears' => (float) $rows->filter(fn (TuitionBill $b) => $b->status !== 'lunas' && $b->tanggal_jatuh_tempo?->isPast())->sum('nominal'),
+            'totalUnpaid' => (float) $rows->where('status', '!=', self::STATUS_LUNAS)->sum('nominal'),
+            'totalArrears' => (float) $rows->filter(fn (TuitionBill $b) => $b->status !== self::STATUS_LUNAS && $b->tanggal_jatuh_tempo?->isPast())->sum('nominal'),
         ];
     }
 
@@ -253,7 +268,7 @@ class TuitionBill extends Model
      */
     public function scopeOverdue($query)
     {
-        return $query->where('status', '!=', 'lunas')
+        return $query->where('status', '!=', self::STATUS_LUNAS)
             ->whereDate('tanggal_jatuh_tempo', '<', today());
     }
 

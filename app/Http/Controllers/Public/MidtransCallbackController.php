@@ -123,7 +123,10 @@ class MidtransCallbackController extends Controller
                     'metode_pembayaran' => 'va',
                     'status' => 'berhasil',
                     'user_id' => null,
-                    'keterangan' => 'Pembayaran Virtual Account Midtrans.',
+                    'keterangan' => (string) $request->input(
+                        'keterangan_simulasi',
+                        'Pembayaran Virtual Account Midtrans.'
+                    ),
                     'nomor_referensi' => $terkunci->reference_number,
                 ]);
 
@@ -205,7 +208,7 @@ class MidtransCallbackController extends Controller
     private function selectBill(PaymentGatewayTransaction $transaksi): ?TuitionBill
     {
         return TuitionBill::where('id_siswa', $transaksi->siswa_id)
-            ->whereIn('status', ['belum_bayar', 'tunggakan'])
+            ->where('status', '!=', TuitionBill::STATUS_LUNAS)
             ->orderBy('tahun')
             ->orderBy('bulan')
             ->lockForUpdate()

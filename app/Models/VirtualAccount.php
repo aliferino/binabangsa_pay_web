@@ -11,6 +11,12 @@ class VirtualAccount extends Model
 {
     use HasFactory;
 
+    /**
+     * Prefix merchant Midtrans untuk nomor VA. Dipakai supaya angka ini tidak
+     * tersebar sebagai literal di beberapa berkas.
+     */
+    public const PREFIX_MIDTRANS = '77701';
+
     protected $table = 'virtual_account';
 
     protected $fillable = [
@@ -69,8 +75,30 @@ class VirtualAccount extends Model
         return $this->isActive();
     }
 
+    /**
+     * Nomor yang benar-benar dipakai siswa: prefix merchant Midtrans di depan,
+     * nomor kirim di belakang. Hasilnya 12 digit, misal 77701 + 0012345.
+     *
+     * Nomor inilah yang ditampilkan, dicari, dan disimpan di account_number
+     * dan nomor_va. Jangan simpan dua nomor berbeda untuk satu VA.
+     */
+    public static function nomorLengkap(string $nis, string $prefix = self::PREFIX_MIDTRANS): string
+    {
+        return $prefix.static::generateNumber($nis);
+    }
+
     public static function generateNomorVa(string $nis): string
     {
         return static::generateNumber($nis);
+    }
+
+    /**
+     * Nomor untuk ditampilkan, dikelompokkan 4-4-4 supaya mudah dibaca.
+     */
+    public function nomorTampil(): string
+    {
+        $angka = preg_replace('/[^0-9]/', '', (string) ($this->account_number ?: $this->nomor_va));
+
+        return trim(chunk_split($angka, 4, ' '));
     }
 }

@@ -308,8 +308,17 @@ class ControllerMasterDataTest extends TestCase
             ->post(route('tagihan-spp.tandai-tunggakan'))
             ->assertRedirect(route('tagihan-spp.index'));
 
-        $this->assertSame('tunggakan', $lama->fresh()->status);
+        // Tunggakan tidak lagi disimpan sebagai status: kolom status hanya
+        // berisi belum_bayar atau lunas, dan tunggakan dihitung dari tanggal
+        // jatuh tempo. Menulis 'tunggakan' dulu membuat baris itu tidak pernah
+        // terpilih oleh query mana pun.
+        $this->assertSame('belum_bayar', $lama->fresh()->status);
         $this->assertSame('belum_bayar', $baru->fresh()->status);
+
+        // Yang membedakan hanya tanggalnya.
+        $this->assertTrue($lama->fresh()->tanggal_jatuh_tempo->isPast());
+        $this->assertFalse($baru->fresh()->tanggal_jatuh_tempo->isPast());
+        $this->assertSame(1, TuitionBill::overdue()->count());
     }
 
     public function test_tagihan_lunas_tidak_ikut_jadi_tunggakan(): void
