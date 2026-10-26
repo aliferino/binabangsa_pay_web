@@ -13,7 +13,7 @@
 <body class="flex min-h-[100dvh] flex-col bg-latar-2 font-sans text-tinta antialiased dark:bg-gelap dark:text-teks-gelap">
 
     {{-- Bilah atas untuk layar kecil, berisi tombol buka menu. --}}
-    <header class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-garis bg-white px-4 lg:hidden dark:border-garis-gelap dark:bg-gelap-2">
+    <header class="cetak-sembunyi sticky top-0 z-30 flex h-16 items-center justify-between border-b border-garis bg-white px-4 lg:hidden dark:border-garis-gelap dark:bg-gelap-2">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5">
             <img src="{{ asset('images/logo-smk-bina-bangsa-180.webp') }}" alt="Logo SMK Bina Bangsa"
                  class="h-9 w-9 shrink-0 rounded-full object-contain ring-1 ring-garis dark:ring-garis-gelap" width="36" height="36">
@@ -31,7 +31,7 @@
         {{-- Menu samping. Isinya dipilih oleh layouts.partials._sidebar sesuai role.
              Menempel setinggi layar dan menggulir sendiri, tidak ikut halaman. --}}
         <aside id="menu-samping"
-               class="hidden w-full shrink-0 bg-white lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:self-start dark:bg-gelap-2">
+               class="cetak-sembunyi hidden w-full shrink-0 bg-white lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:self-start dark:bg-gelap-2">
             @include('layouts.partials._sidebar')
         </aside>
 
@@ -41,7 +41,7 @@
             <main class="min-w-0 flex-1 bg-latar-2 px-4 py-6 lg:px-8 lg:py-8 dark:bg-gelap">
                 {{-- Seluruh isi halaman ada di dalam #isi-halaman supaya bisa
                      diganti tanpa muat ulang saat menu samping diklik. --}}
-                <div id="isi-halaman" class="mx-auto max-w-6xl"
+                <div id="isi-halaman" class="area-cetak mx-auto max-w-6xl"
                      @if (old('_modal')) data-modal-gagal="{{ old('_modal') }}" data-mode-gagal="{{ old('_mode') }}" data-id-gagal="{{ old('_id') }}" @endif>
 
                     {{-- Judul halaman dan keterangan singkat. --}}
@@ -62,7 +62,7 @@
                 </div>
             </main>
 
-            <footer class="border-t border-garis bg-white dark:border-garis-gelap dark:bg-gelap-2">
+            <footer class="cetak-sembunyi border-t border-garis bg-white dark:border-garis-gelap dark:bg-gelap-2">
                 <div class="mx-auto max-w-6xl px-4 py-4 text-center text-xs text-redup lg:px-8 dark:text-redup-gelap">
                     SMK Bina Bangsa, Sistem Pembayaran SPP
                 </div>

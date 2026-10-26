@@ -3,11 +3,15 @@
 @section('judul', 'Rekap Pembayaran')
 @section('keterangan', 'Uang masuk SPP per bulan dan per kelas')
 
+@section('aksi')
+    @include('layouts.partials._tombol-cetak')
+@endsection
+
 @section('isi')
 
     {{-- Form filter tanggal. --}}
     <form method="GET" action="{{ route('kepsek.reports.recap') }}"
-          class="mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-4 shadow-sm">
+          class="cetak-sembunyi mb-4 rounded-xl border border-garis dark:border-garis-gelap bg-white dark:bg-gelap-2 p-4 shadow-sm">
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 
             <div>

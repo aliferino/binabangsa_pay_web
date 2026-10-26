@@ -395,3 +395,79 @@ select:focus-visible {
 @media (prefers-reduced-motion: reduce) {
     .tautan-ditekan { animation: none; }
 }
+
+
+/*
+    Gaya cetak laporan.
+
+    Halaman laporan memakai class="dark" di <html> untuk mode gelap. Aturan
+    cetak menang karena berada di @media print dan memakai !important pada
+    warna, jadi latar dan teks selalu putih dan hitam saat dicetak.
+
+    Dua kelas penanda:
+    - cetak-sembunyi: elemen yang tidak ikut tercetak (sidebar, header, footer,
+      form filter, tombol aksi).
+    - area-cetak: wadah isi laporan, dijadikan kolom tunggal penuh saat dicetak.
+*/
+@media print {
+    @page {
+        margin: 12mm;
+    }
+
+    .cetak-sembunyi {
+        display: none !important;
+    }
+
+    /* Paksa tema terang walau <html class="dark"> aktif. */
+    html,
+    html.dark,
+    body,
+    body * {
+        background: #fff !important;
+        color: #111 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    /* Isi laporan melebar penuh, tanpa jarak layar. */
+    body {
+        display: block !important;
+        min-height: 0 !important;
+    }
+
+    main {
+        padding: 0 !important;
+    }
+
+    .area-cetak {
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Tabel tidak terpotong dan garis tetap terbaca. */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        page-break-inside: auto;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tfoot {
+        display: table-footer-group;
+    }
+
+    tr,
+    img,
+    section {
+        page-break-inside: avoid;
+    }
+
+    th,
+    td {
+        border: 1px solid #999 !important;
+    }
+}

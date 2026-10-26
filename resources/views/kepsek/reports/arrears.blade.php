@@ -3,6 +3,10 @@
 @section('judul', 'Laporan Tunggakan')
 @section('keterangan', 'Rekap tunggakan SPP per siswa')
 
+@section('aksi')
+    @include('layouts.partials._tombol-cetak')
+@endsection
+
 @section('isi')
 
     {{-- Catatan bentuk data: $daftar_tunggakan berisi array dengan kunci nis, nama,
@@ -80,7 +84,7 @@
 
     {{-- Form filter. --}}
     <form method="GET" action="{{ route('kepsek.reports.arrears') }}"
-          class="mb-5 rounded-xl border border-garis bg-white px-4 py-3 dark:border-garis-gelap dark:bg-gelap-2">
+          class="cetak-sembunyi mb-5 rounded-xl border border-garis bg-white px-4 py-3 dark:border-garis-gelap dark:bg-gelap-2">
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
 
             <div>

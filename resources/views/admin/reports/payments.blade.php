@@ -3,6 +3,10 @@
 @section('judul', 'Laporan Pembayaran')
 @section('keterangan', 'Rekap tagihan SPP berdasarkan filter yang dipilih')
 
+@section('aksi')
+    @include('layouts.partials._tombol-cetak')
+@endsection
+
 @section('isi')
 
     @php
@@ -74,7 +78,7 @@
 
     {{-- Form filter. Delapan pilihan dirapatkan jadi grid, tombol di ujung. --}}
     <form method="GET" action="{{ route('laporan.pembayaran') }}"
-          class="mb-5 rounded-xl border border-garis bg-white px-4 py-3 dark:border-garis-gelap dark:bg-gelap-2">
+          class="cetak-sembunyi mb-5 rounded-xl border border-garis bg-white px-4 py-3 dark:border-garis-gelap dark:bg-gelap-2">
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
 
             <div>
