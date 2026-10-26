@@ -172,11 +172,14 @@
                     </span>
                 </button>
 
-                {{-- Di layar besar bubble menempel di sisi KANAN kartu, mengarah ke
-                     isi halaman. Di layar kecil panel selebar layar, jadi bubble
-                     ditaruh di atas kartu supaya tidak keluar tepi. --}}
+                {{-- Bubble dibuka KE ATAS di dalam lebar sidebar, bukan ke kanan
+                     keluar sidebar. Dulu di layar besar ia dipindah ke sisi kanan
+                     kartu, dan hasilnya dua hal rusak: tepi kirinya terpotong
+                     karena aside meng-clip, dan badannya menimpa kartu isi
+                     halaman. Posisi satu ini dipakai semua lebar layar, jadi
+                     tidak ada lagi aturan lg: yang membuatnya meleset. --}}
                 <div id="bubble-profil" data-profil-bubble hidden
-                     class="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-garis bg-white p-1.5 shadow-lg lg:bottom-0 lg:left-full lg:right-auto lg:mb-0 lg:ml-3 lg:w-56 dark:border-garis-gelap dark:bg-gelap-2">
+                     class="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-xl border border-garis bg-white p-1.5 shadow-lg dark:border-garis-gelap dark:bg-gelap-2">
 
                     <button type="button" data-tombol-tema aria-pressed="false"
                             class="tombol-tekan flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-tinta transition-colors duration-150 hover:bg-latar-2 dark:text-teks-gelap dark:hover:bg-gelap">
