@@ -14,6 +14,8 @@
         $persenMenunggak = round($overdueStudents / $totalSiswa * 100);
 
         $puncak = $monthlyIncome->max('nominal') ?: 1;
+        $puncakKelas = $arrearsByClass->max('nominal') ?: 1;
+        $puncakJurusan = $arrearsByMajor->max('nominal') ?: 1;
     @endphp
 
     <div class="space-y-5">
@@ -104,6 +106,43 @@
             @endif
         </section>
 
+        {{-- Tunggakan per kelas dan per jurusan. Satu pola, dua sumber data. --}}
+        @foreach ([
+            ['judul' => 'Tunggakan per kelas', 'ket' => 'Nominal tagihan lewat jatuh tempo yang belum dibayar, per kelas.', 'unit' => 'kelas', 'data' => $arrearsByClass, 'puncak' => $puncakKelas],
+            ['judul' => 'Tunggakan per jurusan', 'ket' => 'Nominal tagihan lewat jatuh tempo yang belum dibayar, per jurusan.', 'unit' => 'jurusan', 'data' => $arrearsByMajor, 'puncak' => $puncakJurusan],
+        ] as $panel)
+            <section class="rounded-xl border border-garis bg-white px-5 py-5 dark:border-garis-gelap dark:bg-gelap-2">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <div>
+                        <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">{{ $panel['judul'] }}</h2>
+                        <p class="mt-0.5 text-xs text-redup dark:text-redup-gelap">{{ $panel['ket'] }}</p>
+                    </div>
+                </div>
+
+                @if ($panel['data']->isEmpty())
+                    <p class="py-6 text-sm leading-relaxed text-redup dark:text-redup-gelap">
+                        Belum ada tunggakan per {{ $panel['unit'] }}. Semua tagihan yang jatuh tempo sudah lunas.
+                    </p>
+                @else
+                    <div class="mt-5 flex items-end gap-3 sm:gap-5">
+                        @foreach ($panel['data'] as $batang)
+                            @php $tinggi = max(6, (int) round($batang['nominal'] / $panel['puncak'] * 132)); @endphp
+                            <div class="flex min-w-0 flex-1 flex-col items-center gap-2">
+                                <span class="text-[11px] font-medium tabular-nums text-redup dark:text-redup-gelap">
+                                    Rp{{ number_format($batang['nominal'] / 1000, 0, ',', '.') }}rb
+                                </span>
+                                <div class="w-full max-w-14 rounded-md bg-neon" style="height: {{ $tinggi }}px"
+                                     title="{{ $batang['nama'] }}: {{ $rupiah($batang['nominal']) }}"></div>
+                                <span class="w-full truncate border-t border-garis pt-1.5 text-center text-[11px] text-redup dark:border-garis-gelap dark:text-redup-gelap">
+                                    {{ $batang['nama'] }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </section>
+        @endforeach
+
         <div class="grid items-start gap-5 lg:grid-cols-2">
 
             {{-- Laporan. --}}
@@ -137,8 +176,7 @@
                 <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Cakupan angka</h2>
                 <dl class="mt-3 space-y-2.5 text-xs leading-relaxed">
                     @foreach ([
-                        ['Sudah dihitung', 'Jumlah siswa per status, nominal tagihan, penerimaan dari pembayaran berhasil.'],
-                        ['Belum dihitung', 'Tunggakan per kelas dan per jurusan, karena belum ada laporan rekap per unit.'],
+                        ['Sudah dihitung', 'Jumlah siswa per status, nominal tagihan, penerimaan dari pembayaran berhasil, dan tunggakan per kelas serta per jurusan.'],
                         ['Sumber', 'Tabel siswa, tagihan_spp, dan pembayaran. Virtual account belum memengaruhi angka mana pun.'],
                     ] as [$judul, $isi])
                         <div>

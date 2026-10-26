@@ -14,6 +14,21 @@ class DashboardController extends Controller
      */
     public function principal()
     {
+        // Tunggakan per kelas dan per jurusan dalam satu query. Kolom status dan
+        // tanggal_jatuh_tempo harus diberi prefix tabel karena siswa juga punya
+        // kolom status. Syaratnya sama dengan scopeOverdue().
+        $arrears = TuitionBill::query()
+            ->join('siswa', 'siswa.id_siswa', '=', 'tagihan_spp.id_siswa')
+            ->leftJoin('kelas', 'kelas.id_kelas', '=', 'siswa.id_kelas')
+            ->leftJoin('jurusan', 'jurusan.id_jurusan', '=', 'kelas.id_jurusan')
+            ->where('tagihan_spp.status', '!=', TuitionBill::STATUS_LUNAS)
+            ->whereDate('tagihan_spp.tanggal_jatuh_tempo', '<', today())
+            ->get([
+                'kelas.nama_kelas as kelas',
+                'jurusan.nama_jurusan as jurusan',
+                'tagihan_spp.nominal',
+            ]);
+
         $data = [
             'activeStudents' => Student::where('status', 'aktif')->count(),
             'totalStudents' => Student::count(),
@@ -30,6 +45,18 @@ class DashboardController extends Controller
             'totalPaid' => (float) Payment::where('status', 'berhasil')->sum('nominal_pembayaran'),
             'totalArrears' => (float) TuitionBill::overdue()->sum('nominal'),
             'totalOutstanding' => (float) TuitionBill::where('status', '!=', 'lunas')->sum('nominal'),
+
+            // Tunggakan per kelas dan per jurusan. Satu query, dua pengelompokan.
+            // Tunggakan = tagihan belum lunas yang sudah lewat jatuh tempo,
+            // sama dengan scopeOverdue() yang dipakai angka totalArrears.
+            'arrearsByClass' => $arrears->groupBy(fn ($baris) => $baris->kelas ?? 'Tanpa kelas')
+                ->map(fn ($grup, $nama) => ['nama' => $nama, 'nominal' => (float) $grup->sum('nominal')])
+                ->sortByDesc('nominal')
+                ->values(),
+            'arrearsByMajor' => $arrears->groupBy(fn ($baris) => $baris->jurusan ?? 'Tanpa jurusan')
+                ->map(fn ($grup, $nama) => ['nama' => $nama, 'nominal' => (float) $grup->sum('nominal')])
+                ->sortByDesc('nominal')
+                ->values(),
 
             // Penerimaan per bulan, untuk melihat arus uang masuk sepanjang tahun.
             'monthlyIncome' => Payment::where('status', 'berhasil')
