@@ -1,11 +1,19 @@
-{{-- Daftar menu Siswa. Hanya dashboard; menu tagihan belum punya route. --}}
+{{-- Daftar menu Siswa. Tiga menu uang: tagihan, nomor bayar, lalu riwayat. --}}
 
 @php
     $grup = [
         [
             'label' => null,
             'menu' => [
-                ['rute' => 'dashboard', 'pola' => 'dashboard*', 'ikon' => 'i-dashboard', 'teks' => 'Dashboard'],
+                ['rute' => 'siswa.dashboard', 'pola' => 'siswa.dashboard', 'ikon' => 'i-dashboard', 'teks' => 'Dashboard'],
+            ],
+        ],
+        [
+            'label' => 'Pembayaran',
+            'menu' => [
+                ['rute' => 'siswa.bills.index', 'pola' => 'siswa.bills.*', 'ikon' => 'i-tagihan', 'teks' => 'Tagihan'],
+                ['rute' => 'siswa.virtual-accounts.index', 'pola' => 'siswa.virtual-accounts.*', 'ikon' => 'i-va', 'teks' => 'Virtual Account'],
+                ['rute' => 'siswa.payments.index', 'pola' => 'siswa.payments.*', 'ikon' => 'i-transaksi', 'teks' => 'Riwayat Pembayaran'],
             ],
         ],
     ];

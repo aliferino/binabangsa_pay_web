@@ -15,9 +15,10 @@
     @else
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-garis dark:divide-garis-gelap text-sm">
-                <thead class="bg-latar-2 dark:bg-gelap text-left text-xs uppercase tracking-wide text-redup dark:text-redup-gelap">
+                <thead class="bg-latar-2 dark:bg-gelap text-left text-[11px] uppercase tracking-wide text-redup dark:text-redup-gelap">
                     <tr>
                         <th class="px-5 py-3 font-semibold">Tanggal</th>
+                        <th class="px-5 py-3 font-semibold">Bulan</th>
                         <th class="px-5 py-3 font-semibold">Nominal</th>
                         <th class="px-5 py-3 font-semibold">Metode</th>
                         <th class="px-5 py-3 font-semibold">Status</th>
@@ -29,6 +30,13 @@
                         <tr class="hover:bg-latar-2 dark:hover:bg-garis-gelap/40">
                             <td class="px-5 py-3 text-redup dark:text-redup-gelap">
                                 {{ $pembayaran->created_at?->format('d/m/Y H:i') ?? '-' }}
+                            </td>
+                            <td class="px-5 py-3 text-tinta dark:text-teks-gelap">
+                                @if ($pembayaran->tagihanSpp)
+                                    {{ $pembayaran->tagihanSpp->namaBulan() }} {{ $pembayaran->tagihanSpp->tahun }}
+                                @else
+                                    Tidak terikat tagihan
+                                @endif
                             </td>
                             <td class="px-5 py-3 text-tinta dark:text-teks-gelap">
                                 Rp{{ number_format((float) $pembayaran->nominal_pembayaran, 0, ',', '.') }}
@@ -67,7 +75,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
+                            <td colspan="6" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
                                 Belum ada pembayaran untuk akun Anda.
                             </td>
                         </tr>

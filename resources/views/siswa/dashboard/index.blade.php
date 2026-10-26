@@ -91,6 +91,46 @@
                 </div>
             </section>
 
+            {{-- Ringkasan tunggakan: tiga angka, satu panel. Yang paling mendesak paling kanan tekanannya. --}}
+            <section class="rounded-xl border border-garis bg-white px-5 py-5 dark:border-garis-gelap dark:bg-gelap-2">
+                <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Ringkasan tunggakan</h2>
+                <p class="mt-0.5 text-xs text-redup dark:text-redup-gelap">Dihitung dari seluruh tagihan SPP Anda.</p>
+
+                <dl class="mt-4 grid gap-4 sm:grid-cols-3">
+                    <div>
+                        <dt class="text-[11px] uppercase tracking-wide text-redup dark:text-redup-gelap">Tagihan belum dibayar</dt>
+                        <dd class="mt-1 text-2xl font-bold tabular-nums tracking-tight text-tinta dark:text-teks-gelap">
+                            {{ $unpaidCount }}
+                        </dd>
+                        <dd class="mt-0.5 text-xs text-redup dark:text-redup-gelap">dari {{ $totalBills }} tagihan</dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-[11px] uppercase tracking-wide text-redup dark:text-redup-gelap">Nominal belum dibayar</dt>
+                        <dd class="mt-1 text-2xl font-bold tabular-nums tracking-tight text-tinta dark:text-teks-gelap">
+                            {{ $rupiah($totalOutstanding) }}
+                        </dd>
+                        <dd class="mt-0.5 text-xs text-redup dark:text-redup-gelap">
+                            {{ $rupiah($totalPaid) }} sudah dibayar
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-[11px] uppercase tracking-wide text-redup dark:text-redup-gelap">Lewat jatuh tempo</dt>
+                        <dd @class([
+                            'mt-1 text-2xl font-bold tabular-nums tracking-tight',
+                            'text-red-700 dark:text-red-400' => $totalArrears > 0,
+                            'text-tinta dark:text-teks-gelap' => $totalArrears <= 0,
+                        ])>
+                            {{ $rupiah($totalArrears) }}
+                        </dd>
+                        <dd class="mt-0.5 text-xs text-redup dark:text-redup-gelap">
+                            {{ $totalArrears > 0 ? 'Segera lunasi agar tidak menumpuk' : 'Tidak ada tunggakan' }}
+                        </dd>
+                    </div>
+                </dl>
+            </section>
+
             <div class="grid items-start gap-4 lg:grid-cols-[1.15fr_1fr]">
 
                 {{-- Tagihan terdekat: yang paling mendesak, jadi paling atas dan paling tegas. --}}
