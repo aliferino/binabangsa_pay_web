@@ -196,7 +196,7 @@ class PembayaranTest extends TestCase
      */
     public function test_pembayaran_tunai_melunasi_tagihan(): void
     {
-        $response = $this->actingAs($this->teller)->post(route('pembayaran.tunai'), [
+        $response = $this->actingAs($this->admin)->post(route('pembayaran.tunai'), [
             'tagihan_spp_id' => $this->tagihan->id_tagihan,
             'nominal_pembayaran' => 350000,
         ]);
@@ -209,7 +209,7 @@ class PembayaranTest extends TestCase
         $this->assertSame('lunas', $this->tagihan->fresh()->status);
         $this->assertSame('tunai', $pembayaran->metode_pembayaran);
         $this->assertSame('berhasil', $pembayaran->status);
-        $this->assertSame($this->teller->id_user, $pembayaran->user_id);
+        $this->assertSame($this->admin->id_user, $pembayaran->user_id);
         $this->assertNull($pembayaran->transaksi_id);
     }
 
@@ -233,12 +233,12 @@ class PembayaranTest extends TestCase
      */
     public function test_pembayaran_ditolak_kalau_tagihan_sudah_lunas(): void
     {
-        $this->actingAs($this->teller)->post(route('pembayaran.tunai'), [
+        $this->actingAs($this->admin)->post(route('pembayaran.tunai'), [
             'tagihan_spp_id' => $this->tagihan->id_tagihan,
             'nominal_pembayaran' => 350000,
         ]);
 
-        $response = $this->actingAs($this->teller)->post(route('pembayaran.tunai'), [
+        $response = $this->actingAs($this->admin)->post(route('pembayaran.tunai'), [
             'tagihan_spp_id' => $this->tagihan->id_tagihan,
             'nominal_pembayaran' => 350000,
         ]);
@@ -253,7 +253,7 @@ class PembayaranTest extends TestCase
      */
     public function test_pembayaran_nominal_nol_ditolak(): void
     {
-        $response = $this->actingAs($this->teller)->post(route('pembayaran.tunai'), [
+        $response = $this->actingAs($this->admin)->post(route('pembayaran.tunai'), [
             'tagihan_spp_id' => $this->tagihan->id_tagihan,
             'nominal_pembayaran' => 0,
         ]);
@@ -265,7 +265,7 @@ class PembayaranTest extends TestCase
 
     public function test_pembayaran_nominal_negatif_ditolak(): void
     {
-        $response = $this->actingAs($this->teller)->post(route('pembayaran.tunai'), [
+        $response = $this->actingAs($this->admin)->post(route('pembayaran.tunai'), [
             'tagihan_spp_id' => $this->tagihan->id_tagihan,
             'nominal_pembayaran' => -50000,
         ]);
@@ -370,7 +370,7 @@ class PembayaranTest extends TestCase
      */
     public function test_callback_tidak_melunasi_tagihan_yang_sudah_dibayar_tunai(): void
     {
-        $this->actingAs($this->teller)->post(route('pembayaran.tunai'), [
+        $this->actingAs($this->admin)->post(route('pembayaran.tunai'), [
             'tagihan_spp_id' => $this->tagihan->id_tagihan,
             'nominal_pembayaran' => 350000,
         ]);
@@ -446,6 +446,30 @@ class PembayaranTest extends TestCase
         // Kalau urutan route salah, "ringkasan" akan dibaca sebagai id
         // pembayaran dan hasilnya 404, bukan 200.
         $this->actingAs($this->teller)->get(route('pembayaran.ringkasan'))->assertStatus(200);
+    }
+
+    public function test_teller_tidak_boleh_mencatat_pembayaran_tunai(): void
+    {
+        // Poin N: teller tidak menerima tunai dan tidak boleh mengubah status
+        // tagihan jadi lunas secara manual. Endpoint tetap ada untuk admin saja.
+        $this->actingAs($this->teller)->post(route('pembayaran.tunai'), [
+            'tagihan_spp_id' => $this->tagihan->id,
+            'nominal_pembayaran' => 350000,
+        ])->assertStatus(403);
+
+        $this->assertSame(0, Payment::count());
+        $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
+    }
+
+    public function test_teller_tidak_boleh_mencatat_pembayaran_qris(): void
+    {
+        $this->actingAs($this->teller)->post(route('pembayaran.qris'), [
+            'tagihan_spp_id' => $this->tagihan->id,
+            'nominal_pembayaran' => 350000,
+        ])->assertStatus(403);
+
+        $this->assertSame(0, Payment::count());
+        $this->assertSame('belum_bayar', $this->tagihan->fresh()->status);
     }
 
     /**

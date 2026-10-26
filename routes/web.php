@@ -151,13 +151,20 @@ Route::middleware('auth')->group(function () {
     |
     | Siswa sengaja tidak diberi akses ke seluruh blok ini, karena mencatat
     | dan mengubah pembayaran bukan haknya.
+    |
+    | Pencatatan tunai dan QRIS dipegang admin saja. Teller tidak menerima
+    | uang tunai dan tidak boleh melunasi tagihan secara manual, jadi kedua
+    | route itu dipisah ke grup admin di bawah.
     */
 
-    Route::middleware('role:admin,teller')->group(function () {
+    Route::middleware('role:admin')->group(function () {
         Route::post('/pembayaran/tunai', [PaymentController::class, 'tunai'])
             ->name('pembayaran.tunai');
         Route::post('/pembayaran/qris', [PaymentController::class, 'qris'])
             ->name('pembayaran.qris');
+    });
+
+    Route::middleware('role:admin,teller')->group(function () {
         Route::get('/pembayaran/ringkasan', [PaymentController::class, 'ringkasan'])
             ->name('pembayaran.ringkasan');
 

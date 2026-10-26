@@ -105,7 +105,7 @@
                         </td>
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
-<a href="{{ route('tagihan-spp.show', $tagihan) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Lihat detail" aria-label="Lihat detail"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-lihat"/></svg>
+<a href="{{ route(auth()->user()->role === 'teller' ? 'teller.bills.show' : 'tagihan-spp.show', $tagihan) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Lihat detail" aria-label="Lihat detail"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-lihat"/></svg>
                                 </a>
 
                                 @if (auth()->user()->role === 'admin')
