@@ -113,9 +113,20 @@
                 <path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5"/>
             </symbol>
             <symbol id="i-simpan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m5 12.5 4.5 4.5L19 7.5"/>
-            </symbol>
-        </defs>
+                            <path d="m5 12.5 4.5 4.5L19 7.5"/>
+                        </symbol>
+
+                        {{-- Steker, untuk aksi menghubungkan Virtual Account ke Xendit. --}}
+                        <symbol id="i-hubung" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 2v6M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-12 0V8Z"/>
+                            <path d="M12 17v5"/>
+                        </symbol>
+
+                        {{-- Tombol putar, untuk simulasi pembayaran mode uji. --}}
+                        <symbol id="i-simulasi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"/><path d="m10 8.5 6 3.5-6 3.5v-7Z"/>
+                        </symbol>
+                    </defs>
     </svg>
 
     {{-- Merek aplikasi. Tinggi tetap supaya sejajar dengan bilah atas di layar kecil. --}}

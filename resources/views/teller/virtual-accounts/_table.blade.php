@@ -103,6 +103,25 @@
                                     <svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-lihat"/></svg>
                                 </a>
 
+                                @if ($virtualAccount->xendit_id)
+                                    <form method="POST" action="{{ route('virtual-account.simulasi', $virtualAccount) }}"
+                                          data-konfirmasi="Kirim pembayaran tiruan ke Xendit untuk nomor {{ $virtualAccount->account_number }}? Ini hanya untuk mode uji, tagihan berubah lunas setelah callback masuk." data-konfirmasi-jenis="simpan">
+                                        @csrf
+                                        <button type="submit"
+                                                class="inline-flex h-7 w-7 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap"
+                                                title="Simulasi bayar" aria-label="Simulasi bayar">
+                                            <svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-simulasi"/></svg>
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" data-modal-buka="tambah" data-modal-target="modal-bank"
+                                            data-url="{{ route('virtual-account.buat-xendit', $virtualAccount->siswa_id) }}"
+                                            class="inline-flex h-7 w-7 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap"
+                                            title="Hubungkan ke Xendit" aria-label="Hubungkan ke Xendit">
+                                        <svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-hubung"/></svg>
+                                    </button>
+                                @endif
+
                                 @if (auth()->user()->role === 'admin')
                                     @if ($virtualAccount->aktif())
                                         <form method="POST" action="{{ route('virtual-account.nonaktifkan', $virtualAccount) }}"

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Student;
+use App\Models\TuitionBill;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
@@ -11,8 +12,9 @@ class SearchController extends Controller
     /**
      * Pencarian siswa untuk admin dan teller.
      *
-     * Bisa dicari berdasarkan NIS, NISN, nama, atau nomor kelas. Hasilnya
-     * menampilkan NIS, nama, kelas, dan status tagihannya.
+     * Bisa dicari berdasarkan NIS, NISN, nama, nomor kelas, nomor Virtual
+     * Account, atau transaction ID payment gateway. Hasilnya menampilkan
+     * NIS, nama, kelas, ringkasan status, dan status per bulan.
      */
     public function index(Request $request)
     {
@@ -20,31 +22,76 @@ class SearchController extends Controller
         $hasil = collect();
 
         if ($kata !== '') {
-            $hasil = Student::with('kelas.jurusan', 'tagihan')
-                ->where(function ($q) use ($kata) {
-                    $q->where('nis', 'like', '%'.$kata.'%')
-                        ->orWhere('nisn', 'like', '%'.$kata.'%')
-                        ->orWhere('nama', 'like', '%'.$kata.'%')
-                        ->orWhereHas('kelas', function ($sub) use ($kata) {
-                            $sub->where('nama_kelas', 'like', '%'.$kata.'%');
-                        });
-                })
-                ->orderBy('nama')
-                ->get()
-                ->map(fn (Student $siswa) => [
-                    'nis' => $siswa->nis,
-                    'nisn' => $siswa->nisn,
-                    'nama' => $siswa->nama,
-                    'kelas' => $siswa->kelas?->nama_kelas,
-                    'jurusan' => $siswa->kelas?->jurusan?->nama_jurusan,
-                    'status_tagihan' => $this->summarizeBillStatus($siswa),
-                ]);
+            $hasil = $this->search($kata)->map(fn (Student $siswa) => [
+                'nis' => $siswa->nis,
+                'nisn' => $siswa->nisn,
+                'nama' => $siswa->nama,
+                'kelas' => $siswa->kelas?->nama_kelas,
+                'jurusan' => $siswa->kelas?->jurusan?->nama_jurusan,
+                'no_va' => $siswa->virtualAccount?->nomor_va,
+                'status_tagihan' => $this->summarizeBillStatus($siswa),
+                'status_per_bulan' => $this->monthlyStatus($siswa),
+            ]);
         }
 
         return $this->render('admin.search.index', [
             'keyword' => $kata,
-            'hasil' => $hasil,
+            'results' => $hasil,
         ]);
+    }
+
+    /**
+     * Cari siswa lewat identitas siswa, nomor VA, atau transaction ID.
+     *
+     * Nomor VA dicocokkan ke nomor internal maupun account_number Xendit,
+     * karena teller bisa saja membaca nomor mana pun yang tercetak di kartu.
+     */
+    private function search(string $kata)
+    {
+        return Student::with('kelas.jurusan', 'tagihan', 'virtualAccount')
+            ->where(function ($q) use ($kata) {
+                $q->where('nis', 'like', '%'.$kata.'%')
+                    ->orWhere('nisn', 'like', '%'.$kata.'%')
+                    ->orWhere('nama', 'like', '%'.$kata.'%')
+                    ->orWhereHas('kelas', fn ($sub) => $sub->where('nama_kelas', 'like', '%'.$kata.'%'))
+                    ->orWhereHas('virtualAccount', function ($sub) use ($kata) {
+                        $sub->where('nomor_va', 'like', '%'.$kata.'%')
+                            ->orWhere('account_number', 'like', '%'.$kata.'%');
+                    })
+                    ->orWhereHas('paymentGatewayTransactions', function ($sub) use ($kata) {
+                        $sub->where('transaction_id', 'like', '%'.$kata.'%')
+                            ->orWhere('xendit_payment_id', 'like', '%'.$kata.'%');
+                    });
+            })
+            ->orderBy('nama')
+            ->get();
+    }
+
+    /**
+     * Status tagihan per bulan untuk satu siswa.
+     *
+     * Bentuk array disepakati dengan tampilan pencarian: bulan, tahun,
+     * nominal, status, jatuh tempo, dan hari terlambat. status memakai
+     * tunggakan kalau tagihan terbuka sudah lewat jatuh tempo.
+     */
+    private function monthlyStatus(Student $siswa): array
+    {
+        return $siswa->tagihan
+            ->sortBy([['tahun', 'asc'], ['bulan', 'asc']])
+            ->map(function (TuitionBill $tagihan) {
+                $overdue = $tagihan->status !== 'lunas' && $tagihan->tanggal_jatuh_tempo?->isPast();
+
+                return [
+                    'bulan' => $tagihan->bulan,
+                    'tahun' => $tagihan->tahun,
+                    'nama_bulan' => $tagihan->namaBulan(),
+                    'nominal' => (float) $tagihan->nominal,
+                    'status' => $overdue ? 'tunggakan' : $tagihan->status,
+                    'jatuh_tempo' => $tagihan->tanggal_jatuh_tempo?->format('Y-m-d'),
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     /**
@@ -70,26 +117,5 @@ class SearchController extends Controller
         }
 
         return 'sebagian belum bayar';
-    }
-
-    /**
-     * Pencarian berdasarkan nomor Virtual Account.
-     *
-     * BELUM DIPAKAI. Tabel virtual_account belum dibuat, karena bagian
-     * pembayaran masih ditanyakan ke guru. Kode ini disiapkan supaya nanti
-     * tinggal dihubungkan setelah tabelnya ada. Jangan dipanggil dari route
-     * sebelum tabel virtual_account tersedia.
-     */
-    private function searchByVirtualAccount(string $nomorVa)
-    {
-        // Contoh pemakaian setelah tabel virtual_account ada:
-        //
-        // return Student::whereHas('virtualAccount', function ($q) use ($nomorVa) {
-        //     $q->where('nomor_va', $nomorVa);
-        // })->get();
-        //
-        // Untuk sekarang sengaja mengembalikan koleksi kosong supaya tidak
-        // memanggil relasi yang belum ada.
-        return collect();
     }
 }

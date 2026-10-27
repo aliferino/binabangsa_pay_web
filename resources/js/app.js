@@ -140,7 +140,7 @@
         }
     }
 
-    function bukaTambah(modal) {
+    function bukaTambah(modal, tombol) {
         var b = bagian(modal);
 
         /*
@@ -156,6 +156,15 @@
 
             if (urlStore) {
                 b.form.action = urlStore;
+            }
+
+            // Modal yang tujuannya berbeda per baris, misalnya hubungkan
+            // Virtual Account ke Xendit, membawa alamatnya di tombol pemicu.
+            // Kalau atribut itu tidak ada, action dari Blade dipakai apa adanya.
+            var urlTombol = tombol && tombol.getAttribute('data-url');
+
+            if (urlTombol) {
+                b.form.action = urlTombol;
             }
 
             if (b.metode) {
@@ -375,7 +384,7 @@
                 if (tombolBuka.getAttribute('data-modal-buka') === 'ubah') {
                     bukaUbah(modal, tombolBuka);
                 } else {
-                    bukaTambah(modal);
+                    bukaTambah(modal, tombolBuka);
                 }
             }
 

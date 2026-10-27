@@ -18,6 +18,7 @@
 
     @if (auth()->user()->role === 'admin')
         @include('teller.virtual-accounts._modal')
+        @include('teller.virtual-accounts._bank_modal')
     @endif
 
 @endsection

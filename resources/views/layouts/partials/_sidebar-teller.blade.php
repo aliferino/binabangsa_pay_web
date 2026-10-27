@@ -1,4 +1,11 @@
-{{-- Daftar menu Teller. Fokus kasir: tagihan, pembayaran, pencarian siswa. --}}
+{{--
+    Daftar menu Teller.
+
+    Fokus kasir: cari siswa, periksa tagihan, catat pembayaran. Kelompoknya
+    sengaja mengikuti alur itu, bukan urutan tabel di database. Data master
+    yang boleh dilihat teller hanya siswa dan kelas, sisanya milik admin.
+    Istilah "Virtual Account" dipakai penuh di semua label, tidak disingkat VA.
+--}}
 
 @php
     $grup = [
@@ -9,10 +16,10 @@
             ],
         ],
         [
-            'label' => 'Kasir',
+            'label' => 'Operasional',
             'menu' => [
-                ['rute' => 'tagihan-spp.index', 'pola' => 'tagihan-spp.*', 'ikon' => 'i-tagihan', 'teks' => 'Tagihan SPP'],
                 ['rute' => 'pencarian.index', 'pola' => 'pencarian.*', 'ikon' => 'i-cari', 'teks' => 'Pencarian'],
+                ['rute' => 'tagihan-spp.index', 'pola' => 'tagihan-spp.*', 'ikon' => 'i-tagihan', 'teks' => 'Tagihan SPP'],
                 ['rute' => 'virtual-account.index', 'pola' => 'virtual-account.*', 'ikon' => 'i-va', 'teks' => 'Virtual Account'],
             ],
         ],
@@ -20,11 +27,11 @@
             'label' => 'Transaksi',
             'menu' => [
                 ['rute' => 'gateway-transactions.index', 'pola' => 'gateway-transactions.*', 'ikon' => 'i-transaksi', 'teks' => 'Payment Gateway'],
-                ['rute' => 'va-transactions.index', 'pola' => 'va-transactions.*', 'ikon' => 'i-va', 'teks' => 'Transaksi VA'],
+                ['rute' => 'va-transactions.index', 'pola' => 'va-transactions.*', 'ikon' => 'i-va', 'teks' => 'Transaksi Virtual Account'],
             ],
         ],
         [
-            'label' => 'Data',
+            'label' => 'Data Master',
             'menu' => [
                 ['rute' => 'siswa.index', 'pola' => 'siswa.*', 'ikon' => 'i-siswa', 'teks' => 'Siswa'],
                 ['rute' => 'kelas.index', 'pola' => 'kelas.*', 'ikon' => 'i-kelas', 'teks' => 'Kelas'],

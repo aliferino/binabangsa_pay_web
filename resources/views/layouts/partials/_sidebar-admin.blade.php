@@ -4,6 +4,10 @@
     Isinya hanya tautan. Logo, profil, dan tombol keluar ada di _sidebar.blade.php
     supaya tidak diulang di tiap role. Kelas $kelasTautan, $kelasAktif, $kelasLabel,
     dan $kelasIkon juga dari sana.
+
+    Urutan kelompok mengikuti alur kerja admin: lihat ringkasan, urus data induk,
+    jalankan operasional harian, periksa uang masuk, baca laporan, lalu atur akun.
+    Istilah "Virtual Account" dipakai penuh di semua label, tidak disingkat VA.
 --}}
 
 @php
@@ -15,7 +19,7 @@
             ],
         ],
         [
-            'label' => 'Data master',
+            'label' => 'Data Master',
             'menu' => [
                 ['rute' => 'tahun-ajaran.index', 'pola' => 'tahun-ajaran.*', 'ikon' => 'i-kalender', 'teks' => 'Tahun Ajaran'],
                 ['rute' => 'jurusan.index', 'pola' => 'jurusan.*', 'ikon' => 'i-jurusan', 'teks' => 'Jurusan'],
@@ -36,7 +40,7 @@
             'label' => 'Transaksi',
             'menu' => [
                 ['rute' => 'gateway-transactions.index', 'pola' => 'gateway-transactions.*', 'ikon' => 'i-transaksi', 'teks' => 'Payment Gateway'],
-                ['rute' => 'va-transactions.index', 'pola' => 'va-transactions.*', 'ikon' => 'i-va', 'teks' => 'Transaksi VA'],
+                ['rute' => 'va-transactions.index', 'pola' => 'va-transactions.*', 'ikon' => 'i-va', 'teks' => 'Transaksi Virtual Account'],
             ],
         ],
         [
@@ -44,6 +48,7 @@
             'menu' => [
                 ['rute' => 'laporan.pembayaran', 'pola' => 'laporan.pembayaran', 'ikon' => 'i-laporan', 'teks' => 'Laporan Pembayaran'],
                 ['rute' => 'laporan.tunggakan', 'pola' => 'laporan.tunggakan', 'ikon' => 'i-peringatan', 'teks' => 'Laporan Tunggakan'],
+                ['rute' => 'laporan.rekap', 'pola' => 'laporan.rekap', 'ikon' => 'i-transaksi', 'teks' => 'Rekap Pembayaran'],
             ],
         ],
         [
