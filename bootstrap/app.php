@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'callback/payment',
             'callback/xendit',
             'callback/midtrans',
+            'callback/mock',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
