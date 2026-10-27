@@ -16,6 +16,7 @@ use App\Http\Controllers\Kepsek\DashboardController as KepsekDashboardController
 use App\Http\Controllers\Public\CallbackController;
 use App\Http\Controllers\Public\SimulationController;
 use App\Http\Controllers\Public\MidtransCallbackController;
+use App\Http\Controllers\Public\MockCallbackController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Teller\DashboardController as TellerDashboardController;
 use App\Http\Controllers\Teller\PaymentController;
@@ -91,6 +92,18 @@ Route::post('/callback/xendit', [CallbackController::class, 'xendit'])
 
 Route::post('/callback/midtrans', [MidtransCallbackController::class, 'handle'])
     ->name('callback.midtrans');
+
+/*
+|--------------------------------------------------------------------------
+| Callback mock gateway
+|--------------------------------------------------------------------------
+| Tanpa auth dan tanpa CSRF, karena pemanggilnya mock gateway lokal, bukan
+| pengguna yang punya sesi login. Pengaman sebenarnya adalah signature_key
+| yang diperiksa lebih dulu di dalam MockCallbackController.
+*/
+
+Route::post('/callback/mock', [MockCallbackController::class, 'handle'])
+    ->name('callback.mock');
 
 /*
 |--------------------------------------------------------------------------
@@ -376,6 +389,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/simulasi', [SimulationController::class, 'index'])->name('simulasi.index');
 Route::post('/simulasi', [SimulationController::class, 'cari'])->name('simulasi.cari');
+Route::get('/simulasi/sukses/{nomorTransaksi}/bukti', [SimulationController::class, 'bukti'])->name('simulasi.bukti');
 Route::get('/simulasi/sukses/{nomorTransaksi}', [SimulationController::class, 'sukses'])->name('simulasi.sukses');
 Route::get('/simulasi/{nomorVa}', [SimulationController::class, 'detail'])->name('simulasi.detail');
 Route::post('/simulasi/{nomorVa}/bayar', [SimulationController::class, 'bayar'])->name('simulasi.bayar');

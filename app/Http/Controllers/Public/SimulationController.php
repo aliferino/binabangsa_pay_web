@@ -7,34 +7,28 @@ use App\Models\Payment;
 use App\Models\PaymentGatewayTransaction;
 use App\Models\TuitionBill;
 use App\Models\VirtualAccount;
-use App\Services\MidtransNotifier;
+use App\Services\MockGatewayService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 /**
  * Simulasi transfer Virtual Account untuk siswa, tanpa login.
  *
  * Halaman ini pengganti langkah "siswa transfer di mobile banking" saat
  * didemokan. Uangnya tidak benar-benar berpindah: nomor VA dicari di database,
- * lalu notifikasi Midtrans yang sah dikirim ke callback kita sendiri. Jadi
- * jalur yang diuji tetap jalur produksi, bukan jalan pintas.
+ * lalu notifikasi mock gateway lokal yang sah dikirim ke callback kita sendiri.
+ * Jadi jalur yang diuji tetap jalur produksi, bukan jalan pintas, dan tidak
+ * butuh kunci Midtrans maupun Xendit.
  *
- * Halaman ini hanya boleh hidup di mode sandbox. Kalau MIDTRANS_IS_PRODUCTION
- * bernilai true, semua akses ditolak 403.
+ * Halaman ini bisa dimatikan lewat MOCK_GATEWAY_SIMULASI_AKTIF. Penjaganya
+ * sengaja tidak lagi membaca pengaturan Midtrans, supaya jalur simulasi benar
+ * benar berdiri sendiri.
  */
 class SimulationController extends Controller
 {
-    /**
-     * Penanda jujur untuk pembayaran hasil simulasi. Midtrans Sandbox tidak
-     * punya endpoint resmi untuk menandai transaksi settlement tanpa transfer
-     * nyata (yang ada hanya cancel, expire, refund, approve challenge, dan
-     * status), jadi simulasi ini TIDAK pernah sampai ke dashboard Midtrans.
-     * Keterangan ini yang membuatnya terlihat di data.
-     */
-    public const KETERANGAN_SIMULASI = 'Simulasi lokal, tidak melewati Midtrans Sandbox.';
-
     public function __construct()
     {
         // Penjaga sandbox dipasang sekali di sini supaya tidak ada satu pun
@@ -43,7 +37,7 @@ class SimulationController extends Controller
         // Halaman galat 403 milik proyek memakai pesan tetap yang tidak
         // menyebut soal sandbox, jadi kerangka yang sama dirender ulang dengan
         // pesan yang jelas. Tidak ada berkas view yang diubah.
-        if ((bool) config('midtrans.is_production')) {
+        if (! (bool) config('mock_gateway.simulasi_aktif', true)) {
             abort(response()->view('errors._layout', [
                 'kode' => '403',
                 'judul' => 'Simulasi dinonaktifkan',
@@ -58,15 +52,8 @@ class SimulationController extends Controller
      */
     public function index(): View|JsonResponse
     {
-        $daftarVa = VirtualAccount::with('student.kelas')
-            ->where('status', 'aktif')
-            ->orderBy('nomor_va')
-            ->limit(10)
-            ->get();
-
-        return $this->render('public.simulation.index', [
-            'daftarVa' => $daftarVa,
-        ]);
+        // Tidak ada daftar nomor: halaman ini murni untuk mengetik manual.
+        return $this->render('public.simulation.index');
     }
 
     /**
@@ -114,23 +101,33 @@ class SimulationController extends Controller
             'tagihan' => $tagihan,
             'nominal' => $tagihan === null ? 0 : (float) $tagihan->nominal,
             'riwayat' => $this->riwayat($va),
+            // Tahap berjalan ditampilkan satu per satu di view. Karena satu
+            // tekan menjalankan tiga tahap sekaligus, halaman detail langsung
+            // menandai tahap 1 sampai 3 sudah dilalui dan tahap 4 yang aktif.
+            // Kalau semua tagihan sudah lunas, semuanya dianggap selesai.
+            'tahap' => $tagihan === null ? 'berhasil' : MockGatewayService::TAHAP_VIRTUAL_ACCOUNT,
+            'tahapDaftar' => [
+                MockGatewayService::TAHAP_GENERATE,
+                MockGatewayService::TAHAP_GATEWAY,
+                MockGatewayService::TAHAP_VIRTUAL_ACCOUNT,
+                MockGatewayService::TAHAP_SIMULASI,
+            ],
         ]);
     }
 
     /**
      * Jalankan pembayaran tiruan.
      *
-     * Langkahnya: siapkan transaksi pending, susun notifikasi Midtrans yang
-     * sah, kirim ke callback sendiri, lalu baca hasilnya.
+     * Satu tekan menjalankan tiga tahap sekaligus: transaksi dibuat (Generate
+     * Payment), dikirim ke mock gateway lokal, lalu notifikasi sahnya
+     * dikirim ke callback kita sendiri (Simulasi Pembayaran). Urutan itu tetap
+     * nyata di kode dan di tabel, yang dihemat hanya satu klik.
+     *
+     * Status tagihan TIDAK disentuh di sini. Yang menandai lunas tetap callback
+     * resmi, jadi jalur yang diuji tetap jalur produksi.
      */
     public function bayar(string $nomorVa, Request $request): RedirectResponse
     {
-        $serverKey = (string) config('midtrans.server_key');
-
-        if ($serverKey === '') {
-            return back()->with('gagal', 'Server key Midtrans belum diisi, simulasi tidak bisa dijalankan.');
-        }
-
         $va = $this->cariVa($nomorVa);
 
         if ($va === null) {
@@ -153,15 +150,12 @@ class SimulationController extends Controller
 
         $nominal = (float) $data['nominal'];
 
-        $transaksi = PaymentGatewayTransaction::where('virtual_account_id', $va->id)
-            ->where('status_transaksi', 'pending')
-            ->latest('id')
-            ->first();
+        $transaksi = $this->transaksiTerakhir($va);
 
         if ($transaksi === null) {
-            // Transaksi ini TIDAK pernah dikirim ke Midtrans. Nomor berawalan
-            // SIM- dan channel SIMULASI jadi penandanya, supaya tidak tertukar
-            // dengan transaksi asli kalau nanti ada rekonsiliasi.
+            // Transaksi ini TIDAK pernah dikirim ke gateway sungguhan. Nomor
+            // berawalan SIM- dan channel SIMULASI jadi penandanya, supaya tidak
+            // tertukar dengan transaksi asli kalau nanti ada rekonsiliasi.
             $transaksi = PaymentGatewayTransaction::create([
                 'transaction_id' => 'SIM-'.($va->account_number ?: $va->nomor_va).'-'.now()->format('YmdHis'),
                 'virtual_account_id' => $va->id,
@@ -173,8 +167,8 @@ class SimulationController extends Controller
             ]);
         }
 
-        $payload = MidtransNotifier::payload($transaksi, $nominal, $serverKey, self::KETERANGAN_SIMULASI);
-        $hasil = MidtransNotifier::kirim($payload);
+        $payload = MockGatewayService::payload($transaksi, $nominal);
+        $hasil = MockGatewayService::kirim($payload);
 
         $pesan = (string) ($hasil['body']['pesan'] ?? '');
 
@@ -193,7 +187,7 @@ class SimulationController extends Controller
         }
 
         return back()->with('gagal', $pesan === ''
-            ? 'Simulasi gagal. Callback membalas status '.$hasil['status'].'.'
+            ? 'Simulasi gagal. Mock gateway lokal membalas status '.$hasil['status'].'.'
             : 'Simulasi gagal. '.$pesan);
     }
 
@@ -217,6 +211,92 @@ class SimulationController extends Controller
                 'waktu' => $pembayaran->paidAt(),
                 'status' => $pembayaran->status,
             ],
+        ]);
+    }
+
+    /**
+     * Bukti transfer sebagai PNG, supaya bisa disimpan atau dicetak.
+     *
+     * Digambar sendiri pakai GD: tidak butuh paket tambahan dan tidak membuka
+     * peramban. Yang mengunduh tetap data pembayaran asli dari database, jadi
+     * nomor transaksi di gambar sama dengan yang tercatat.
+     */
+    public function bukti(string $nomorTransaksi): Response
+    {
+        $pembayaran = Payment::with('student.kelas')->where('nomor_transaksi', $nomorTransaksi)->first();
+
+        if ($pembayaran === null) {
+            abort(404, 'Pembayaran tidak ditemukan.');
+        }
+
+        $lebar = 720;
+        $tinggi = 520;
+        $gambar = imagecreatetruecolor($lebar, $tinggi);
+
+        $putih = imagecolorallocate($gambar, 255, 255, 255);
+        $tinta = imagecolorallocate($gambar, 17, 17, 17);
+        $redup = imagecolorallocate($gambar, 110, 116, 126);
+        $garis = imagecolorallocate($gambar, 222, 226, 214);
+        $hijau = imagecolorallocate($gambar, 74, 122, 10);
+        $neon = imagecolorallocate($gambar, 184, 240, 72);
+
+        imagefilledrectangle($gambar, 0, 0, $lebar, $tinggi, $putih);
+        imagefilledrectangle($gambar, 0, 0, $lebar, 96, $neon);
+
+        $tebal = 'C:/Windows/Fonts/arialbd.ttf';
+        $biasa = 'C:/Windows/Fonts/arial.ttf';
+        $tebal = is_file($tebal) ? $tebal : null;
+        $biasa = is_file($biasa) ? $biasa : null;
+
+        $tulis = function (int $ukuran, int $x, int $y, $warna, string $teks, bool $bold = false) use ($gambar, $tebal, $biasa) {
+            $font = $bold ? ($tebal ?: $biasa) : ($biasa ?: $tebal);
+            if ($font !== null) {
+                imagettftext($gambar, $ukuran, 0, $x, $y, $warna, $font, $teks);
+
+                return;
+            }
+            // Cadangan kalau font bawaan Windows tidak ada: 5 adalah ukuran
+            // terbesar pada font baku GD.
+            imagestring($gambar, 5, $x, $y - 14, $teks, $warna);
+        };
+
+        $tulis(15, 32, 45, $tinta, 'BinaBangsa Pay', true);
+        $tulis(10, 32, 72, $tinta, 'SMK Bina Bangsa Sidoarjo');
+
+        $tulis(11, 32, 140, $redup, 'BUKTI TRANSFER');
+        $tulis(11, 32, 162, $hijau, 'BERHASIL', true);
+
+        $baris = [
+            ['Nomor transaksi', (string) $pembayaran->nomor_transaksi],
+            ['Nama siswa', (string) ($pembayaran->student?->nama ?? 'Tanpa nama')],
+            ['NIS', (string) ($pembayaran->student?->nis ?? '-')],
+            ['Kelas', (string) ($pembayaran->student?->kelas?->nama_kelas ?? '-')],
+            ['Tanggal bayar', $pembayaran->paidAt()?->format('d M Y H:i') ?? '-'],
+            ['Metode', strtoupper((string) $pembayaran->metode_pembayaran)],
+            ['Status', strtoupper((string) $pembayaran->status)],
+        ];
+
+        $y = 208;
+        foreach ($baris as $pasangan) {
+            $tulis(10, 32, $y, $redup, $pasangan[0]);
+            $tulis(11, 260, $y, $tinta, $pasangan[1], true);
+            $y += 32;
+            imageline($gambar, 32, $y - 16, $lebar - 32, $y - 16, $garis);
+        }
+
+        $tulis(10, 32, $y + 22, $redup, 'Nominal');
+        $tulis(22, 260, $y + 28, $hijau, 'Rp'.number_format((float) $pembayaran->nominal_pembayaran, 0, ',', '.'), true);
+
+        $tulis(8, 32, $tinggi - 30, $redup, 'Bukti simulasi. Uang tidak benar benar berpindah.');
+
+        ob_start();
+        imagepng($gambar);
+        $isi = (string) ob_get_clean();
+        imagedestroy($gambar);
+
+        return response($isi, 200, [
+            'Content-Type' => 'image/png',
+            'Content-Disposition' => 'attachment; filename="bukti-'.$nomorTransaksi.'.png"',
         ]);
     }
 
@@ -262,6 +342,17 @@ class SimulationController extends Controller
             ->where('status', '!=', TuitionBill::STATUS_LUNAS)
             ->orderBy('tahun')
             ->orderBy('bulan')
+            ->first();
+    }
+
+    /**
+     * Transaksi pending terakhir untuk VA ini, kalau ada.
+     */
+    private function transaksiTerakhir(VirtualAccount $va): ?PaymentGatewayTransaction
+    {
+        return PaymentGatewayTransaction::where('virtual_account_id', $va->id)
+            ->where('status_transaksi', 'pending')
+            ->latest('id')
             ->first();
     }
 

@@ -13,6 +13,7 @@
             'Nominal' => $rupiah($pembayaran->nominal),
             'Waktu' => $pembayaran->waktu?->format('d/m/Y H:i') ?? '-',
             'Status' => ucfirst(str_replace('_', ' ', (string) $pembayaran->status)),
+            'Sumber' => 'Callback mock gateway lokal',
         ];
     @endphp
 
@@ -26,16 +27,25 @@
         </span>
 
         <h1 class="mt-4 text-lg font-bold tracking-tight text-tinta dark:text-teks-gelap">Pembayaran diterima</h1>
-        <p class="mt-1 text-xs text-redup dark:text-redup-gelap">Simulasi sandbox, tidak ada uang berpindah</p>
+        <p class="mt-1 text-xs text-redup dark:text-redup-gelap">Tagihan berubah lunas setelah callback masuk</p>
     </div>
 
     {{-- Peringatan jujur, ditempatkan tepat di bawah struk supaya terbaca
          sebelum siswa menutup halaman. --}}
     <div class="mt-4 rounded-xl border border-red-300 bg-red-50 px-4 py-3 dark:border-red-900 dark:bg-red-950/40">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-red-700 dark:text-red-400">Simulasi lokal</p>
+        <p class="text-[11px] font-bold uppercase tracking-widest text-red-700 dark:text-red-400">Mock gateway lokal</p>
         <p class="mt-1 text-xs leading-relaxed text-red-700 dark:text-red-400">
-            Simulasi lokal. Transaksi ini tidak muncul di dashboard Midtrans. Hanya dicatat di aplikasi ini.
+            Transaksi ini tidak muncul di dashboard Midtrans maupun Xendit. Callback dikirim oleh mock lokal ke aplikasi ini sendiri.
         </p>
+    </div>
+
+    {{-- Kelima tahap sudah terlewati. Ditampilkan penuh supaya asesor bisa
+         membandingkan halaman sebelum dan sesudah callback. --}}
+    <div class="mt-4 rounded-xl border border-garis bg-white px-5 py-4 dark:border-garis-gelap dark:bg-gelap-2">
+        <p class="text-[11px] font-medium text-redup dark:text-redup-gelap">Alur pembayaran</p>
+        <div class="mt-3">
+            @include('public.simulation._tahap', ['tahap' => 'berhasil'])
+        </div>
     </div>
 
     <dl class="mt-4 divide-y divide-garis overflow-hidden rounded-xl border border-garis bg-white dark:divide-garis-gelap dark:border-garis-gelap dark:bg-gelap-2">
@@ -47,8 +57,13 @@
         @endforeach
     </dl>
 
-    <a href="{{ route('beranda') }}"
+    <a href="{{ route('simulasi.bukti', $pembayaran->nomor_transaksi) }}" download
        class="tombol-tekan mt-4 block w-full rounded-lg bg-neon px-4 py-3 text-center text-sm font-semibold text-tinta hover:bg-neon-tekan">
+        Simpan bukti transfer (PNG)
+    </a>
+
+    <a href="{{ route('beranda') }}"
+       class="tombol-tekan mt-2 block w-full rounded-lg border border-garis px-4 py-3 text-center text-sm font-semibold text-tinta hover:bg-latar-2 dark:border-garis-gelap dark:text-teks-gelap dark:hover:bg-gelap">
         Selesai
     </a>
 

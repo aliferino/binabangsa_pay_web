@@ -44,10 +44,10 @@
     <main class="mx-auto w-full max-w-lg flex-1 px-4 py-8">
 
         <p class="inline-block rounded-full bg-red-700 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-white">
-            Simulasi Sandbox
+            Mock Gateway Lokal
         </p>
         <p class="mt-3 text-xs leading-relaxed text-redup dark:text-redup-gelap">
-            Halaman ini hanya untuk latihan. Tidak ada uang yang benar-benar berpindah.
+            Halaman ini memakai mock payment gateway lokal, bukan Midtrans atau Xendit. Tidak ada uang yang benar-benar berpindah.
         </p>
 
         <div class="mt-5">
@@ -55,6 +55,10 @@
         </div>
 
     </main>
+
+    {{-- Pesan sukses atau gagal dari controller (mis. nominal tidak cocok)
+         tampil sebagai toast, sama seperti halaman admin. --}}
+    @include('layouts.partials._toast')
 
     <footer class="border-t border-garis bg-white px-4 py-4 text-center text-xs text-redup dark:border-garis-gelap dark:bg-gelap-2 dark:text-redup-gelap">
         SMK Bina Bangsa, simulasi pembayaran Virtual Account
