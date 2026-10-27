@@ -14,93 +14,62 @@ use Illuminate\Http\Request;
  * Laporan khusus kepala sekolah.
  *
  * Kepala sekolah hanya boleh melihat, tidak boleh mencatat atau mengubah.
- * Laporan ini berdiri sendiri, terpisah dari laporan admin, supaya kalau
- * nanti kepala sekolah butuh kolom atau filter sendiri, perubahannya tidak
- * mengganggu laporan admin.
+ * Query laporan pembayaran dipakai bersama dengan laporan admin lewat
+ * TuitionBill::reportQuery, supaya angka kedua laporan tidak bisa berbeda.
  */
 class ReportController extends Controller
 {
+    private const REPORT_FILTERS = [
+        'bulan', 'tahun', 'id_tahun_ajaran', 'id_kelas',
+        'id_jurusan', 'id_siswa', 'status', 'dari', 'sampai',
+    ];
+
     /**
      * Laporan pembayaran tagihan SPP.
      *
-     * Filter: bulan, tahun, tahun ajaran, kelas, jurusan, siswa, status.
-     * Kolom minimal: NIS, nama, kelas, bulan, nominal, status, tanggal bayar.
+     * Uang masuk dibaca dari tabel pembayaran. Satu baris mewakili satu
+     * tagihan, lengkap dengan tanggal bayar dan selisih hari keterlambatan.
      */
     public function payments(Request $request)
     {
-        $query = TuitionBill::with('siswa.kelas.jurusan', 'tarif', 'tahunAjaran');
-
-        if ($request->filled('bulan')) {
-            $query->where('bulan', $request->input('bulan'));
-        }
-
-        if ($request->filled('tahun')) {
-            $query->where('tahun', $request->input('tahun'));
-        }
-
-        if ($request->filled('id_tahun_ajaran')) {
-            $query->where('id_tahun_ajaran', $request->input('id_tahun_ajaran'));
-        }
-
-        if ($request->filled('id_kelas')) {
-            $query->whereHas('siswa', function ($q) use ($request) {
-                $q->where('id_kelas', $request->input('id_kelas'));
-            });
-        }
-
-        if ($request->filled('id_jurusan')) {
-            $query->whereHas('siswa.kelas', function ($q) use ($request) {
-                $q->where('id_jurusan', $request->input('id_jurusan'));
-            });
-        }
-
-        if ($request->filled('id_siswa')) {
-            $query->where('id_siswa', $request->input('id_siswa'));
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        $rows = $query->orderByDesc('tahun')->orderByDesc('bulan')->get();
+        $filter = $request->only(self::REPORT_FILTERS);
+        $rows = TuitionBill::reportQuery($filter);
 
         return $this->render('kepsek.reports.payments', [
             'bills' => $rows,
-            'totalNominal' => (float) $rows->sum('nominal'),
-            'totalPaid' => (float) $rows->where('status', 'lunas')->sum('nominal'),
-            'totalUnpaid' => (float) $rows->where('status', 'belum_bayar')->sum('nominal'),
-            'totalArrears' => (float) $rows->where('status', 'tunggakan')->sum('nominal'),
-            'filter' => $request->only([
-                'bulan', 'tahun', 'id_tahun_ajaran', 'id_kelas',
-                'id_jurusan', 'id_siswa', 'status',
-            ]),
-        ] + $this->filterOptions());
+            'filter' => $filter,
+        ] + TuitionBill::reportTotals($rows) + $this->filterOptions());
+    }
+
+    /**
+     * Rekap uang masuk per bulan dan per kelas.
+     */
+    public function recap(Request $request)
+    {
+        $filter = $request->only(['dari', 'sampai']);
+
+        return $this->render('kepsek.reports.recap', [
+            'filter' => $filter,
+        ] + TuitionBill::recap($filter));
     }
 
     /**
      * Laporan tunggakan per siswa.
      *
-     * Filter: bulan, tahun, kelas, jurusan.
-     * Kolom minimal: NIS, nama, kelas, bulan tunggakan, jumlah tunggakan,
-     * total nominal.
+     * Tunggakan dihitung dari tanggal jatuh tempo, bukan dari nilai kolom
+     * status, karena kolom itu hanya berisi belum_bayar atau lunas.
      */
     public function arrears(Request $request)
     {
         $query = Student::with('kelas.jurusan')
-            ->whereHas('tagihan', function ($q) {
-                $q->where('status', 'tunggakan');
-            });
+            ->whereHas('tagihan', fn ($q) => $q->overdue());
 
         if ($request->filled('bulan')) {
-            $query->whereHas('tagihan', function ($q) use ($request) {
-                $q->where('bulan', $request->input('bulan'));
-            });
+            $query->whereHas('tagihan', fn ($q) => $q->where('bulan', $request->input('bulan'))->overdue());
         }
 
         if ($request->filled('tahun')) {
-            $query->whereHas('tagihan', function ($q) use ($request) {
-                $q->where('tahun', $request->input('tahun'));
-            });
+            $query->whereHas('tagihan', fn ($q) => $q->where('tahun', $request->input('tahun'))->overdue());
         }
 
         if ($request->filled('id_kelas')) {
@@ -114,7 +83,7 @@ class ReportController extends Controller
         }
 
         $rows = $query->orderBy('nama')->get()->map(function (Student $siswa) {
-            $tagihan = $siswa->tagihan()->where('status', 'tunggakan')
+            $tagihan = $siswa->tuitionBills()->overdue()
                 ->orderBy('tahun')
                 ->orderBy('bulan')
                 ->get();
@@ -125,13 +94,14 @@ class ReportController extends Controller
                 'kelas' => $siswa->kelas?->nama_kelas,
                 'bulan_tunggakan' => $tagihan->map(fn (TuitionBill $t) => $t->namaBulan())->implode(', '),
                 'jumlah_tunggakan' => $tagihan->count(),
-                'totalNominal' => (float) $tagihan->sum('nominal'),
+                'total_nominal' => (float) $tagihan->sum('nominal'),
+                'hari_terlambat' => $tagihan->max(fn (TuitionBill $t) => $t->tanggal_jatuh_tempo?->diffInDays(today()) ?? 0),
             ];
         });
 
         return $this->render('kepsek.reports.arrears', [
             'arrears' => $rows,
-            'totalAll' => (float) $rows->sum('totalNominal'),
+            'totalAll' => (float) $rows->sum('total_nominal'),
             'filter' => $request->only(['bulan', 'tahun', 'id_kelas', 'id_jurusan']),
         ] + $this->filterOptions());
     }

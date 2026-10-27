@@ -28,11 +28,11 @@ class PaymentController extends Controller
         $kueri = Payment::with('siswa.kelas', 'tagihanSpp', 'user', 'transaksi');
 
         if ($request->filled('dari')) {
-            $kueri->whereDate('created_at', '>=', $request->input('dari'));
+            $kueri->whereDate(DB::raw('COALESCE(tanggal_pembayaran, created_at)'), '>=', $request->input('dari'));
         }
 
         if ($request->filled('sampai')) {
-            $kueri->whereDate('created_at', '<=', $request->input('sampai'));
+            $kueri->whereDate(DB::raw('COALESCE(tanggal_pembayaran, created_at)'), '<=', $request->input('sampai'));
         }
 
         if ($request->filled('metode_pembayaran')) {
@@ -164,6 +164,7 @@ class PaymentController extends Controller
                 'tagihan_spp_id' => $tagihan->id_tagihan,
                 'siswa_id' => $tagihan->id_siswa,
                 'nominal_pembayaran' => $data['nominal_pembayaran'],
+                'tanggal_pembayaran' => now(),
                 'metode_pembayaran' => $metode,
                 'status' => $status,
                 'user_id' => $request->user()->id_user,

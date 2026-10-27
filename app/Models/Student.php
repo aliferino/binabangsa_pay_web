@@ -64,9 +64,15 @@ class Student extends Model
         return $this->hasMany(Payment::class, 'siswa_id', 'id_siswa');
     }
 
+    /**
+     * Total tagihan yang sudah lewat jatuh tempo dan belum lunas.
+     *
+     * Kolom status di tagihan_spp hanya berisi belum_bayar atau lunas, jadi
+     * tunggakan dihitung dari tanggal jatuh tempo, bukan dari nilai status.
+     */
     public function totalArrears(): float
     {
-        return (float) $this->tuitionBills()->where('status', 'tunggakan')->sum('nominal');
+        return (float) $this->tuitionBills()->overdue()->sum('nominal');
     }
 
     public function kelas(): BelongsTo

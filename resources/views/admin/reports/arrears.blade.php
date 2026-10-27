@@ -79,6 +79,7 @@
                         <th class="px-5 py-3 font-semibold">Kelas</th>
                         <th class="px-5 py-3 font-semibold">Bulan tunggakan</th>
                         <th class="px-5 py-3 font-semibold">Jumlah</th>
+                        <th class="px-5 py-3 font-semibold">Terlambat</th>
                         <th class="px-5 py-3 font-semibold">Total nominal</th>
                     </tr>
                 </thead>
@@ -90,13 +91,16 @@
                             <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'kelas') ?? '-' }}</td>
                             <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'bulan_tunggakan') ?: '-' }}</td>
                             <td class="px-5 py-3 text-redup dark:text-redup-gelap">{{ data_get($baris, 'jumlah_tunggakan') }}</td>
+                            <td class="px-5 py-3 text-redup dark:text-redup-gelap">
+                                {{ (int) data_get($baris, 'hari_terlambat', 0) }} hari
+                            </td>
                             <td class="px-5 py-3 font-medium text-red-700">
                                 Rp{{ number_format((float) data_get($baris, 'total_nominal', 0), 0, ',', '.') }}
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
+                            <td colspan="7" class="px-5 py-8 text-center text-redup dark:text-redup-gelap">
                                 Tidak ada tunggakan pada filter ini.
                             </td>
                         </tr>
@@ -105,7 +109,7 @@
                 @if ($daftar_tunggakan->isNotEmpty())
                     <tfoot class="bg-latar-2 dark:bg-gelap">
                         <tr>
-                            <td colspan="5" class="px-5 py-3 text-right text-sm font-semibold text-tinta dark:text-teks-gelap">Total</td>
+                            <td colspan="6" class="px-5 py-3 text-right text-sm font-semibold text-tinta dark:text-teks-gelap">Total</td>
                             <td class="px-5 py-3 text-sm font-bold text-red-800">
                                 Rp{{ number_format((float) $total_semua, 0, ',', '.') }}
                             </td>

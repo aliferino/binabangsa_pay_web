@@ -292,6 +292,8 @@ Route::middleware('auth')->group(function () {
             ->name('laporan.pembayaran');
         Route::get('/laporan/tunggakan', [ReportController::class, 'arrears'])
             ->name('laporan.tunggakan');
+        Route::get('/laporan/rekap', [ReportController::class, 'recap'])
+            ->name('laporan.rekap');
     });
 
     /*

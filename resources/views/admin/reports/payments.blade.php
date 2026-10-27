@@ -93,6 +93,18 @@
             </div>
 
             <div>
+                <label for="dari" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Tanggal dari</label>
+                <input type="date" name="dari" id="dari" value="{{ $filter['dari'] ?? '' }}"
+                       class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+            </div>
+
+            <div>
+                <label for="sampai" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Tanggal sampai</label>
+                <input type="date" name="sampai" id="sampai" value="{{ $filter['sampai'] ?? '' }}"
+                       class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+            </div>
+
+            <div>
                 <label for="status" class="mb-1 block text-xs font-medium text-redup dark:text-redup-gelap">Status</label>
                 <select name="status" id="status"
                         class="w-full rounded-lg border border-garis bg-white px-3 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
@@ -155,8 +167,7 @@
             <h2 class="text-sm font-semibold text-tinta dark:text-teks-gelap">Rincian tagihan</h2>
             <p class="mt-1 text-xs text-redup dark:text-redup-gelap">
                 {{ $daftar_tagihan->count() }} baris.
-                Angka lunas dan belum bayar dihitung dari status tagihan, karena tabel
-                pembayaran belum dibuat.
+                Lunas dan uang masuk dihitung dari tabel pembayaran, bukan dari status tagihan.
             </p>
         </div>
 
@@ -172,6 +183,10 @@
                             <th class="px-5 py-3 font-semibold">Jurusan</th>
                             <th class="px-5 py-3 font-semibold">Periode</th>
                             <th class="px-5 py-3 font-semibold">Nominal</th>
+                            <th class="px-5 py-3 font-semibold">Dibuat</th>
+                            <th class="px-5 py-3 font-semibold">Jatuh tempo</th>
+                            <th class="px-5 py-3 font-semibold">Tanggal bayar</th>
+                            <th class="px-5 py-3 font-semibold">Terlambat</th>
                             <th class="px-5 py-3 font-semibold">Status</th>
                         </tr>
                     </thead>
@@ -188,6 +203,19 @@
                                 <td class="px-5 py-3 text-tinta dark:text-teks-gelap">
                                     Rp{{ number_format((float) $tagihan->nominal, 0, ',', '.') }}
                                 </td>
+                                <td class="px-5 py-3 text-redup dark:text-redup-gelap">
+                                    {{ $tagihan->created_at?->format('d/m/Y') ?? '-' }}
+                                </td>
+                                <td class="px-5 py-3 text-redup dark:text-redup-gelap">
+                                    {{ $tagihan->tanggal_jatuh_tempo?->format('d/m/Y') ?? '-' }}
+                                </td>
+                                <td class="px-5 py-3 text-tinta dark:text-teks-gelap">
+                                    {{ $tagihan->successfulPayment()?->paidAt()?->format('d/m/Y') ?? '-' }}
+                                </td>
+                                <td class="px-5 py-3 text-redup dark:text-redup-gelap">
+                                    @php($late = $tagihan->daysLate())
+                                    {{ $late === null ? '-' : $late.' hari' }}
+                                </td>
                                 <td class="px-5 py-3">
                                     @include('layouts.partials._status-badge', ['tagihan' => $tagihan])
                                 </td>
@@ -196,8 +224,8 @@
                     </tbody>
                     <tfoot class="bg-latar-2 dark:bg-gelap">
                         <tr>
-                            <td colspan="4" class="px-5 py-3 text-right text-sm font-semibold text-tinta dark:text-teks-gelap">Total</td>
-                            <td colspan="2" class="px-5 py-3 text-sm font-bold text-tinta dark:text-teks-gelap">
+                            <td colspan="6" class="px-5 py-3 text-right text-sm font-semibold text-tinta dark:text-teks-gelap">Total</td>
+                            <td colspan="4" class="px-5 py-3 text-sm font-bold text-tinta dark:text-teks-gelap">
                                 Rp{{ number_format((float) $total_nominal, 0, ',', '.') }}
                             </td>
                         </tr>

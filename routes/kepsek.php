@@ -34,4 +34,6 @@ Route::middleware(['auth', 'role:kepala_sekolah'])->prefix('kepsek')->name('keps
         ->name('reports.payments');
     Route::get('/laporan/tunggakan', [ReportController::class, 'arrears'])
         ->name('reports.arrears');
+    Route::get('/laporan/rekap', [ReportController::class, 'recap'])
+        ->name('reports.recap');
 });

@@ -14,15 +14,25 @@ class Payment extends Model
 
     protected $fillable = [
         'nomor_transaksi', 'transaksi_id', 'tagihan_spp_id', 'siswa_id',
-        'nominal_pembayaran', 'metode_pembayaran', 'status', 'user_id',
-        'keterangan', 'nomor_referensi',
+        'nominal_pembayaran', 'tanggal_pembayaran', 'metode_pembayaran',
+        'status', 'user_id', 'keterangan', 'nomor_referensi',
     ];
 
     protected function casts(): array
     {
         return [
             'nominal_pembayaran' => 'decimal:2',
+            'tanggal_pembayaran' => 'datetime',
         ];
+    }
+
+    /**
+     * Tanggal pembayaran sebenarnya. Baris lama belum punya tanggal_pembayaran,
+     * jadi jatuh ke created_at supaya laporan lama tetap punya tanggal.
+     */
+    public function paidAt(): ?\Illuminate\Support\Carbon
+    {
+        return $this->tanggal_pembayaran ?? $this->created_at;
     }
 
     public function tuitionBill(): BelongsTo
