@@ -23,7 +23,6 @@
                 ['rute' => 'laporan.pembayaran', 'pola' => 'laporan.pembayaran', 'ikon' => 'i-laporan', 'teks' => 'Laporan Pembayaran'],
                 ['rute' => 'laporan.tunggakan', 'pola' => 'laporan.tunggakan', 'ikon' => 'i-peringatan', 'teks' => 'Laporan Tunggakan'],
                 ['rute' => 'laporan.rekap', 'pola' => 'laporan.rekap', 'ikon' => 'i-transaksi', 'teks' => 'Rekap Pembayaran'],
-                ['rute' => 'pencarian.index', 'pola' => 'pencarian.*', 'ikon' => 'i-cari', 'teks' => 'Pencarian'],
             ],
         ],
     ];

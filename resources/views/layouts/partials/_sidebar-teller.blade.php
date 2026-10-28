@@ -13,13 +13,12 @@
             'label' => null,
             'menu' => [
                 ['rute' => 'dashboard', 'pola' => 'dashboard*', 'ikon' => 'i-dashboard', 'teks' => 'Dashboard'],
+                ['rute' => 'pencarian.index', 'pola' => 'pencarian.*', 'ikon' => 'i-cari', 'teks' => 'Pencarian'],
             ],
         ],
         [
             'label' => 'Operasional',
             'menu' => [
-                ['rute' => 'pencarian.index', 'pola' => 'pencarian.*', 'ikon' => 'i-cari', 'teks' => 'Pencarian'],
-                ['rute' => 'tagihan-spp.index', 'pola' => 'tagihan-spp.*', 'ikon' => 'i-tagihan', 'teks' => 'Tagihan SPP'],
                 ['rute' => 'virtual-account.index', 'pola' => 'virtual-account.*', 'ikon' => 'i-va', 'teks' => 'Virtual Account'],
             ],
         ],
@@ -36,13 +35,6 @@
                 ['rute' => 'laporan.pembayaran', 'pola' => 'laporan.pembayaran', 'ikon' => 'i-laporan', 'teks' => 'Laporan Pembayaran'],
                 ['rute' => 'laporan.tunggakan', 'pola' => 'laporan.tunggakan', 'ikon' => 'i-peringatan', 'teks' => 'Laporan Tunggakan'],
                 ['rute' => 'laporan.rekap', 'pola' => 'laporan.rekap', 'ikon' => 'i-transaksi', 'teks' => 'Rekap Pembayaran'],
-            ],
-        ],
-        [
-            'label' => 'Data Master',
-            'menu' => [
-                ['rute' => 'siswa.index', 'pola' => 'siswa.*', 'ikon' => 'i-siswa', 'teks' => 'Siswa'],
-                ['rute' => 'kelas.index', 'pola' => 'kelas.*', 'ikon' => 'i-kelas', 'teks' => 'Kelas'],
             ],
         ],
     ];
