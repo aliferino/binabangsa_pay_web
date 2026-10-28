@@ -13,6 +13,11 @@ use Illuminate\Validation\Rule;
 class TuitionRateController extends Controller
 {
     /**
+     * Tingkat yang boleh dipilih, sama dengan isi kolom tingkat di tabel kelas.
+     */
+    private const TINGKAT = ['10', '11', '12'];
+
+    /**
      * Daftar tarif SPP.
      */
     public function index()
@@ -20,6 +25,7 @@ class TuitionRateController extends Controller
         return $this->render('admin.tuition-rates.index', [
             'tuitionRates' => TuitionRate::with('tahunAjaran')
                 ->orderByDesc('id_tahun_ajaran')
+                ->orderBy('tingkat')
                 ->get(),
         ] + $this->pilihan());
     }
@@ -88,6 +94,7 @@ class TuitionRateController extends Controller
     {
         return [
             'id_tahun_ajaran' => ['required', 'exists:tahun_ajaran,id_tahun_ajaran'],
+            'tingkat' => ['nullable', Rule::in(self::TINGKAT)],
             'nominal' => ['required', 'numeric', 'gt:0'],
             'keterangan' => ['nullable', 'string'],
             'status' => ['required', Rule::in(['aktif', 'nonaktif'])],
@@ -105,6 +112,7 @@ class TuitionRateController extends Controller
             'nominal.required' => 'Nominal wajib diisi.',
             'nominal.numeric' => 'Nominal harus berupa angka.',
             'nominal.gt' => 'Nominal harus lebih besar dari nol.',
+            'tingkat.in' => 'Tingkat harus 10, 11, atau 12.',
             'status.in' => 'Status harus aktif atau nonaktif.',
         ];
     }

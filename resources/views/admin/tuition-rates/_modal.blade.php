@@ -46,6 +46,21 @@
                         </div>
 
                         <div>
+                            <label for="tingkat" class="mb-1 block text-sm font-medium text-redup dark:text-redup-gelap">Tingkat</label>
+                            <select name="tingkat" id="tingkat"
+                                    class="w-full rounded-lg border border-garis bg-white pl-3 pr-9 py-2 text-sm text-tinta shadow-sm focus:border-neon-teks focus:outline-none focus:ring-2 focus:ring-neon/40 dark:border-redup dark:bg-gelap dark:text-teks-gelap">
+                                <option value="">Semua tingkatan</option>
+                                <option value="10" @selected(old('tingkat') === '10')>Tingkat 10</option>
+                                <option value="11" @selected(old('tingkat') === '11')>Tingkat 11</option>
+                                <option value="12" @selected(old('tingkat') === '12')>Tingkat 12</option>
+                            </select>
+                            @include('layouts.partials._error', ['nama' => 'tingkat'])
+                            <p class="mt-1 text-xs text-redup dark:text-redup-gelap">
+                                Kosongkan kalau tarif ini berlaku untuk semua tingkatan.
+                            </p>
+                        </div>
+
+                        <div>
                             <label for="nominal" class="mb-1 block text-sm font-medium text-redup dark:text-redup-gelap">
                                 Nominal <span class="text-red-600 dark:text-red-400">*</span>
                             </label>

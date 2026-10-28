@@ -14,7 +14,7 @@ class TuitionRate extends Model
 
     protected $primaryKey = 'id_tarif';
 
-    protected $fillable = ['id_tahun_ajaran', 'nominal', 'keterangan', 'status'];
+    protected $fillable = ['id_tahun_ajaran', 'tingkat', 'nominal', 'keterangan', 'status'];
 
     protected function casts(): array
     {

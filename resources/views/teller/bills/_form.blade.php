@@ -91,6 +91,7 @@
                     @foreach ($daftar_tarif as $tarif)
                         <option value="{{ $tarif->id_tarif }}" @selected($nilai('id_tarif') == $tarif->id_tarif)>
                             Rp{{ number_format((float) $tarif->nominal, 0, ',', '.') }}
+                            {{ $tarif->tingkat ? '- Tingkat '.$tarif->tingkat : '- Semua tingkatan' }}
                             {{ $tarif->tahunAjaran ? '- '.$tarif->tahunAjaran->tahun_ajaran : '' }}
                         </option>
                     @endforeach

@@ -5,6 +5,7 @@
             <thead class="bg-latar-2 text-left text-xs uppercase tracking-wide text-redup dark:bg-gelap dark:text-redup-gelap">
                 <tr>
                     <th class="px-5 py-3 font-semibold">Tahun ajaran</th>
+                    <th class="px-5 py-3 font-semibold">Tingkat</th>
                     <th class="px-5 py-3 font-semibold">Nominal</th>
                     <th class="px-5 py-3 font-semibold">Keterangan</th>
                     <th class="px-5 py-3 font-semibold">Status</th>
@@ -16,6 +17,9 @@
                     <tr class="hover:bg-latar-2 dark:hover:bg-gelap">
                         <td class="px-5 py-3 font-medium text-tinta dark:text-teks-gelap">
                             {{ $tarif->tahunAjaran?->tahun_ajaran ?? '-' }}
+                        </td>
+                        <td class="px-5 py-3 text-tinta dark:text-teks-gelap">
+                            {{ $tarif->tingkat ? 'Tingkat '.$tarif->tingkat : 'Semua tingkatan' }}
                         </td>
                         <td class="px-5 py-3 text-tinta dark:text-teks-gelap">
                             Rp{{ number_format((float) $tarif->nominal, 0, ',', '.') }}
@@ -31,7 +35,7 @@
                         <td class="px-5 py-3">
                             <div class="flex flex-wrap items-center justify-end gap-2">
                                 @if (auth()->user()->role === 'admin')
-<button type="button" data-modal-buka="ubah" data-modal-target="modal-tarif-spp" data-id="{{ $tarif->id_tarif }}" data-id_tahun_ajaran="{{ $tarif->id_tahun_ajaran }}" data-nominal="{{ (int) $tarif->nominal }}" data-keterangan="{{ $tarif->keterangan }}" data-status="{{ $tarif->status }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Ubah" aria-label="Ubah"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-ubah"/></svg>
+<button type="button" data-modal-buka="ubah" data-modal-target="modal-tarif-spp" data-id="{{ $tarif->id_tarif }}" data-id_tahun_ajaran="{{ $tarif->id_tahun_ajaran }}" data-tingkat="{{ $tarif->tingkat }}" data-nominal="{{ (int) $tarif->nominal }}" data-keterangan="{{ $tarif->keterangan }}" data-status="{{ $tarif->status }}" class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-garis text-redup transition-colors hover:border-neon-teks hover:bg-latar-2 hover:text-tinta dark:border-garis-gelap dark:text-redup-gelap dark:hover:bg-gelap dark:hover:text-teks-gelap" title="Ubah" aria-label="Ubah"><svg class="h-[18px] w-[18px]" aria-hidden="true"><use href="#i-ubah"/></svg>
                                     </button>
 
                                     <form method="POST" action="{{ route('tarif-spp.destroy', $tarif) }}"
