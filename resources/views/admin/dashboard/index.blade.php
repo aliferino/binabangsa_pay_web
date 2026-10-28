@@ -104,16 +104,15 @@
                                 Rp{{ number_format($jumlah / 1000, 0, ',', '.') }}rb
                             </span>
 
-                            {{-- Satu batang bertumpuk: bagian lunas hijau di atas, sisanya abu.
-                                 Tinggi total dari nominal, jadi 0 dan Rp350rb tidak tampak sama. --}}
-                            <div class="flex w-full max-w-14 flex-col justify-end overflow-hidden rounded-md"
+                            {{-- Batang bertumpuk, diisi dari DASAR seperti air: bagian
+                                 yang sudah lunas (hijau) menempel di bawah, sisanya abu
+                                 di atas. Latar wadah sudah abu, jadi bagian belum bayar
+                                 tidak perlu elemen sendiri. --}}
+                            <div class="flex w-full max-w-14 flex-col justify-end overflow-hidden rounded-md bg-redup/25 dark:bg-teks-gelap/25"
                                  style="height: {{ $tinggi }}px"
                                  title="{{ $batang['nama'] }} {{ $batang['tahun'] }}: {{ $rupiah($jumlah) }} (lunas {{ $bagianLunas }}%)">
                                 @if ($bagianLunas > 0)
                                     <div class="w-full bg-neon" style="height: {{ $bagianLunas }}%"></div>
-                                @endif
-                                @if ($bagianLunas < 100)
-                                    <div class="w-full flex-1 bg-redup/25 dark:bg-teks-gelap/25"></div>
                                 @endif
                             </div>
 

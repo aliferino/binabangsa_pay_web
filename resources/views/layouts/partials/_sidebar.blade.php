@@ -139,7 +139,10 @@
         </div>
     </a>
 
-    <nav class="gulir-tanpa-batang min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain px-2.5 pb-2 pt-2.5" aria-label="Menu utama">
+    {{-- pt-4, bukan pt-2.5: butuh jarak napas di bawah garis blok logo. Tanpa
+         jarak itu, menu pertama yang aktif (pil neon penuh) menempel ke garis
+         pemisah logo dan terlihat seperti menabrak logo sekolah. --}}
+    <nav class="gulir-tanpa-batang min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain px-2.5 pb-2 pt-4" aria-label="Menu utama">
         @switch($roleSekarang)
             @case('admin')
                 @include('layouts.partials._sidebar-admin')
